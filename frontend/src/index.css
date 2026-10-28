@@ -1,0 +1,81 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-[#1c2036] text-[#f1f3ff] antialiased selection:bg-[#6d5dfc] selection:text-white min-h-screen;
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  }
+}
+
+/* Theme Cards: #262b47 with 1px #363d66 border and 18px radius */
+.theme-card {
+  background-color: #262b47;
+  border: 1px solid #363d66;
+  border-radius: 18px;
+}
+
+.theme-card-hover {
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.theme-card-hover:hover {
+  border-color: #6d5dfc;
+  transform: translateY(-3px);
+  box-shadow: 0 16px 32px -10px rgba(109, 93, 252, 0.35);
+}
+
+/* Primary Button: Violet-to-Pink gradient */
+.btn-primary {
+  background: linear-gradient(135deg, #6d5dfc 0%, #d946ef 100%);
+  color: #ffffff;
+  font-weight: 700;
+  border-radius: 12px;
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+}
+
+.btn-primary:hover {
+  opacity: 0.95;
+  box-shadow: 0 10px 25px -5px rgba(217, 70, 239, 0.45);
+  transform: translateY(-1px);
+}
+
+/* Secondary Ghost Button */
+.btn-secondary {
+  background-color: rgba(54, 61, 102, 0.45);
+  border: 1px solid #363d66;
+  color: #f1f3ff;
+  border-radius: 12px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.btn-secondary:hover {
+  background-color: rgba(109, 93, 252, 0.15);
+  border-color: #6d5dfc;
+  color: #ffffff;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #1c2036;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #363d66;
+  border-radius: 9999px;
+  border: 2px solid #1c2036;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #6d5dfc;
+}
