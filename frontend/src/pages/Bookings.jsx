@@ -4,6 +4,7 @@ import api from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import ChatModal from '../components/ChatModal';
 import ReviewModal from '../components/ReviewModal';
+import InvoiceModal from '../components/InvoiceModal';
 import TrustBadge from '../components/TrustBadge';
 import StatCard from '../components/StatCard';
 import { 
@@ -19,7 +20,9 @@ import {
   Bell, 
   Star,
   Users,
-  IndianRupee
+  IndianRupee,
+  ShoppingBag,
+  FileText
 } from 'lucide-react';
 
 const STATUS_PILLS = {
@@ -38,9 +41,13 @@ const Bookings = () => {
   
   const [selectedChatBooking, setSelectedChatBooking] = useState(null);
   const [selectedReviewBooking, setSelectedReviewBooking] = useState(null);
+  const [selectedInvoiceBooking, setSelectedInvoiceBooking] = useState(null);
   const [actionLoading, setActionLoading] = useState(null);
   const [toastNotification, setToastNotification] = useState(null);
   const socketRef = useRef(null);
+
+  const isCustomer = user?.role === 'customer';
+  const isProvider = user?.role === 'provider';
 
   const fetchBookings = async () => {
     setLoading(true);
@@ -102,13 +109,16 @@ const Bookings = () => {
     }
   };
 
-  // 4 Dynamic Stat Card Metrics
+  // Metrics Calculations
   const totalCount = bookings.length;
   const activeCount = bookings.filter((b) => ['pending', 'accepted', 'in_progress'].includes(b.status)).length;
   const completedCount = bookings.filter((b) => b.status === 'completed').length;
-  const trustScoreVal = user?.role === 'provider' 
-    ? (user.trust_metrics?.trust_score || 94.2)
-    : 95.0;
+
+  const totalSpent = bookings
+    .filter((b) => b.status === 'completed')
+    .reduce((sum, b) => sum + (parseFloat(b.agreed_price) || 0), 0);
+
+  const providerTrustScore = user?.trust_metrics?.trust_score || 94.2;
 
   // Filter list
   const filteredBookings = bookings.filter((b) => {
@@ -149,64 +159,89 @@ const Bookings = () => {
         {/* Top Header */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-2.5">
               <h1 className="text-2xl sm:text-3xl font-black text-white">
-                Welcome back, {user?.full_name?.split(' ')[0]}
+                {isCustomer ? 'My Bookings & Appointments' : 'Provider Service Dashboard'}
               </h1>
               <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded-full bg-[#2dd4bf]/15 text-[#2dd4bf] border border-[#2dd4bf]/30">
                 {user?.role}
               </span>
             </div>
             <p className="text-xs text-[#a9b0d0] mt-1">
-              {user?.role === 'provider' ? 'Manage your job requests & client communication' : 'Track your appointments, chat with pros, and review completed work'}
+              {isCustomer
+                ? 'Track your home service requests, coordinate live with assigned pros, and view official invoices.'
+                : 'Manage incoming customer service requests, update work progress, and monitor your ML Trust Score.'}
             </p>
           </div>
         </div>
 
-        {/* 4 STAT CARDS (The 4th is the ML Trust Score) */}
+        {/* 4 STAT CARDS */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          
           <StatCard
-            title="TOTAL APPOINTMENTS"
+            title={isCustomer ? 'TOTAL BOOKINGS' : 'TOTAL JOB REQUESTS'}
             value={totalCount}
-            change="+2 this week"
-            icon={Calendar}
+            change={totalCount > 0 ? `${totalCount} on record` : 'No bookings yet'}
+            icon={isCustomer ? ShoppingBag : Calendar}
             accent="violet"
           />
+
           <StatCard
-            title="ACTIVE REQUESTS"
+            title={isCustomer ? 'ACTIVE APPOINTMENTS' : 'ACTIVE JOBS'}
             value={activeCount}
-            change={activeCount > 0 ? 'Requires attention' : 'All clear'}
+            change={activeCount > 0 ? `${activeCount} in progress` : 'All clear'}
             icon={Clock}
             accent="teal"
           />
+
           <StatCard
-            title="COMPLETED JOBS"
+            title={isCustomer ? 'SERVICES COMPLETED' : 'COMPLETED JOBS'}
             value={completedCount}
-            subtitle="Verified in MySQL"
+            subtitle={isCustomer ? 'Verified delivered' : 'Verified in MySQL'}
             icon={CheckCircle2}
             accent="amber"
           />
 
-          {/* Stat Card 4: ML Trust Score with SHAP attribution */}
-          <div className="theme-card p-5 relative overflow-hidden flex flex-col justify-between border-[#2dd4bf]/40 bg-gradient-to-br from-[#262b47] to-[#1e2a47]">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-[10px] font-extrabold text-[#2dd4bf] tracking-wider uppercase">
-                ML TRUST SCORE
-              </span>
-              <span className="text-xs text-[#2dd4bf]">★</span>
-            </div>
-            <div>
-              <p className="text-2xl sm:text-3xl font-black text-[#2dd4bf]">
-                {Number(trustScoreVal).toFixed(1)} <span className="text-xs font-normal text-[#a9b0d0]">/ 100</span>
-              </p>
-              <div className="mt-2">
-                <TrustBadge score={trustScoreVal} providerName={user?.full_name} />
+          {isCustomer ? (
+            <div className="theme-card p-5 relative overflow-hidden flex flex-col justify-between border-[#2dd4bf]/40 bg-gradient-to-br from-[#262b47] to-[#1e2a47]">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-[10px] font-extrabold text-[#2dd4bf] tracking-wider uppercase">
+                  TOTAL COMPLETED SPENT
+                </span>
+                <IndianRupee className="w-4 h-4 text-[#2dd4bf]" />
+              </div>
+              <div>
+                <p className="text-2xl sm:text-3xl font-black text-white flex items-center">
+                  <IndianRupee className="w-5 h-5 text-[#2dd4bf]" />
+                  {totalSpent.toFixed(0)}
+                </p>
+                <span className="text-xs text-[#a9b0d0] mt-1 block">
+                  Across {completedCount} completed services
+                </span>
               </div>
             </div>
-          </div>
+          ) : (
+            <div className="theme-card p-5 relative overflow-hidden flex flex-col justify-between border-[#2dd4bf]/40 bg-gradient-to-br from-[#262b47] to-[#1e2a47]">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-[10px] font-extrabold text-[#2dd4bf] tracking-wider uppercase">
+                  ML TRUST SCORE
+                </span>
+                <span className="text-xs text-[#2dd4bf]">★</span>
+              </div>
+              <div>
+                <p className="text-2xl sm:text-3xl font-black text-[#2dd4bf]">
+                  {Number(providerTrustScore).toFixed(1)} <span className="text-xs font-normal text-[#a9b0d0]">/ 100</span>
+                </p>
+                <div className="mt-2">
+                  <TrustBadge score={providerTrustScore} providerName={user?.full_name} />
+                </div>
+              </div>
+            </div>
+          )}
+
         </div>
 
-        {/* Filter Navigation Tabs */}
+        {/* Filter Tabs */}
         <div className="flex items-center space-x-2 border-b border-[#363d66] pb-3 text-xs font-semibold">
           {[
             { id: 'all', label: `All (${bookings.length})` },
@@ -228,7 +263,7 @@ const Bookings = () => {
           ))}
         </div>
 
-        {/* Bookings Table / Cards */}
+        {/* Bookings Table */}
         {loading ? (
           <div className="space-y-3">
             {[1, 2, 3].map((n) => (
@@ -247,31 +282,34 @@ const Bookings = () => {
               <table className="w-full text-left">
                 <thead>
                   <tr className="border-b border-[#363d66] text-[#a9b0d0] uppercase tracking-wider text-[10px]">
-                    <th className="pb-3">{user?.role === 'provider' ? 'Customer' : 'Provider'}</th>
-                    <th className="pb-3">Service</th>
-                    <th className="pb-3">Scheduled</th>
-                    <th className="pb-3">Agreed Fee</th>
+                    <th className="pb-3">{isCustomer ? 'Assigned Service Provider' : 'Customer Name'}</th>
+                    <th className="pb-3">Service Details</th>
+                    <th className="pb-3">Scheduled Date & Time</th>
+                    <th className="pb-3">Service Fee</th>
                     <th className="pb-3">Status</th>
                     <th className="pb-3 text-right">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[#363d66]/60">
                   {filteredBookings.map((b) => {
-                    const counterpartName = user?.role === 'customer' ? b.provider_name : b.customer_name;
+                    const counterpartName = isCustomer
+                      ? b.counterpart?.full_name || b.provider_name || 'Verified Pro'
+                      : b.counterpart?.full_name || b.customer_name || 'Customer';
+
                     const pill = STATUS_PILLS[b.status] || STATUS_PILLS.pending;
 
                     return (
                       <tr key={b.id} className="hover:bg-[#1c2036]/50 transition-colors">
-                        {/* Name */}
+                        {/* Name Column */}
                         <td className="py-3.5 pr-2">
-                          <p className="font-bold text-white">{counterpartName || 'Verified User'}</p>
-                          <p className="text-[11px] text-[#a9b0d0]">{b.service_address || b.customer_address}</p>
+                          <p className="font-bold text-white">{counterpartName}</p>
+                          <p className="text-[11px] text-[#a9b0d0]">{b.customer_address || b.service_address}</p>
                         </td>
 
-                        {/* Title */}
+                        {/* Title & Category */}
                         <td className="py-3.5 pr-2">
                           <p className="font-semibold text-white">{b.service_title}</p>
-                          <span className="text-[10px] text-[#6d5dfc]">{b.service_category}</span>
+                          <span className="text-[10px] text-[#6d5dfc] font-semibold">{b.service_category}</span>
                         </td>
 
                         {/* Date & Time */}
@@ -293,10 +331,10 @@ const Bookings = () => {
 
                         {/* Action Buttons */}
                         <td className="py-3.5 text-right space-x-2 whitespace-nowrap">
-                          {/* Chat Button with Unread Badge */}
+                          {/* Live Chat Button */}
                           <button
                             onClick={() => setSelectedChatBooking(b)}
-                            className="btn-secondary px-3 py-1.5 text-xs font-semibold inline-flex items-center space-x-1 relative"
+                            className="btn-secondary px-3 py-1.5 text-xs font-semibold inline-flex items-center space-x-1 relative cursor-pointer"
                           >
                             <MessageSquare className="w-3.5 h-3.5 text-[#6d5dfc]" />
                             <span>Chat</span>
@@ -307,54 +345,76 @@ const Bookings = () => {
                             )}
                           </button>
 
-                          {/* Provider Action Buttons */}
-                          {user?.role === 'provider' && b.status === 'pending' && (
+                          {/* 1-CLICK PRINTABLE INVOICE (for Completed Bookings) */}
+                          {b.status === 'completed' && (
+                            <button
+                              onClick={() => setSelectedInvoiceBooking(b)}
+                              className="btn-secondary px-3 py-1.5 text-xs font-bold inline-flex items-center space-x-1 hover:border-[#2dd4bf] text-[#2dd4bf] cursor-pointer"
+                              title="Print / Save Official Invoice"
+                            >
+                              <FileText className="w-3.5 h-3.5" />
+                              <span>Invoice</span>
+                            </button>
+                          )}
+
+                          {/* PROVIDER ACTIONS */}
+                          {isProvider && b.status === 'pending' && (
                             <>
                               <button
                                 onClick={() => handleStatusUpdate(b.id, 'accepted')}
                                 disabled={actionLoading === b.id}
-                                className="px-3 py-1.5 rounded-xl bg-[#2dd4bf]/20 text-[#2dd4bf] hover:bg-[#2dd4bf]/30 font-bold text-xs"
+                                className="px-3 py-1.5 rounded-xl bg-[#2dd4bf]/20 text-[#2dd4bf] hover:bg-[#2dd4bf]/30 font-bold text-xs cursor-pointer"
                               >
                                 Accept
                               </button>
                               <button
                                 onClick={() => handleStatusUpdate(b.id, 'cancelled')}
                                 disabled={actionLoading === b.id}
-                                className="px-2.5 py-1.5 text-rose-400 hover:bg-rose-500/10 rounded-xl font-medium text-xs"
+                                className="px-2.5 py-1.5 text-rose-400 hover:bg-rose-500/10 rounded-xl font-medium text-xs cursor-pointer"
                               >
                                 Decline
                               </button>
                             </>
                           )}
 
-                          {user?.role === 'provider' && b.status === 'accepted' && (
+                          {isProvider && b.status === 'accepted' && (
                             <button
                               onClick={() => handleStatusUpdate(b.id, 'in_progress')}
                               disabled={actionLoading === b.id}
-                              className="px-3 py-1.5 rounded-xl bg-[#6d5dfc]/20 text-[#6d5dfc] hover:bg-[#6d5dfc]/30 font-bold text-xs"
+                              className="px-3 py-1.5 rounded-xl bg-[#6d5dfc]/20 text-[#6d5dfc] hover:bg-[#6d5dfc]/30 font-bold text-xs cursor-pointer"
                             >
                               Start Job
                             </button>
                           )}
 
-                          {user?.role === 'provider' && b.status === 'in_progress' && (
+                          {isProvider && b.status === 'in_progress' && (
                             <button
                               onClick={() => handleStatusUpdate(b.id, 'completed')}
                               disabled={actionLoading === b.id}
-                              className="px-3 py-1.5 rounded-xl bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30 font-bold text-xs"
+                              className="px-3 py-1.5 rounded-xl bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30 font-bold text-xs cursor-pointer"
                             >
                               Complete
                             </button>
                           )}
 
-                          {/* Customer Action: Review */}
-                          {user?.role === 'customer' && b.status === 'completed' && (
+                          {/* CUSTOMER ACTIONS */}
+                          {isCustomer && b.status === 'completed' && (
                             <button
                               onClick={() => setSelectedReviewBooking(b)}
-                              className="px-3 py-1.5 rounded-xl bg-[#fbbf24]/20 text-[#fbbf24] hover:bg-[#fbbf24]/30 font-bold text-xs inline-flex items-center space-x-1"
+                              className="px-3 py-1.5 rounded-xl bg-[#fbbf24]/20 text-[#fbbf24] hover:bg-[#fbbf24]/30 font-bold text-xs inline-flex items-center space-x-1 cursor-pointer"
                             >
                               <Star className="w-3.5 h-3.5 fill-[#fbbf24]" />
-                              <span>Review</span>
+                              <span>Rate Service</span>
+                            </button>
+                          )}
+
+                          {isCustomer && b.status === 'pending' && (
+                            <button
+                              onClick={() => handleStatusUpdate(b.id, 'cancelled')}
+                              disabled={actionLoading === b.id}
+                              className="px-2.5 py-1.5 text-rose-400 hover:bg-rose-500/10 rounded-xl font-medium text-xs cursor-pointer"
+                            >
+                              Cancel
                             </button>
                           )}
                         </td>
@@ -386,6 +446,14 @@ const Bookings = () => {
             fetchBookings();
             setSelectedReviewBooking(null);
           }}
+        />
+      )}
+
+      {/* 1-CLICK PRINTABLE INVOICE MODAL */}
+      {selectedInvoiceBooking && (
+        <InvoiceModal
+          booking={selectedInvoiceBooking}
+          onClose={() => setSelectedInvoiceBooking(null)}
         />
       )}
 

@@ -1,86 +1,52 @@
 import numpy as np
 import pandas as pd
-from sklearn.ensemble import RandomForestRegressor
+from sklearn.ensemble import GradientBoostingRegressor
 
-CATEGORY_BASE_RATES = {
-    'plumbing': 300.0,
-    'electrical': 350.0,
-    'appliance repair': 400.0,
-    'home cleaning': 250.0,
-    'carpentry': 350.0
-}
-
-CATEGORY_MAP = {
-    'plumbing': 0,
-    'electrical': 1,
-    'appliance repair': 2,
-    'home cleaning': 3,
-    'carpentry': 4
-}
-
-class PriceEstimator:
+class FairPriceEstimator:
+    """
+    Estimates fair local market prices using Gradient Boosting Regression.
+    """
     def __init__(self):
-        self.model = RandomForestRegressor(n_estimators=100, random_state=42)
+        self.model = GradientBoostingRegressor(n_estimators=80, learning_rate=0.1, random_state=42)
         self._train_historical_model()
 
     def _train_historical_model(self):
-        """
-        Trains the regression model on simulated historical job records.
-        Features: [category_code, duration_hours, is_emergency]
-        Target: total_cost
-        """
         np.random.seed(42)
-        n_samples = 1200
+        n = 500
+        categories = np.random.choice([0, 1, 2, 3, 4, 5], size=n) # Encoded categories
+        duration = np.random.uniform(0.5, 6.0, size=n)
+        emergency = np.random.choice([0, 1], size=n, p=[0.8, 0.2])
 
-        categories = np.random.choice(list(CATEGORY_MAP.keys()), n_samples)
-        cat_codes = np.array([CATEGORY_MAP[c] for c in categories])
-        duration = np.random.uniform(0.5, 5.0, n_samples)  # 30 mins to 5 hours
-        is_emergency = np.random.choice([0, 1], n_samples, p=[0.75, 0.25])
+        base_rates = {0: 350, 1: 400, 2: 450, 3: 300, 4: 450, 5: 380}
+        prices = [
+            (base_rates[cat] * dur) + (150 * em) + np.random.normal(0, 30)
+            for cat, dur, em in zip(categories, duration, emergency)
+        ]
 
-        # Realistic pricing equation with stochastic noise
-        base_rates = np.array([CATEGORY_BASE_RATES[c] for c in categories])
-        cost = (base_rates * duration) + (is_emergency * 150.0) + np.random.normal(0, 25, n_samples)
-        cost = np.clip(cost, 150.0, 3000.0)
-
-        df = pd.DataFrame({
-            'cat_code': cat_codes,
-            'duration': duration,
-            'is_emergency': is_emergency,
-            'cost': cost
-        })
-
-        X = df[['cat_code', 'duration', 'is_emergency']]
-        y = df['cost']
+        X = pd.DataFrame({'cat': categories, 'duration': duration, 'emergency': emergency})
+        y = np.maximum(150, prices)
         self.model.fit(X, y)
 
-    def estimate_price_range(self, category: str, duration_hours: float = 1.5, is_emergency: bool = False) -> dict:
-        """
-        Predicts expected fair market price and gives a realistic +/- 15% range.
-        """
-        clean_cat = category.strip().lower()
-        cat_code = CATEGORY_MAP.get(clean_cat, 0)
-
-        input_data = pd.DataFrame([[
-            cat_code,
-            max(0.5, float(duration_hours)),
-            1 if is_emergency else 0
-        ]], columns=['cat_code', 'duration', 'is_emergency'])
-
-        predicted_price = float(self.model.predict(input_data)[0])
-        predicted_price = round(predicted_price, -1)  # Round to nearest 10
-
-        # Fair margin bounds (+/- 15%)
-        min_fair = round(predicted_price * 0.85, -1)
-        max_fair = round(predicted_price * 1.15, -1)
+    def estimate_price_range(self, category_name, duration_hours, is_emergency=False):
+        cat_map = {'Plumbing': 0, 'Electrical': 1, 'Carpentry': 2, 'Cleaning': 3, 'Appliance Repair': 4, 'Painting': 5}
+        cat_idx = cat_map.get(category_name, 0)
+        
+        X_val = pd.DataFrame([{
+            'cat': cat_idx, 
+            'duration': float(duration_hours), 
+            'emergency': 1 if is_emergency else 0
+        }])
+        
+        pred = float(self.model.predict(X_val)[0])
+        # Calculate dynamic ±12% fair market confidence bound
+        min_p = round(pred * 0.88, -1)
+        max_p = round(pred * 1.12, -1)
 
         return {
-            'category': category,
-            'duration_hours': duration_hours,
-            'is_emergency': is_emergency,
-            'estimated_price': predicted_price,
-            'fair_range_min': min_fair,
-            'fair_range_max': max_fair,
-            'currency': 'INR'
+            'estimated_price': round(pred),
+            'fair_range_min': int(min_p),
+            'fair_range_max': int(max_p),
+            'algorithm': 'GradientBoostingRegressor'
         }
 
-price_estimator = PriceEstimator()
+price_estimator = FairPriceEstimator()

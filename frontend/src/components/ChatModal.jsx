@@ -16,12 +16,34 @@ const ChatModal = ({ booking, onClose }) => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
+  // REAL DATE & TIME FORMATTER
+  const formatMessageTime = (msg) => {
+    const rawTime = msg.sent_at || msg.created_at || msg.timestamp;
+    if (!rawTime) return 'Just now';
+    
+    const d = new Date(rawTime);
+    if (isNaN(d.getTime())) return 'Just now';
+
+    const now = new Date();
+    const isToday = d.toDateString() === now.toDateString();
+    
+    const yesterday = new Date();
+    yesterday.setDate(now.getDate() - 1);
+    const isYesterday = d.toDateString() === yesterday.toDateString();
+
+    const timeStr = d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+    if (isToday) return `Today, ${timeStr}`;
+    if (isYesterday) return `Yesterday, ${timeStr}`;
+    return `${d.toLocaleDateString([], { month: 'short', day: 'numeric' })}, ${timeStr}`;
+  };
+
   useEffect(() => {
-    // 1. Fetch message history
+    // 1. Fetch message history from REST API
     const loadChatHistory = async () => {
       try {
         const res = await api.get(`/bookings/${booking.id}/messages`);
-        if (res.data.success) {
+        if (res.data?.success && Array.isArray(res.data.messages)) {
           setMessages(res.data.messages);
         }
       } catch (err) {
@@ -72,8 +94,8 @@ const ChatModal = ({ booking, onClose }) => {
 
   const recipientName =
     user?.role === 'customer'
-      ? booking.provider_name || 'Service Provider'
-      : booking.customer_name || 'Customer';
+      ? booking.counterpart?.full_name || booking.provider_name || 'Service Provider'
+      : booking.counterpart?.full_name || booking.customer_name || 'Customer';
 
   return (
     <div 
@@ -130,10 +152,10 @@ const ChatModal = ({ booking, onClose }) => {
                         : 'bg-[#262b47] border border-[#363d66] text-white rounded-bl-xs'
                     }`}
                   >
-                    {m.message_text || m.content}
+                    {m.content || m.message_text}
                   </div>
-                  <span className="text-[10px] text-[#a9b0d0] mt-1 px-1">
-                    {new Date(m.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                  <span className="text-[10px] text-[#a9b0d0] mt-1 px-1 font-medium">
+                    {formatMessageTime(m)}
                   </span>
                 </div>
               );
@@ -154,7 +176,7 @@ const ChatModal = ({ booking, onClose }) => {
           <button
             type="submit"
             disabled={!newText.trim()}
-            className="p-2.5 btn-primary rounded-xl disabled:opacity-40"
+            className="p-2.5 btn-primary rounded-xl disabled:opacity-40 cursor-pointer"
           >
             <Send className="w-4 h-4" />
           </button>

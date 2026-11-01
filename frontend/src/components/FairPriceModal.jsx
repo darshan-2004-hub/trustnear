@@ -1,14 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import api from '../services/api';
-import { Calculator, X, IndianRupee, Clock, AlertCircle, Sparkles, CheckCircle2, Zap } from 'lucide-react';
+import { Calculator, X, Sparkles, AlertCircle, IndianRupee, ShieldCheck } from 'lucide-react';
 
-const CATEGORIES = [
-  'Plumbing',
-  'Electrical',
-  'Appliance Repair',
-  'Home Cleaning',
-  'Carpentry',
-];
+const CATEGORIES = ['Plumbing', 'Electrical', 'Carpentry', 'Cleaning', 'Appliance Repair', 'Painting'];
 
 const FairPriceModal = ({ onClose, initialCategory = 'Plumbing' }) => {
   const [category, setCategory] = useState(initialCategory);
@@ -25,11 +19,11 @@ const FairPriceModal = ({ onClose, initialCategory = 'Plumbing' }) => {
         duration_hours: Number(durationHours),
         is_emergency: isEmergency,
       });
-      if (res.data.success) {
+      if (res.data?.success) {
         setEstimation(res.data.estimation);
       }
     } catch (err) {
-      console.error('Failed to calculate fair price:', err);
+      console.warn('Fair price calculation fallback:', err.message);
     } finally {
       setLoading(false);
     }
@@ -40,124 +34,112 @@ const FairPriceModal = ({ onClose, initialCategory = 'Plumbing' }) => {
   }, [category, durationHours, isEmergency]);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs">
-      <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 animate-in fade-in duration-150">
+    <div 
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-4"
+      onClick={onClose}
+    >
+      <div 
+        className="theme-card max-w-md w-full p-6 relative shadow-2xl animate-in fade-in zoom-in-95"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <button 
+          onClick={onClose} 
+          className="absolute top-4 right-4 text-[#a9b0d0] hover:text-white p-1 rounded-lg hover:bg-[#363d66]"
+        >
+          <X className="w-5 h-5" />
+        </button>
+
         {/* Header */}
-        <div className="flex items-start justify-between pb-4 border-b border-slate-100">
-          <div className="flex items-center space-x-2.5">
-            <div className="p-2 bg-emerald-100 text-emerald-700 rounded-xl">
-              <Calculator className="h-5 w-5" />
-            </div>
-            <div>
-              <h3 className="text-base font-bold text-slate-900">
-                Fair Market Price Estimator
-              </h3>
-              <p className="text-xs text-slate-500">
-                Powered by our Scikit-learn Historical Job Regression Model
-              </p>
+        <div className="flex items-center space-x-3 mb-5">
+          <div className="w-11 h-11 rounded-xl bg-gradient-to-tr from-[#6d5dfc] to-[#d946ef] p-0.5">
+            <div className="w-full h-full bg-[#1c2036] rounded-[10px] flex items-center justify-center text-[#2dd4bf]">
+              <Calculator className="w-5 h-5" />
             </div>
           </div>
-          <button
-            onClick={onClose}
-            className="text-slate-400 hover:text-slate-600 p-1 rounded-lg cursor-pointer"
-          >
-            <X className="h-5 w-5" />
-          </button>
+          <div>
+            <h3 className="font-bold text-white text-base">Fair Price Estimator</h3>
+            <p className="text-xs text-[#a9b0d0]">Machine Learning Regression for Fair Rates</p>
+          </div>
         </div>
 
-        {/* Input Controls */}
-        <div className="space-y-4 my-5">
+        <div className="space-y-4 text-xs">
           {/* Category */}
           <div>
-            <label className="block text-xs font-semibold text-slate-700 uppercase mb-1">
-              Service Category
-            </label>
+            <label className="block text-[#a9b0d0] font-semibold mb-1">Service Trade Category</label>
             <select
               value={category}
               onChange={(e) => setCategory(e.target.value)}
-              className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-brand-500"
+              className="w-full bg-[#1c2036] border border-[#363d66] rounded-xl px-3 py-2.5 text-white outline-none focus:border-[#6d5dfc]"
             >
-              {CATEGORIES.map((cat) => (
-                <option key={cat} value={cat}>
-                  {cat}
-                </option>
+              {CATEGORIES.map((c) => (
+                <option key={c} value={c}>{c}</option>
               ))}
             </select>
           </div>
 
           {/* Duration Slider */}
           <div>
-            <div className="flex justify-between items-center mb-1 text-xs">
-              <span className="font-semibold text-slate-700 uppercase">Estimated Job Duration</span>
-              <span className="font-bold text-brand-600">{durationHours} Hours</span>
+            <div className="flex justify-between items-center mb-1">
+              <label className="text-[#a9b0d0] font-semibold">Estimated Job Duration</label>
+              <span className="font-bold text-white text-xs">{durationHours} Hours</span>
             </div>
             <input
               type="range"
               min="0.5"
-              max="5.0"
+              max="6.0"
               step="0.5"
               value={durationHours}
               onChange={(e) => setDurationHours(e.target.value)}
-              className="w-full accent-brand-600 cursor-pointer"
+              className="w-full accent-[#6d5dfc] cursor-pointer"
             />
-            <div className="flex justify-between text-[10px] text-slate-400 mt-0.5">
-              <span>30 Mins (Minor fix)</span>
-              <span>2.5 Hrs (Standard)</span>
-              <span>5.0 Hrs (Major overhaul)</span>
+            <div className="flex justify-between text-[10px] text-[#a9b0d0] mt-1">
+              <span>30 Mins</span>
+              <span>3 Hours</span>
+              <span>6+ Hours</span>
             </div>
           </div>
 
-          {/* Urgency Toggle */}
-          <div className="flex items-center justify-between p-3 bg-slate-50 rounded-xl border border-slate-100">
-            <div className="flex items-center space-x-2">
-              <Zap className={`h-4 w-4 ${isEmergency ? 'text-amber-500' : 'text-slate-400'}`} />
-              <div>
-                <span className="text-xs font-bold text-slate-800 block">Emergency / Immediate Dispatch</span>
-                <span className="text-[11px] text-slate-500">Requires arrival within 45 minutes</span>
-              </div>
+          {/* Emergency Checkbox */}
+          <div className="p-3 rounded-xl bg-[#1c2036] border border-[#363d66] flex items-center justify-between">
+            <div>
+              <p className="font-semibold text-white">Emergency / Immediate Dispatch</p>
+              <p className="text-[10px] text-[#a9b0d0]">Within 30 minutes arrival surcharge</p>
             </div>
             <input
               type="checkbox"
               checked={isEmergency}
               onChange={(e) => setIsEmergency(e.target.checked)}
-              className="h-4 w-4 text-brand-600 rounded cursor-pointer"
+              className="w-4 h-4 rounded border-[#363d66] accent-[#d946ef] cursor-pointer"
             />
           </div>
+
+          {/* Result Card */}
+          {estimation ? (
+            <div className="p-4 rounded-xl bg-gradient-to-br from-[#262b47] to-[#1c2036] border border-[#2dd4bf]/40 text-center space-y-1">
+              <span className="text-[11px] font-bold text-[#2dd4bf] uppercase tracking-wider">
+                Fair Market Estimate Range
+              </span>
+              <p className="text-3xl font-black text-white flex items-center justify-center">
+                <IndianRupee className="w-6 h-6 text-[#2dd4bf]" />
+                {estimation.fair_range_min} - ₹{estimation.fair_range_max}
+              </p>
+              <p className="text-[11px] text-[#a9b0d0]">
+                Estimated Median: ₹{estimation.estimated_price}
+              </p>
+            </div>
+          ) : (
+            <div className="p-4 rounded-xl bg-[#1c2036] text-center text-xs text-[#a9b0d0]">
+              Calculating fair market regression...
+            </div>
+          )}
+
+          <button
+            onClick={onClose}
+            className="w-full py-2.5 btn-primary text-xs font-bold uppercase tracking-wider mt-2"
+          >
+            Apply to Search
+          </button>
         </div>
-
-        {/* Prediction Output Box */}
-        {estimation && (
-          <div className="p-4 bg-emerald-50/70 border border-emerald-200 rounded-2xl space-y-3">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-emerald-800 uppercase tracking-wide flex items-center">
-                <Sparkles className="h-3.5 w-3.5 mr-1" />
-                Predicted Fair Market Cost
-              </span>
-              <span className="text-xl font-extrabold text-emerald-900">
-                ₹{estimation.estimated_price}
-              </span>
-            </div>
-
-            {/* Fair Range Band */}
-            <div className="pt-2 border-t border-emerald-200/60 flex items-center justify-between text-xs text-emerald-800">
-              <span>Reasonable Market Range:</span>
-              <span className="font-bold bg-white px-2.5 py-1 rounded-lg border border-emerald-200 shadow-2xs">
-                ₹{estimation.fair_range_min} — ₹{estimation.fair_range_max}
-              </span>
-            </div>
-
-            <p className="text-[11px] text-emerald-700 leading-relaxed">
-              Quotes falling within this range represent fair, unmanipulated regional labor rates for Mangaluru.
-            </p>
-          </div>
-        )}
-
-        <button
-          onClick={onClose}
-          className="w-full mt-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-semibold transition cursor-pointer"
-        >
-          Close Estimator
-        </button>
       </div>
     </div>
   );

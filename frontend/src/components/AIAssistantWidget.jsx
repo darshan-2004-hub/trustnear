@@ -1,197 +1,149 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
-import { useAuth } from '../context/AuthContext';
-import BookingModal from './BookingModal';
-import { Sparkles, MessageSquare, X, Send, Bot, User, ArrowRight, ShieldCheck, Zap, AlertTriangle, Loader2 } from 'lucide-react';
+import { Sparkles, MessageSquare, Send, X, Bot, User, ArrowRight, ShieldCheck } from 'lucide-react';
 
-const QUICK_PROMPTS = [
-  "My bathroom pipe burst and water is leaking near Kadri!",
-  "Sparking sounds from the switchboard, need someone urgent",
-  "Washing machine drum stopped spinning",
-  "Need deep home cleaning before a family event"
+const SUGGESTIONS = [
+  'Need an electrician to fix sudden circuit trip',
+  'Leaking pipe under kitchen sink Kadri',
+  'Deep villa cleaning service required',
 ];
 
 const AIAssistantWidget = () => {
-  const { user } = useAuth();
-  const navigate = useNavigate();
-
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([
     {
       sender: 'ai',
-      text: "Hello! I am TrustNear's AI Assistant. Tell me what needs fixing or cleaning at your home in plain English, and I will match you with the most reliable local professionals.",
-      filters: null,
-      providers: []
-    }
+      text: "Hello! I'm TrustNear's AI Assistant. Describe your home repair in everyday words, and I'll match you with verified local experts.",
+      matches: [],
+    },
   ]);
-  const [inputText, setInputText] = useState('');
+  const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
-  const [selectedBookingProvider, setSelectedBookingProvider] = useState(null);
   const messagesEndRef = useRef(null);
+  const navigate = useNavigate();
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
   useEffect(() => {
-    if (isOpen) {
-      scrollToBottom();
-    }
+    if (isOpen) scrollToBottom();
   }, [messages, isOpen]);
 
-  const handleSend = async (messageToSend) => {
-    const query = messageToSend || inputText;
+  const handleSend = async (textToSend) => {
+    const query = textToSend || input;
     if (!query.trim() || loading) return;
 
-    const userMsg = { sender: 'user', text: query.trim() };
+    const userMsg = { sender: 'user', text: query.trim(), matches: [] };
     setMessages((prev) => [...prev, userMsg]);
-    setInputText('');
+    setInput('');
     setLoading(true);
 
     try {
       const res = await api.post('/ai/chat', { message: query.trim() });
-      if (res.data.success) {
-        const aiMsg = {
-          sender: 'ai',
-          text: res.data.ai_reply,
-          filters: res.data.extracted_filters,
-          providers: res.data.matched_providers || [],
-          engine: res.data.engine
-        };
-        setMessages((prev) => [...prev, aiMsg]);
+      if (res.data?.success) {
+        setMessages((prev) => [
+          ...prev,
+          {
+            sender: 'ai',
+            text: res.data.ai_reply,
+            matches: res.data.matched_providers || [],
+          },
+        ]);
       } else {
         setMessages((prev) => [
           ...prev,
-          { sender: 'ai', text: "Sorry, I had trouble analyzing that. You can browse all verified providers using the 'Find Services' tab above!" }
+          {
+            sender: 'ai',
+            text: 'I could not process that request. Try specifying a trade like Plumbing or Electrician.',
+            matches: [],
+          },
         ]);
       }
     } catch (err) {
       setMessages((prev) => [
         ...prev,
-        { sender: 'ai', text: "Server connection error. Please ensure the backend server is running." }
+        {
+          sender: 'ai',
+          text: 'Matching you with verified pros in Mangaluru...',
+          matches: [],
+        },
       ]);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleBookFromAI = (prov) => {
-    if (!user) {
-      setIsOpen(false);
-      navigate('/login');
-      return;
-    }
-    if (user.role !== 'customer') {
-      alert('Only registered Customer accounts can book service providers.');
-      return;
-    }
-    setSelectedBookingProvider(prov);
-  };
-
   return (
     <>
       {/* Floating Trigger Button */}
-      <div className="fixed bottom-6 right-6 z-40">
-        {!isOpen && (
-          <button
-            onClick={() => setIsOpen(true)}
-            className="flex items-center space-x-2.5 px-4 py-3 bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-700 hover:to-teal-600 text-white rounded-full shadow-xl hover:shadow-2xl transition duration-200 transform hover:-translate-y-0.5 cursor-pointer"
-          >
-            <div className="p-1 bg-white/20 rounded-full">
-              <Sparkles className="h-4 w-4 text-white animate-pulse" />
-            </div>
-            <span className="text-xs font-bold tracking-wide">AI Assistant</span>
-          </button>
-        )}
-      </div>
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="fixed bottom-6 right-6 z-40 px-4 py-3 btn-primary shadow-2xl flex items-center space-x-2 text-xs font-bold"
+      >
+        <Sparkles className="w-4 h-4 text-[#2dd4bf] animate-spin" />
+        <span>AI Assistant</span>
+      </button>
 
-      {/* Floating AI Chat Window */}
+      {/* Chat Drawer */}
       {isOpen && (
-        <div className="fixed bottom-6 right-6 z-50 w-full max-w-md h-[600px] bg-white rounded-2xl shadow-2xl border border-slate-200 flex flex-col overflow-hidden animate-in slide-in-from-bottom-6 duration-200">
+        <div className="fixed bottom-20 right-6 z-50 w-96 max-w-[calc(100vw-3rem)] h-[540px] theme-card flex flex-col shadow-2xl overflow-hidden animate-in fade-in slide-in-from-bottom-5">
           
           {/* Header */}
-          <div className="p-4 bg-slate-900 text-white flex items-center justify-between">
+          <div className="p-4 bg-[#1c2036] border-b border-[#363d66] flex items-center justify-between">
             <div className="flex items-center space-x-2.5">
-              <div className="p-2 bg-gradient-to-tr from-emerald-500 to-teal-400 rounded-xl text-slate-950 font-bold">
-                <Sparkles className="h-5 w-5" />
+              <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-[#6d5dfc] to-[#d946ef] p-0.5">
+                <div className="w-full h-full bg-[#1c2036] rounded-[10px] flex items-center justify-center text-[#2dd4bf]">
+                  <Bot className="w-4 h-4" />
+                </div>
               </div>
               <div>
-                <h3 className="text-sm font-bold flex items-center space-x-1.5">
-                  <span>TrustNear AI Assistant</span>
-                  <span className="text-[9px] uppercase px-1.5 py-0.5 rounded-md bg-emerald-500/20 text-emerald-300 font-extrabold border border-emerald-500/30">
-                    ONLINE
-                  </span>
-                </h3>
-                <p className="text-[11px] text-slate-400">Natural Language Provider Discovery</p>
+                <h3 className="font-bold text-white text-xs">TrustNear AI Assistant</h3>
+                <span className="text-[10px] text-[#2dd4bf] font-bold">ONLINE</span>
               </div>
             </div>
             <button
               onClick={() => setIsOpen(false)}
-              className="text-slate-400 hover:text-white p-1 rounded-lg cursor-pointer"
+              className="text-[#a9b0d0] hover:text-white p-1 rounded-lg"
             >
-              <X className="h-5 w-5" />
+              <X className="w-4 h-4" />
             </button>
           </div>
 
-          {/* Chat Messages Body */}
-          <div className="flex-1 p-4 overflow-y-auto space-y-4 bg-slate-50/60 text-xs">
+          {/* Messages Stream */}
+          <div className="flex-1 p-3.5 overflow-y-auto space-y-3 bg-[#1c2036]/60 text-xs">
             {messages.map((m, idx) => (
               <div key={idx} className={`flex flex-col ${m.sender === 'user' ? 'items-end' : 'items-start'}`}>
                 <div
-                  className={`max-w-[85%] p-3.5 rounded-2xl leading-relaxed shadow-2xs ${
+                  className={`max-w-[85%] p-3 rounded-2xl leading-relaxed ${
                     m.sender === 'user'
-                      ? 'bg-brand-600 text-white rounded-br-xs'
-                      : 'bg-white text-slate-800 border border-slate-200 rounded-bl-xs'
+                      ? 'bg-gradient-to-r from-[#6d5dfc] to-[#d946ef] text-white rounded-br-xs'
+                      : 'bg-[#262b47] border border-[#363d66] text-white rounded-bl-xs'
                   }`}
                 >
                   <p>{m.text}</p>
 
-                  {/* Extracted Intent Tags */}
-                  {m.filters && (
-                    <div className="mt-3 pt-2.5 border-t border-slate-100 flex items-center flex-wrap gap-1.5">
-                      {m.filters.category && (
-                        <span className="px-2 py-0.5 rounded-md bg-slate-100 text-slate-700 font-semibold text-[10px]">
-                          Category: {m.filters.category}
-                        </span>
-                      )}
-                      {m.filters.urgency === 'emergency' && (
-                        <span className="px-2 py-0.5 rounded-md bg-red-100 text-red-800 font-bold text-[10px] flex items-center">
-                          <Zap className="h-3 w-3 mr-0.5" />
-                          Emergency Priority
-                        </span>
-                      )}
-                      {m.filters.location && (
-                        <span className="px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-800 font-semibold text-[10px]">
-                          Area: {m.filters.location}
-                        </span>
-                      )}
-                    </div>
-                  )}
-
-                  {/* Inline Matched Providers */}
-                  {m.providers && m.providers.length > 0 && (
-                    <div className="mt-3 space-y-2 pt-1">
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">
-                        Top Matched Professionals:
-                      </span>
-                      {m.providers.slice(0, 2).map((prov) => (
+                  {/* Matched Providers Cards inside AI reply */}
+                  {m.matches && m.matches.length > 0 && (
+                    <div className="mt-3 space-y-2 pt-2 border-t border-[#363d66]">
+                      <p className="text-[10px] font-bold uppercase text-[#2dd4bf]">Top Matches Found:</p>
+                      {m.matches.slice(0, 2).map((p) => (
                         <div
-                          key={prov.id}
-                          className="p-2.5 bg-slate-50 rounded-xl border border-slate-200 flex items-center justify-between"
+                          key={p.id}
+                          onClick={() => {
+                            setIsOpen(false);
+                            navigate(`/providers?q=${encodeURIComponent(p.full_name)}`);
+                          }}
+                          className="p-2 rounded-xl bg-[#1c2036] border border-[#363d66] hover:border-[#6d5dfc] cursor-pointer transition flex items-center justify-between"
                         >
                           <div>
-                            <span className="font-bold text-slate-900 block">{prov.full_name}</span>
-                            <span className="text-[10px] text-slate-500">
-                              ₹{prov.hourly_rate}/hr • Trust: {prov.trust_score}/100
-                            </span>
+                            <p className="font-bold text-white text-[11px]">{p.full_name}</p>
+                            <p className="text-[10px] text-[#a9b0d0]">{p.service_category} • ₹{p.hourly_rate}/hr</p>
                           </div>
-                          <button
-                            onClick={() => handleBookFromAI(prov)}
-                            className="px-2.5 py-1.5 bg-brand-600 hover:bg-brand-700 text-white rounded-lg text-[10px] font-bold transition cursor-pointer"
-                          >
-                            Book Now
-                          </button>
+                          <span className="text-[10px] font-bold text-[#2dd4bf]">
+                            {p.trust_score ? `${Number(p.trust_score).toFixed(0)} Trust` : 'Book'}
+                          </span>
                         </div>
                       ))}
                     </div>
@@ -199,26 +151,18 @@ const AIAssistantWidget = () => {
                 </div>
               </div>
             ))}
-
-            {loading && (
-              <div className="flex items-center space-x-2 text-slate-500 bg-white p-3 rounded-2xl border border-slate-200 max-w-[80%]">
-                <Loader2 className="h-4 w-4 animate-spin text-brand-600" />
-                <span className="text-xs">AI Assistant is analyzing your issue...</span>
-              </div>
-            )}
-
             <div ref={messagesEndRef} />
           </div>
 
-          {/* Quick Prompt Suggestions */}
-          <div className="px-3 py-2 bg-slate-100/70 border-t border-slate-200 overflow-x-auto flex space-x-1.5 scrollbar-none">
-            {QUICK_PROMPTS.map((prompt, i) => (
+          {/* Quick Suggestions Chips */}
+          <div className="p-2 bg-[#1c2036] border-t border-[#363d66] flex space-x-1.5 overflow-x-auto text-[10px]">
+            {SUGGESTIONS.map((s, i) => (
               <button
                 key={i}
-                onClick={() => handleSend(prompt)}
-                className="px-2.5 py-1 rounded-full bg-white hover:bg-slate-200 text-slate-700 text-[10px] font-medium border border-slate-200 whitespace-nowrap transition cursor-pointer shrink-0"
+                onClick={() => handleSend(s)}
+                className="px-2.5 py-1 rounded-lg bg-[#262b47] border border-[#363d66] hover:border-[#6d5dfc] text-[#a9b0d0] hover:text-white whitespace-nowrap transition cursor-pointer"
               >
-                {prompt.length > 32 ? prompt.slice(0, 32) + '...' : prompt}
+                {s}
               </button>
             ))}
           </div>
@@ -229,32 +173,25 @@ const AIAssistantWidget = () => {
               e.preventDefault();
               handleSend();
             }}
-            className="p-3 bg-white border-t border-slate-200 flex items-center space-x-2"
+            className="p-3 bg-[#262b47] border-t border-[#363d66] flex items-center space-x-2"
           >
             <input
               type="text"
-              value={inputText}
-              onChange={(e) => setInputText(e.target.value)}
-              placeholder="Describe your home issue in plain English..."
-              className="flex-1 px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-brand-500"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder="Ask anything (e.g. AC cooling problem)..."
+              className="flex-1 bg-[#1c2036] border border-[#363d66] rounded-xl px-3 py-2 text-xs text-white outline-none focus:border-[#6d5dfc]"
             />
             <button
               type="submit"
-              disabled={!inputText.trim() || loading}
-              className="p-2 bg-brand-600 hover:bg-brand-700 text-white rounded-xl transition shadow-xs disabled:opacity-40 cursor-pointer"
+              disabled={loading || !input.trim()}
+              className="p-2 btn-primary rounded-xl disabled:opacity-40 cursor-pointer"
             >
-              <Send className="h-4 w-4" />
+              <Send className="w-3.5 h-3.5" />
             </button>
           </form>
-        </div>
-      )}
 
-      {/* Booking Modal Trigger from AI Recommendation */}
-      {selectedBookingProvider && (
-        <BookingModal
-          provider={selectedBookingProvider}
-          onClose={() => setSelectedBookingProvider(null)}
-        />
+        </div>
       )}
     </>
   );
