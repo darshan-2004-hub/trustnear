@@ -55,7 +55,7 @@ sample_providers = [
         "full_name": "Pooja Hegde",
         "email": "pooja.cleaners@example.com",
         "phone": "+919845065432",
-        "service_category": "Home Cleaning",
+        "service_category": "Cleaning",
         "experience_years": 4,
         "hourly_rate": 250.00,
         "service_address": "Bejai, Mangaluru",
@@ -76,6 +76,19 @@ sample_providers = [
         "latitude": 12.8622,
         "longitude": 74.8361,
         "metrics": {"completed_jobs": 118, "cancellation_rate": 2.5, "avg_response_minutes": 20, "review_sentiment_avg": 0.88, "experience_years": 15}
+    },
+    {
+        "full_name": "Kavitha Shenoy",
+        "email": "kavitha.painting@example.com",
+        "phone": "+919845088990",
+        "service_category": "Painting",
+        "experience_years": 7,
+        "hourly_rate": 380.00,
+        "service_address": "Kankanady, Mangaluru",
+        "bio": "Interior texture designs, exterior weatherproof coating, and moisture wall sealing.",
+        "latitude": 12.8665,
+        "longitude": 74.8612,
+        "metrics": {"completed_jobs": 76, "cancellation_rate": 3.0, "avg_response_minutes": 18, "review_sentiment_avg": 0.79, "experience_years": 7}
     }
 ]
 

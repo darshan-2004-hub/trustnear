@@ -3,7 +3,7 @@ import json
 import re
 import google.generativeai as genai
 
-VALID_CATEGORIES = ['Plumbing', 'Electrical', 'Appliance Repair', 'Home Cleaning', 'Carpentry']
+VALID_CATEGORIES = ['Plumbing', 'Electrical', 'Carpentry', 'Cleaning', 'Appliance Repair', 'Painting']
 
 class AIAssistant:
     def __init__(self):
@@ -95,9 +95,11 @@ JSON output:
         elif any(w in lower for w in ['fridge', 'refrigerator', 'washing machine', 'microwave', 'oven', 'appliance', 'ac', 'cooler']):
             category = 'Appliance Repair'
         elif any(w in lower for w in ['clean', 'sweep', 'mop', 'sanitize', 'dust', 'sofa', 'carpet']):
-            category = 'Home Cleaning'
+            category = 'Cleaning'
         elif any(w in lower for w in ['wood', 'door', 'lock', 'furniture', 'cupboard', 'table', 'chair', 'carpenter']):
             category = 'Carpentry'
+        elif any(w in lower for w in ['paint', 'wall', 'primer', 'color', 'distemper', 'waterproof', 'painting']):
+            category = 'Painting'
 
         # Urgency detection
         if any(w in lower for w in ['emergency', 'urgent', 'immediately', 'now', 'flooding', 'burst', 'danger', 'sparks']):

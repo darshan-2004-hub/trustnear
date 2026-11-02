@@ -62,15 +62,34 @@ class TrustEngine:
         # TreeExplainer works out-of-the-box with GradientBoostingRegressor
         self.explainer = shap.TreeExplainer(self.model)
 
-    def calculate_and_explain(self, completed_jobs, cancellation_rate, avg_response_minutes, review_sentiment_avg):
+    def calculate_and_explain(self, completed_jobs=0, cancellation_rate=0.0, avg_response_minutes=25, review_sentiment_avg=0.0, **kwargs):
         """
         Computes the Trust Score and generates SHAP factor explanations.
+        Supports passing a dictionary of metrics or individual parameters.
         """
+        if isinstance(completed_jobs, dict):
+            metrics_dict = completed_jobs
+            completed_jobs = metrics_dict.get('completed_jobs', 0)
+            cancellation_rate = metrics_dict.get('cancellation_rate', 0.0)
+            avg_response_minutes = metrics_dict.get('avg_response_minutes', 25)
+            review_sentiment_avg = metrics_dict.get('review_sentiment_avg', 0.0)
+        else:
+            completed_jobs = kwargs.get('completed_jobs', completed_jobs)
+            cancellation_rate = kwargs.get('cancellation_rate', cancellation_rate)
+            avg_response_minutes = kwargs.get('avg_response_minutes', avg_response_minutes)
+            review_sentiment_avg = kwargs.get('review_sentiment_avg', review_sentiment_avg)
+
+        # Sanitize numeric values
+        completed_jobs = int(completed_jobs or 0)
+        cancellation_rate = float(cancellation_rate or 0.0)
+        avg_response_minutes = int(avg_response_minutes or 25)
+        review_sentiment_avg = float(review_sentiment_avg or 0.0)
+
         df_input = pd.DataFrame([{
-            'completed_jobs': int(completed_jobs),
-            'cancellation_rate': float(cancellation_rate),
-            'avg_response_minutes': int(avg_response_minutes),
-            'review_sentiment_avg': float(review_sentiment_avg)
+            'completed_jobs': completed_jobs,
+            'cancellation_rate': cancellation_rate,
+            'avg_response_minutes': avg_response_minutes,
+            'review_sentiment_avg': review_sentiment_avg
         }])
 
         pred_score = float(self.model.predict(df_input)[0])

@@ -65,7 +65,7 @@ const ReviewModal = ({ booking, onClose, onReviewSubmitted }) => {
             </div>
           </div>
           <div>
-            <h3 className="font-bold text-white text-base">Rate {booking.provider_name || 'Service'}</h3>
+            <h3 className="font-bold text-white text-base">Rate {booking.counterpart?.full_name || booking.provider_name || 'Service'}</h3>
             <p className="text-xs text-[#a9b0d0]">Verified Review with NLP Sentiment Screening</p>
           </div>
         </div>
@@ -82,7 +82,7 @@ const ReviewModal = ({ booking, onClose, onReviewSubmitted }) => {
             <CheckCircle2 className="w-10 h-10 text-[#2dd4bf] mx-auto" />
             <h4 className="font-bold text-white text-sm">Review Submitted Successfully!</h4>
             <div className="p-3 rounded-lg bg-[#262b47] border border-[#363d66] text-xs space-y-1">
-              <p className="text-[#a9b0d0]">NLP Sentiment Score: <strong className="text-[#2dd4bf]">{result.sentiment_score ?? 0.85}</strong></p>
+              <p className="text-[#a9b0d0]">NLP Sentiment Score: <strong className="text-[#2dd4bf]">{result.review?.sentiment_score ?? result.sentiment_score ?? 'Verified'}</strong></p>
               {result.is_suspicious && (
                 <p className="text-amber-400 font-bold">Flagged for admin moderation: {result.flag_reason}</p>
               )}

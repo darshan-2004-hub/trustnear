@@ -75,7 +75,7 @@ const ProviderMap = ({ providers = [], selectedProvider, onSelectProvider, onBoo
 
                   <div className="flex items-center justify-between text-[#a9b0d0] text-[11px] pt-1 border-t border-[#363d66]">
                     <span>Rate: <strong className="text-white">₹{p.hourly_rate}/hr</strong></span>
-                    <span className="text-[#fbbf24] font-bold">★ {p.rating || 4.9}</span>
+                    <span className="text-[#fbbf24] font-bold">{p.rating ? `★ ${Number(p.rating).toFixed(1)}` : '★ New'}</span>
                   </div>
 
                   {onBookProvider && (

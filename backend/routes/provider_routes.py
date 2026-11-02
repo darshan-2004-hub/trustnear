@@ -1,5 +1,6 @@
 import math
 from flask import Blueprint, request, jsonify
+from sqlalchemy import func
 from models.schema_models import db, User, ProviderProfile, TrustMetric, Review
 from ml.price_estimator import price_estimator
 from ml.ranker import personalize_ranking
@@ -32,9 +33,34 @@ def get_providers():
         .filter(ProviderProfile.is_available == True)
 
     if category and category.lower() != 'all':
-        query = query.filter(ProviderProfile.service_category.ilike(f"%{category}%"))
+        # Support aliases like 'Home Cleaning' vs 'Cleaning'
+        if category.lower() in ['cleaning', 'home cleaning']:
+            query = query.filter(
+                (ProviderProfile.service_category.ilike("%cleaning%"))
+            )
+        else:
+            query = query.filter(ProviderProfile.service_category.ilike(f"%{category}%"))
 
     results = query.all()
+
+    # Aggregate authentic reviews count and average rating per provider from database
+    review_stats = db.session.query(
+        Review.provider_id,
+        func.avg(Review.rating).label('avg_rating'),
+        func.count(Review.id).label('review_count')
+    ).filter(
+        Review.is_approved_by_admin == True,
+        Review.is_suspicious == False
+    ).group_by(Review.provider_id).all()
+
+    review_stats_map = {
+        row.provider_id: {
+            'rating': round(float(row.avg_rating), 1),
+            'reviews_count': int(row.review_count)
+        }
+        for row in review_stats
+    }
+
     providers_list = []
 
     for profile, user, trust in results:
@@ -44,6 +70,8 @@ def get_providers():
         distance = None
         if user_lat is not None and user_lon is not None and prov_lat and prov_lon:
             distance = haversine_distance(user_lat, user_lon, prov_lat, prov_lon)
+
+        r_stats = review_stats_map.get(user.id, {'rating': None, 'reviews_count': 0})
 
         providers_list.append({
             'id': profile.id,
@@ -63,7 +91,9 @@ def get_providers():
             'completed_jobs': trust.completed_jobs if trust else 0,
             'cancellation_rate': float(trust.cancellation_rate) if trust else 0.0,
             'avg_response_minutes': trust.avg_response_minutes if trust else 25,
-            'shap_factors': trust.shap_factors if trust else None
+            'shap_factors': trust.shap_factors if trust else None,
+            'rating': r_stats['rating'],
+            'reviews_count': r_stats['reviews_count']
         })
 
     # Apply Personalized Re-ranking (Trust vs. Price vs. Speed)
@@ -83,8 +113,11 @@ def estimate_price():
     Computes fair market pricing for a given service category, duration, and urgency.
     """
     data = request.get_json() or {}
-    category = data.get('category', 'Plumbing')
-    duration_hours = float(data.get('duration_hours', 1.5))
+    category = data.get('category') or data.get('category_name') or 'Plumbing'
+    try:
+        duration_hours = float(data.get('duration_hours', 1.5))
+    except (ValueError, TypeError):
+        duration_hours = 1.5
     is_emergency = bool(data.get('is_emergency', False))
 
     estimation = price_estimator.estimate_price_range(
@@ -101,7 +134,11 @@ def estimate_price():
 
 @provider_bp.route('/<int:provider_id>', methods=['GET'])
 def get_provider_details(provider_id):
-    profile = ProviderProfile.query.filter_by(id=provider_id).first()
+    # Support querying by either ProviderProfile.id or ProviderProfile.user_id
+    profile = ProviderProfile.query.filter(
+        (ProviderProfile.id == provider_id) | (ProviderProfile.user_id == provider_id)
+    ).first()
+
     if not profile:
         return jsonify({'success': False, 'message': 'Provider not found.'}), 404
 
@@ -115,9 +152,21 @@ def get_provider_details(provider_id):
         'id': r.id,
         'rating': r.rating,
         'review_text': r.review_text,
-        'sentiment_score': float(r.sentiment_score) if r.sentiment_score else None,
+        'sentiment_score': float(r.sentiment_score) if r.sentiment_score is not None else None,
         'created_at': r.created_at.isoformat()
     } for r in reviews]
+
+    avg_rating = db.session.query(func.avg(Review.rating)).filter(
+        Review.provider_id == profile.user_id,
+        Review.is_approved_by_admin == True,
+        Review.is_suspicious == False
+    ).scalar()
+
+    review_count = db.session.query(func.count(Review.id)).filter(
+        Review.provider_id == profile.user_id,
+        Review.is_approved_by_admin == True,
+        Review.is_suspicious == False
+    ).scalar()
 
     return jsonify({
         'success': True,
@@ -139,6 +188,8 @@ def get_provider_details(provider_id):
             'cancellation_rate': float(trust.cancellation_rate) if trust else 0.0,
             'avg_response_minutes': trust.avg_response_minutes if trust else 25,
             'shap_factors': trust.shap_factors if trust else None,
+            'rating': round(float(avg_rating), 1) if avg_rating else None,
+            'reviews_count': int(review_count) if review_count else 0,
             'reviews': reviews_data
         }
     }), 200

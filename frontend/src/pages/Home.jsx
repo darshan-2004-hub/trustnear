@@ -27,8 +27,8 @@ const DEFAULT_SERVICES = [
   { title: 'Plumbing', icon: Wrench, count: 'Pros Online', description: 'Leak repairs, pipe fitting & drainage solutions.', accent: 'teal' },
   { title: 'Electrical', icon: Zap, count: 'Pros Online', description: 'Wiring, fixtures, circuit breakers & inspections.', accent: 'amber' },
   { title: 'Carpentry', icon: Hammer, count: 'Pros Online', description: 'Custom woodwork, door locks & repairs.', accent: 'violet' },
-  { title: 'Home Cleaning', icon: Sparkles, count: 'Pros Online', description: 'Deep cleaning, sanitization & kitchen scrubbing.', accent: 'pink' },
-  { title: 'Appliance Repair', icon: Flame, count: 'Pros Online', description: 'AC gas refill, refrigerator & washing machine service.', accent: 'teal' },
+  { title: 'Cleaning', icon: Sparkles, count: 'Pros Online', description: 'Deep cleaning, sanitization & floor scrubbing.', accent: 'pink' },
+  { title: 'Appliance Repair', icon: Flame, count: 'Pros Online', description: 'AC service, refrigerator & washing machine repairs.', accent: 'teal' },
   { title: 'Painting', icon: Paintbrush, count: 'Pros Online', description: 'Interior/exterior wall painting & waterproofing.', accent: 'violet' },
 ];
 
@@ -44,8 +44,8 @@ const Home = () => {
   // REAL DATA STATS (Populated dynamically from MySQL via API)
   const [platformStats, setPlatformStats] = useState({
     totalCompletedJobs: 0,
-    avgRating: '4.8',
-    onTimeRate: '98%',
+    avgRating: null,
+    onTimeRate: '—',
     totalProviders: 0,
   });
 
@@ -69,22 +69,24 @@ const Home = () => {
           // 2. COMPUTE REAL DATABASE STATS:
           const totalJobs = providersList.reduce((acc, p) => acc + (p.completed_jobs || 0), 0);
           
-          const validRatings = providersList.filter(p => p.rating && p.rating > 0);
+          const validRatings = providersList.filter(p => p.rating && Number(p.rating) > 0);
           const computedAvgRating = validRatings.length > 0
             ? (validRatings.reduce((acc, p) => acc + parseFloat(p.rating), 0) / validRatings.length).toFixed(1)
-            : '4.9';
+            : null;
 
           const avgCancellation = providersList.length > 0
             ? providersList.reduce((acc, p) => acc + (parseFloat(p.cancellation_rate) || 0), 0) / providersList.length
-            : 2.0;
+            : 0;
 
-          // On-Time completion rate = (100 - cancellation_rate)%
-          const computedOnTimeRate = Math.min(100, Math.max(90, Math.round(100 - avgCancellation)));
+          // Punctuality / on-time rate = (100 - cancellation_rate)%
+          const computedOnTimeRate = providersList.length > 0
+            ? `${Math.max(0, Math.min(100, Math.round(100 - avgCancellation)))}%`
+            : '100%';
 
           setPlatformStats({
-            totalCompletedJobs: totalJobs > 0 ? totalJobs : 142,
+            totalCompletedJobs: totalJobs,
             avgRating: computedAvgRating,
-            onTimeRate: `${computedOnTimeRate}%`,
+            onTimeRate: computedOnTimeRate,
             totalProviders: providersList.length,
           });
 
@@ -95,7 +97,7 @@ const Home = () => {
             ).length;
             return {
               ...srv,
-              count: count > 0 ? `${count} Verified Pro${count > 1 ? 's' : ''}` : 'Active Pro',
+              count: count > 0 ? `${count} Verified Pro${count > 1 ? 's' : ''}` : 'Available Pro',
             };
           });
           setServicesList(updatedServices);
@@ -218,7 +220,7 @@ const Home = () => {
                 <span className="text-xs font-bold uppercase tracking-widest">Jobs Completed</span>
               </div>
               <p className="text-4xl sm:text-5xl font-black tracking-tight">
-                {platformStats.totalCompletedJobs}+
+                {platformStats.totalCompletedJobs}
               </p>
               <p className="text-xs text-white/80 mt-1 font-medium">
                 Verified jobs across {platformStats.totalProviders} active providers in Mangaluru
@@ -232,7 +234,7 @@ const Home = () => {
                 <span className="text-xs font-bold uppercase tracking-widest">Community Rating</span>
               </div>
               <p className="text-4xl sm:text-5xl font-black tracking-tight">
-                {platformStats.avgRating} / 5.0
+                {platformStats.avgRating ? `${platformStats.avgRating} / 5.0` : 'New Platform'}
               </p>
               <p className="text-xs text-white/80 mt-1 font-medium">
                 Calculated from real NLP-screened reviews
@@ -243,13 +245,13 @@ const Home = () => {
             <div className="pt-4 md:pt-0">
               <div className="flex items-center justify-center space-x-2 text-white/90 mb-1">
                 <Clock className="w-5 h-5" />
-                <span className="text-xs font-bold uppercase tracking-widest">Punctuality Rate</span>
+                <span className="text-xs font-bold uppercase tracking-widest">Completion Rate</span>
               </div>
               <p className="text-4xl sm:text-5xl font-black tracking-tight">
                 {platformStats.onTimeRate}
               </p>
               <p className="text-xs text-white/80 mt-1 font-medium">
-                On-time arrival and completed job record
+                Punctual arrival and low cancellation ratio
               </p>
             </div>
 
@@ -284,6 +286,10 @@ const Home = () => {
               <div key={n} className="theme-card p-6 h-64 animate-pulse" />
             ))}
           </div>
+        ) : topProviders.length === 0 ? (
+          <div className="theme-card p-8 text-center text-xs text-[#a9b0d0]">
+            No verified providers currently listed in the database.
+          </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {topProviders.map((provider) => (
@@ -306,7 +312,7 @@ const Home = () => {
             <span className="font-bold text-white">TrustNear Platform</span>
             <span>— Smart Local Discovery</span>
           </div>
-          <p>© </p>
+          <p>© TrustNear Autonomous Local Discovery</p>
         </div>
       </footer>
 

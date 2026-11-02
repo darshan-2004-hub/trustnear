@@ -29,7 +29,8 @@ const SearchProviders = () => {
   const { isAuthenticated } = useAuth();
 
   const queryParams = new URLSearchParams(location.search);
-  const initialCategory = queryParams.get('category') || 'All';
+  const rawCategory = queryParams.get('category') || 'All';
+  const initialCategory = rawCategory.toLowerCase() === 'home cleaning' ? 'Cleaning' : rawCategory;
   const initialQuery = queryParams.get('q') || '';
 
   const [category, setCategory] = useState(initialCategory);
@@ -182,19 +183,12 @@ const SearchProviders = () => {
               </div>
             ) : (
               filteredProviders.map((provider) => (
-                <div key={provider.id || provider.user_id} className="relative">
-                  <ProviderCard
-                    provider={provider}
-                    onBook={handleBook}
-                    onViewReviews={(p) => setReviewsProvider(p)}
-                  />
-                  {/* Match percentage pill */}
-                  {provider.match_score && (
-                    <div className="absolute top-4 right-32 px-2.5 py-0.5 rounded-full bg-[#2dd4bf]/20 text-[#2dd4bf] text-[10px] font-bold border border-[#2dd4bf]/30">
-                      ✨ {Math.round(provider.match_score * 100)}% Match
-                    </div>
-                  )}
-                </div>
+                <ProviderCard
+                  key={provider.id || provider.user_id}
+                  provider={provider}
+                  onBook={handleBook}
+                  onViewReviews={(p) => setReviewsProvider(p)}
+                />
               ))
             )}
           </div>

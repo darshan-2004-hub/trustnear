@@ -118,7 +118,9 @@ const Bookings = () => {
     .filter((b) => b.status === 'completed')
     .reduce((sum, b) => sum + (parseFloat(b.agreed_price) || 0), 0);
 
-  const providerTrustScore = user?.trust_metrics?.trust_score || 94.2;
+  const providerTrustScore = user?.trust_metrics?.trust_score !== undefined && user?.trust_metrics?.trust_score !== null
+    ? Number(user.trust_metrics.trust_score)
+    : 50.0;
 
   // Filter list
   const filteredBookings = bookings.filter((b) => {

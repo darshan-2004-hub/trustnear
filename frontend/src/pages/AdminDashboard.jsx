@@ -16,12 +16,12 @@ import {
 
 const AdminDashboard = () => {
   const [stats, setStats] = useState({
-    total_customers: 3,
-    total_providers: 7,
-    pending_verifications: 1,
-    total_bookings: 3,
-    completed_bookings: 2,
-    flagged_reviews_count: 1,
+    total_customers: 0,
+    total_providers: 0,
+    pending_verifications: 0,
+    total_bookings: 0,
+    completed_bookings: 0,
+    flagged_reviews_count: 0,
   });
 
   const [pendingProviders, setPendingProviders] = useState([]);

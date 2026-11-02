@@ -31,7 +31,7 @@ const InvoiceModal = ({ booking, onClose }) => {
     ? booking.counterpart.full_name
     : booking.provider_name || 'Verified Service Provider';
 
-  const agreedPrice = parseFloat(booking.agreed_price) || 350;
+  const agreedPrice = parseFloat(booking.agreed_price) || 0;
 
   const handlePrint = () => {
     window.print();

@@ -58,8 +58,12 @@ def register():
     if not full_name or not email or not password:
         return jsonify({'success': False, 'message': 'full_name, email, and password are required fields.'}), 400
 
-    if role not in ['customer', 'provider', 'admin']:
-        return jsonify({'success': False, 'message': 'Invalid role. Choose from: customer, provider, admin.'}), 400
+    # Security: Restrict public self-registration strictly to customer and provider
+    if role == 'admin':
+        return jsonify({'success': False, 'message': 'Registration as administrator is forbidden. Contact the platform administrator.'}), 403
+
+    if role not in ['customer', 'provider']:
+        return jsonify({'success': False, 'message': 'Invalid role. Choose from: customer, provider.'}), 400
 
     # 2. Email format validation
     if not EMAIL_REGEX.match(email):
@@ -69,7 +73,13 @@ def register():
     if len(password) < 6:
         return jsonify({'success': False, 'message': 'Password must be at least 6 characters long.'}), 400
 
-    # 4. Check for existing email in database
+    # 4. Optional Phone format validation
+    if phone:
+        clean_phone = re.sub(r'[\s\-\+]', '', phone)
+        if len(clean_phone) < 10:
+            return jsonify({'success': False, 'message': 'Please provide a valid 10-digit mobile number.'}), 400
+
+    # 5. Check for existing email in database
     if User.query.filter_by(email=email).first():
         return jsonify({'success': False, 'message': 'An account with this email already exists.'}), 409
 
@@ -87,7 +97,19 @@ def register():
 
         # If role is provider, validate and create profile & initial trust metrics
         if role == 'provider':
-            category = data.get('service_category', 'General Maintenance').strip()
+            raw_category = data.get('service_category', 'Plumbing').strip()
+            # Standardize category name
+            category_mapping = {
+                'home cleaning': 'Cleaning',
+                'cleaning': 'Cleaning',
+                'plumbing': 'Plumbing',
+                'electrical': 'Electrical',
+                'carpentry': 'Carpentry',
+                'appliance repair': 'Appliance Repair',
+                'painting': 'Painting'
+            }
+            category = category_mapping.get(raw_category.lower(), raw_category)
+
             exp_years = int(data.get('experience_years', 0))
             hourly_rate = float(data.get('hourly_rate', 0.00))
             bio = data.get('bio', '').strip()
@@ -112,10 +134,12 @@ def register():
                 service_address=address,
                 latitude=lat,
                 longitude=lon,
-                verification_status='pending'
+                verification_status='pending',
+                is_available=True
             )
             db.session.add(provider_profile)
 
+            # Standardized list of SHAP attribution factors for baseline new provider
             initial_trust = TrustMetric(
                 provider_id=new_user.id,
                 trust_score=50.00,
@@ -123,7 +147,12 @@ def register():
                 cancellation_rate=0.00,
                 avg_response_minutes=0,
                 review_sentiment_avg=0.0000,
-                shap_factors={"baseline": 50.0, "status": "new_provider"}
+                shap_factors=[
+                    {'feature': 'completed_jobs', 'description': 'Baseline: 0 completed jobs', 'impact': 0.0, 'type': 'neutral'},
+                    {'feature': 'cancellation_rate', 'description': 'Baseline: 0.0% cancellation ratio', 'impact': 0.0, 'type': 'neutral'},
+                    {'feature': 'avg_response_minutes', 'description': 'Baseline: New provider onboarding', 'impact': 0.0, 'type': 'neutral'},
+                    {'feature': 'review_sentiment_avg', 'description': 'Baseline: No verified reviews yet', 'impact': 0.0, 'type': 'neutral'}
+                ]
             )
             db.session.add(initial_trust)
 

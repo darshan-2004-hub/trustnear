@@ -2,6 +2,7 @@ from datetime import datetime
 from flask import Blueprint, request, jsonify
 from models.schema_models import db, User, Booking, ProviderProfile, Message
 from routes.auth_routes import token_required
+from ml.recalculator import recalculate_provider_trust
 
 booking_bp = Blueprint('booking_bp', __name__)
 
@@ -36,6 +37,22 @@ def create_booking(current_user):
     provider = User.query.filter_by(id=provider_id, role='provider').first()
     if not provider:
         return jsonify({'success': False, 'message': 'Selected provider does not exist.'}), 404
+
+    profile = ProviderProfile.query.filter_by(user_id=provider.id).first()
+    if not profile:
+        return jsonify({'success': False, 'message': 'Provider profile does not exist.'}), 404
+
+    if profile.verification_status != 'verified':
+        return jsonify({
+            'success': False,
+            'message': f'Cannot book this provider. Provider verification status is currently "{profile.verification_status}".'
+        }), 400
+
+    if not profile.is_available:
+        return jsonify({
+            'success': False,
+            'message': 'This provider is currently marked as unavailable for new bookings.'
+        }), 400
 
     try:
         b_date = datetime.strptime(booking_date_str, '%Y-%m-%d').date()
@@ -157,6 +174,13 @@ def update_booking_status(current_user, booking_id):
             booking.cancellation_reason = cancellation_reason or f"Cancelled by {current_user.role}"
 
         db.session.commit()
+
+        # Dynamically recalculate provider trust metrics upon job completion or cancellation
+        if new_status in ['completed', 'cancelled']:
+            try:
+                recalculate_provider_trust(booking.provider_id)
+            except Exception as recalc_err:
+                print(f"[TrustRecalculator] Post-booking update notice: {recalc_err}")
 
         return jsonify({
             'success': True,

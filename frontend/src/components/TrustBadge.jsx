@@ -81,20 +81,12 @@ const TrustBadge = ({ score = 50, shapFactors = null, providerName = 'Verified P
                   </div>
                 ))
               ) : (
-                <>
-                  <div className="flex justify-between items-center p-2.5 rounded-lg bg-[#1c2036] border border-[#363d66]">
-                    <span className="text-white">Completed Jobs Record</span>
-                    <span className="font-bold text-[#2dd4bf]">+18.4 Impact</span>
-                  </div>
-                  <div className="flex justify-between items-center p-2.5 rounded-lg bg-[#1c2036] border border-[#363d66]">
-                    <span className="text-white">Low Cancellation Ratio (&lt; 2%)</span>
-                    <span className="font-bold text-[#2dd4bf]">+12.1 Impact</span>
-                  </div>
-                  <div className="flex justify-between items-center p-2.5 rounded-lg bg-[#1c2036] border border-[#363d66]">
-                    <span className="text-white">NLP Review Sentiment Analysis</span>
-                    <span className="font-bold text-[#6d5dfc]">+8.5 Impact</span>
-                  </div>
-                </>
+                <div className="p-4 rounded-xl bg-[#1c2036] border border-[#363d66] text-center space-y-1">
+                  <p className="text-white font-semibold">Baseline Trust Rating (50.0)</p>
+                  <p className="text-[#a9b0d0] text-[11px]">
+                    This provider is newly registered. SHAP factor attributions will dynamically compute as verified jobs and reviews are recorded.
+                  </p>
+                </div>
               )}
             </div>
 
