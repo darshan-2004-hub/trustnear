@@ -1,0 +1,3 @@
+review_id,booking_id,provider_id,rating,sentiment_score,is_suspicious,is_approved_by_admin,is_synthetic,data_source
+1,3,5,5,0.296,False,True,False,mysql_production
+2,2,5,5,-0.9145,True,False,False,mysql_production

@@ -1,0 +1,812 @@
+cat,category_name,duration,emergency,price,is_synthetic,data_source
+3,Cleaning,3.7,0,1096.9,True,synthetic_benchmark_v1
+4,Appliance Repair,4.5,0,1993.57,True,synthetic_benchmark_v1
+2,Carpentry,4.7,0,2127.09,True,synthetic_benchmark_v1
+4,Appliance Repair,2.6,0,1164.11,True,synthetic_benchmark_v1
+4,Appliance Repair,1.8,0,817.15,True,synthetic_benchmark_v1
+1,Electrical,1.6,0,629.28,True,synthetic_benchmark_v1
+2,Carpentry,1.9,0,821.8,True,synthetic_benchmark_v1
+2,Carpentry,2.0,1,1077.08,True,synthetic_benchmark_v1
+2,Carpentry,1.6,0,738.42,True,synthetic_benchmark_v1
+4,Appliance Repair,5.3,1,2520.83,True,synthetic_benchmark_v1
+3,Cleaning,4.7,0,1411.74,True,synthetic_benchmark_v1
+2,Carpentry,0.8,1,536.05,True,synthetic_benchmark_v1
+5,Painting,2.0,0,748.57,True,synthetic_benchmark_v1
+4,Appliance Repair,0.6,0,262.45,True,synthetic_benchmark_v1
+1,Electrical,3.2,0,1286.09,True,synthetic_benchmark_v1
+3,Cleaning,3.1,0,918.52,True,synthetic_benchmark_v1
+5,Painting,5.1,0,1959.43,True,synthetic_benchmark_v1
+5,Painting,2.2,0,831.78,True,synthetic_benchmark_v1
+1,Electrical,5.0,0,1980.4,True,synthetic_benchmark_v1
+3,Cleaning,5.8,0,1755.22,True,synthetic_benchmark_v1
+4,Appliance Repair,1.0,0,421.45,True,synthetic_benchmark_v1
+0,Plumbing,4.9,0,1765.37,True,synthetic_benchmark_v1
+3,Cleaning,3.7,0,1149.56,True,synthetic_benchmark_v1
+1,Electrical,3.1,0,1252.84,True,synthetic_benchmark_v1
+5,Painting,2.8,0,1074.73,True,synthetic_benchmark_v1
+4,Appliance Repair,4.8,1,2319.56,True,synthetic_benchmark_v1
+3,Cleaning,4.0,0,1187.77,True,synthetic_benchmark_v1
+0,Plumbing,4.9,0,1722.43,True,synthetic_benchmark_v1
+0,Plumbing,5.5,0,1901.92,True,synthetic_benchmark_v1
+2,Carpentry,3.9,0,1767.6,True,synthetic_benchmark_v1
+2,Carpentry,5.9,1,2826.7,True,synthetic_benchmark_v1
+1,Electrical,3.8,0,1510.55,True,synthetic_benchmark_v1
+3,Cleaning,4.0,0,1185.12,True,synthetic_benchmark_v1
+3,Cleaning,3.6,0,1049.69,True,synthetic_benchmark_v1
+5,Painting,1.0,0,416.45,True,synthetic_benchmark_v1
+5,Painting,4.5,0,1697.11,True,synthetic_benchmark_v1
+5,Painting,3.5,0,1325.03,True,synthetic_benchmark_v1
+2,Carpentry,3.0,0,1357.5,True,synthetic_benchmark_v1
+3,Cleaning,5.5,0,1657.06,True,synthetic_benchmark_v1
+3,Cleaning,2.1,0,648.66,True,synthetic_benchmark_v1
+0,Plumbing,3.4,0,1180.52,True,synthetic_benchmark_v1
+2,Carpentry,4.3,0,1906.53,True,synthetic_benchmark_v1
+4,Appliance Repair,4.9,0,2172.16,True,synthetic_benchmark_v1
+2,Carpentry,3.0,0,1335.52,True,synthetic_benchmark_v1
+4,Appliance Repair,5.1,0,2271.2,True,synthetic_benchmark_v1
+0,Plumbing,4.7,0,1637.41,True,synthetic_benchmark_v1
+1,Electrical,0.9,0,392.69,True,synthetic_benchmark_v1
+3,Cleaning,0.8,0,230.57,True,synthetic_benchmark_v1
+0,Plumbing,3.9,0,1355.56,True,synthetic_benchmark_v1
+3,Cleaning,2.4,0,719.59,True,synthetic_benchmark_v1
+5,Painting,1.7,1,785.86,True,synthetic_benchmark_v1
+1,Electrical,3.7,0,1478.32,True,synthetic_benchmark_v1
+1,Electrical,2.4,0,973.52,True,synthetic_benchmark_v1
+0,Plumbing,3.5,0,1247.12,True,synthetic_benchmark_v1
+1,Electrical,3.0,0,1225.08,True,synthetic_benchmark_v1
+4,Appliance Repair,3.7,0,1716.42,True,synthetic_benchmark_v1
+1,Electrical,2.7,0,1094.23,True,synthetic_benchmark_v1
+3,Cleaning,4.3,1,1495.86,True,synthetic_benchmark_v1
+3,Cleaning,1.5,0,430.59,True,synthetic_benchmark_v1
+3,Cleaning,4.3,0,1342.28,True,synthetic_benchmark_v1
+3,Cleaning,2.8,0,830.49,True,synthetic_benchmark_v1
+4,Appliance Repair,5.3,0,2377.95,True,synthetic_benchmark_v1
+2,Carpentry,3.3,0,1482.0,True,synthetic_benchmark_v1
+5,Painting,5.9,0,2236.53,True,synthetic_benchmark_v1
+0,Plumbing,3.8,0,1332.15,True,synthetic_benchmark_v1
+3,Cleaning,1.7,1,645.5,True,synthetic_benchmark_v1
+1,Electrical,5.0,0,2020.75,True,synthetic_benchmark_v1
+3,Cleaning,2.4,0,706.18,True,synthetic_benchmark_v1
+1,Electrical,2.4,0,976.39,True,synthetic_benchmark_v1
+5,Painting,0.7,0,304.19,True,synthetic_benchmark_v1
+5,Painting,3.5,0,1321.07,True,synthetic_benchmark_v1
+5,Painting,3.4,0,1311.86,True,synthetic_benchmark_v1
+1,Electrical,2.5,0,1013.98,True,synthetic_benchmark_v1
+3,Cleaning,5.4,0,1676.32,True,synthetic_benchmark_v1
+5,Painting,1.2,0,443.38,True,synthetic_benchmark_v1
+4,Appliance Repair,2.3,1,1204.88,True,synthetic_benchmark_v1
+1,Electrical,2.3,0,879.35,True,synthetic_benchmark_v1
+1,Electrical,1.0,0,387.6,True,synthetic_benchmark_v1
+3,Cleaning,3.1,0,938.83,True,synthetic_benchmark_v1
+1,Electrical,4.3,1,1904.83,True,synthetic_benchmark_v1
+1,Electrical,3.3,0,1289.35,True,synthetic_benchmark_v1
+5,Painting,1.4,0,551.65,True,synthetic_benchmark_v1
+3,Cleaning,2.6,0,778.42,True,synthetic_benchmark_v1
+5,Painting,0.5,0,151.96,True,synthetic_benchmark_v1
+5,Painting,5.3,0,2018.54,True,synthetic_benchmark_v1
+3,Cleaning,1.0,0,342.73,True,synthetic_benchmark_v1
+0,Plumbing,3.8,0,1301.99,True,synthetic_benchmark_v1
+5,Painting,5.9,0,2239.25,True,synthetic_benchmark_v1
+4,Appliance Repair,3.5,0,1550.33,True,synthetic_benchmark_v1
+4,Appliance Repair,5.6,0,2508.29,True,synthetic_benchmark_v1
+1,Electrical,1.8,0,755.8,True,synthetic_benchmark_v1
+4,Appliance Repair,4.7,0,2108.21,True,synthetic_benchmark_v1
+1,Electrical,3.4,0,1395.04,True,synthetic_benchmark_v1
+0,Plumbing,4.5,0,1602.73,True,synthetic_benchmark_v1
+3,Cleaning,0.8,0,230.93,True,synthetic_benchmark_v1
+3,Cleaning,1.3,1,527.44,True,synthetic_benchmark_v1
+3,Cleaning,1.2,0,337.6,True,synthetic_benchmark_v1
+4,Appliance Repair,4.3,0,1911.73,True,synthetic_benchmark_v1
+0,Plumbing,5.1,0,1793.83,True,synthetic_benchmark_v1
+4,Appliance Repair,4.6,0,2069.51,True,synthetic_benchmark_v1
+4,Appliance Repair,0.7,0,299.41,True,synthetic_benchmark_v1
+0,Plumbing,5.3,0,1816.28,True,synthetic_benchmark_v1
+0,Plumbing,2.4,0,842.65,True,synthetic_benchmark_v1
+0,Plumbing,2.7,0,933.26,True,synthetic_benchmark_v1
+0,Plumbing,1.1,1,530.12,True,synthetic_benchmark_v1
+3,Cleaning,4.6,0,1387.62,True,synthetic_benchmark_v1
+2,Carpentry,1.5,0,612.45,True,synthetic_benchmark_v1
+2,Carpentry,3.6,0,1581.67,True,synthetic_benchmark_v1
+0,Plumbing,5.1,0,1842.41,True,synthetic_benchmark_v1
+2,Carpentry,1.0,0,437.33,True,synthetic_benchmark_v1
+2,Carpentry,3.4,0,1467.06,True,synthetic_benchmark_v1
+0,Plumbing,1.8,1,743.75,True,synthetic_benchmark_v1
+2,Carpentry,2.4,0,1142.11,True,synthetic_benchmark_v1
+4,Appliance Repair,3.1,0,1377.43,True,synthetic_benchmark_v1
+1,Electrical,2.5,1,1178.98,True,synthetic_benchmark_v1
+1,Electrical,4.1,0,1643.03,True,synthetic_benchmark_v1
+0,Plumbing,3.1,0,1072.88,True,synthetic_benchmark_v1
+3,Cleaning,3.7,0,1129.39,True,synthetic_benchmark_v1
+0,Plumbing,4.6,1,1700.39,True,synthetic_benchmark_v1
+3,Cleaning,3.6,1,1193.97,True,synthetic_benchmark_v1
+1,Electrical,3.7,0,1467.69,True,synthetic_benchmark_v1
+0,Plumbing,3.6,0,1226.43,True,synthetic_benchmark_v1
+5,Painting,2.6,0,973.48,True,synthetic_benchmark_v1
+4,Appliance Repair,2.4,1,1251.34,True,synthetic_benchmark_v1
+2,Carpentry,5.4,0,2433.3,True,synthetic_benchmark_v1
+3,Cleaning,3.8,1,1323.27,True,synthetic_benchmark_v1
+5,Painting,1.8,1,838.88,True,synthetic_benchmark_v1
+2,Carpentry,3.2,0,1464.81,True,synthetic_benchmark_v1
+2,Carpentry,2.3,0,1033.4,True,synthetic_benchmark_v1
+0,Plumbing,5.6,0,1945.24,True,synthetic_benchmark_v1
+2,Carpentry,0.5,0,262.01,True,synthetic_benchmark_v1
+4,Appliance Repair,1.7,0,747.27,True,synthetic_benchmark_v1
+5,Painting,2.5,0,958.6,True,synthetic_benchmark_v1
+2,Carpentry,3.2,1,1609.22,True,synthetic_benchmark_v1
+0,Plumbing,5.2,1,1991.04,True,synthetic_benchmark_v1
+4,Appliance Repair,1.0,0,420.86,True,synthetic_benchmark_v1
+1,Electrical,4.9,0,1986.3,True,synthetic_benchmark_v1
+5,Painting,0.8,0,279.53,True,synthetic_benchmark_v1
+2,Carpentry,5.1,0,2315.27,True,synthetic_benchmark_v1
+0,Plumbing,0.8,0,293.38,True,synthetic_benchmark_v1
+1,Electrical,0.6,0,260.47,True,synthetic_benchmark_v1
+1,Electrical,4.3,1,1839.87,True,synthetic_benchmark_v1
+3,Cleaning,6.0,0,1814.7,True,synthetic_benchmark_v1
+4,Appliance Repair,5.4,1,2607.14,True,synthetic_benchmark_v1
+2,Carpentry,3.7,1,1819.83,True,synthetic_benchmark_v1
+0,Plumbing,5.5,0,1904.53,True,synthetic_benchmark_v1
+3,Cleaning,0.5,1,322.99,True,synthetic_benchmark_v1
+4,Appliance Repair,5.9,0,2657.85,True,synthetic_benchmark_v1
+3,Cleaning,3.2,0,918.14,True,synthetic_benchmark_v1
+5,Painting,4.5,0,1687.6,True,synthetic_benchmark_v1
+4,Appliance Repair,5.0,0,2236.84,True,synthetic_benchmark_v1
+4,Appliance Repair,4.5,0,2062.65,True,synthetic_benchmark_v1
+2,Carpentry,3.4,0,1563.25,True,synthetic_benchmark_v1
+4,Appliance Repair,3.1,0,1428.17,True,synthetic_benchmark_v1
+3,Cleaning,5.1,0,1535.81,True,synthetic_benchmark_v1
+4,Appliance Repair,1.6,0,742.84,True,synthetic_benchmark_v1
+2,Carpentry,5.8,0,2581.48,True,synthetic_benchmark_v1
+2,Carpentry,4.4,0,1980.17,True,synthetic_benchmark_v1
+5,Painting,1.6,0,619.29,True,synthetic_benchmark_v1
+3,Cleaning,4.5,0,1323.13,True,synthetic_benchmark_v1
+1,Electrical,3.4,0,1365.25,True,synthetic_benchmark_v1
+1,Electrical,4.4,0,1802.17,True,synthetic_benchmark_v1
+4,Appliance Repair,4.7,0,2128.97,True,synthetic_benchmark_v1
+5,Painting,1.0,0,402.94,True,synthetic_benchmark_v1
+0,Plumbing,3.3,0,1093.69,True,synthetic_benchmark_v1
+4,Appliance Repair,5.6,0,2558.95,True,synthetic_benchmark_v1
+5,Painting,2.3,1,1019.35,True,synthetic_benchmark_v1
+3,Cleaning,3.8,1,1270.78,True,synthetic_benchmark_v1
+3,Cleaning,2.5,1,895.63,True,synthetic_benchmark_v1
+3,Cleaning,3.0,1,1012.87,True,synthetic_benchmark_v1
+3,Cleaning,3.5,0,1076.2,True,synthetic_benchmark_v1
+3,Cleaning,3.5,0,1041.62,True,synthetic_benchmark_v1
+5,Painting,1.6,0,589.53,True,synthetic_benchmark_v1
+5,Painting,4.3,0,1629.8,True,synthetic_benchmark_v1
+2,Carpentry,1.0,0,477.95,True,synthetic_benchmark_v1
+1,Electrical,1.3,0,523.29,True,synthetic_benchmark_v1
+3,Cleaning,0.5,0,150.0,True,synthetic_benchmark_v1
+0,Plumbing,1.1,0,396.62,True,synthetic_benchmark_v1
+5,Painting,3.1,0,1154.78,True,synthetic_benchmark_v1
+0,Plumbing,3.8,0,1276.1,True,synthetic_benchmark_v1
+0,Plumbing,4.9,1,1902.4,True,synthetic_benchmark_v1
+0,Plumbing,1.1,0,396.43,True,synthetic_benchmark_v1
+2,Carpentry,5.2,1,2488.04,True,synthetic_benchmark_v1
+5,Painting,4.6,0,1739.36,True,synthetic_benchmark_v1
+0,Plumbing,2.7,1,1129.93,True,synthetic_benchmark_v1
+3,Cleaning,5.6,0,1757.18,True,synthetic_benchmark_v1
+4,Appliance Repair,6.0,0,2711.22,True,synthetic_benchmark_v1
+0,Plumbing,1.6,0,534.26,True,synthetic_benchmark_v1
+2,Carpentry,2.6,0,1166.14,True,synthetic_benchmark_v1
+5,Painting,5.6,0,2138.76,True,synthetic_benchmark_v1
+2,Carpentry,4.5,0,1966.26,True,synthetic_benchmark_v1
+0,Plumbing,0.8,0,288.36,True,synthetic_benchmark_v1
+5,Painting,4.8,0,1834.91,True,synthetic_benchmark_v1
+4,Appliance Repair,5.1,0,2328.16,True,synthetic_benchmark_v1
+0,Plumbing,4.6,1,1790.55,True,synthetic_benchmark_v1
+2,Carpentry,4.9,0,2207.78,True,synthetic_benchmark_v1
+1,Electrical,5.0,0,2037.87,True,synthetic_benchmark_v1
+3,Cleaning,1.5,0,500.89,True,synthetic_benchmark_v1
+2,Carpentry,1.8,0,810.7,True,synthetic_benchmark_v1
+5,Painting,4.0,0,1530.45,True,synthetic_benchmark_v1
+0,Plumbing,5.5,1,2030.82,True,synthetic_benchmark_v1
+3,Cleaning,2.2,1,773.73,True,synthetic_benchmark_v1
+0,Plumbing,3.7,0,1274.05,True,synthetic_benchmark_v1
+5,Painting,4.3,0,1622.91,True,synthetic_benchmark_v1
+0,Plumbing,3.0,1,1172.6,True,synthetic_benchmark_v1
+1,Electrical,4.4,0,1759.1,True,synthetic_benchmark_v1
+3,Cleaning,5.4,0,1609.66,True,synthetic_benchmark_v1
+3,Cleaning,3.9,0,1196.77,True,synthetic_benchmark_v1
+5,Painting,3.5,0,1318.13,True,synthetic_benchmark_v1
+1,Electrical,2.9,0,1102.83,True,synthetic_benchmark_v1
+2,Carpentry,3.7,1,1818.14,True,synthetic_benchmark_v1
+0,Plumbing,2.5,0,874.65,True,synthetic_benchmark_v1
+4,Appliance Repair,2.7,0,1193.45,True,synthetic_benchmark_v1
+0,Plumbing,3.4,1,1342.37,True,synthetic_benchmark_v1
+0,Plumbing,0.9,0,288.12,True,synthetic_benchmark_v1
+2,Carpentry,1.8,0,818.25,True,synthetic_benchmark_v1
+0,Plumbing,3.5,0,1290.82,True,synthetic_benchmark_v1
+1,Electrical,2.9,0,1114.86,True,synthetic_benchmark_v1
+1,Electrical,2.3,0,907.09,True,synthetic_benchmark_v1
+3,Cleaning,4.5,0,1333.09,True,synthetic_benchmark_v1
+5,Painting,4.3,0,1623.17,True,synthetic_benchmark_v1
+4,Appliance Repair,1.4,0,655.5,True,synthetic_benchmark_v1
+0,Plumbing,5.3,0,1868.57,True,synthetic_benchmark_v1
+0,Plumbing,3.2,0,1141.22,True,synthetic_benchmark_v1
+2,Carpentry,4.6,0,2070.76,True,synthetic_benchmark_v1
+5,Painting,3.7,1,1522.95,True,synthetic_benchmark_v1
+1,Electrical,6.0,0,2372.13,True,synthetic_benchmark_v1
+4,Appliance Repair,4.6,0,2088.66,True,synthetic_benchmark_v1
+3,Cleaning,4.4,0,1324.27,True,synthetic_benchmark_v1
+1,Electrical,4.8,0,1951.51,True,synthetic_benchmark_v1
+5,Painting,1.3,0,501.33,True,synthetic_benchmark_v1
+3,Cleaning,1.6,1,600.42,True,synthetic_benchmark_v1
+2,Carpentry,4.4,0,1966.95,True,synthetic_benchmark_v1
+2,Carpentry,3.2,1,1604.12,True,synthetic_benchmark_v1
+0,Plumbing,4.7,0,1662.76,True,synthetic_benchmark_v1
+5,Painting,1.1,0,439.38,True,synthetic_benchmark_v1
+4,Appliance Repair,3.5,0,1548.79,True,synthetic_benchmark_v1
+3,Cleaning,2.6,0,749.97,True,synthetic_benchmark_v1
+1,Electrical,3.0,0,1195.25,True,synthetic_benchmark_v1
+5,Painting,3.8,1,1630.0,True,synthetic_benchmark_v1
+5,Painting,3.3,0,1236.65,True,synthetic_benchmark_v1
+2,Carpentry,3.5,0,1586.37,True,synthetic_benchmark_v1
+0,Plumbing,3.2,0,1131.38,True,synthetic_benchmark_v1
+0,Plumbing,2.7,0,964.02,True,synthetic_benchmark_v1
+3,Cleaning,4.7,0,1451.61,True,synthetic_benchmark_v1
+2,Carpentry,0.6,0,309.05,True,synthetic_benchmark_v1
+5,Painting,3.8,0,1429.13,True,synthetic_benchmark_v1
+4,Appliance Repair,3.6,0,1567.55,True,synthetic_benchmark_v1
+2,Carpentry,4.4,0,1963.04,True,synthetic_benchmark_v1
+3,Cleaning,3.8,0,1141.89,True,synthetic_benchmark_v1
+3,Cleaning,5.0,0,1490.96,True,synthetic_benchmark_v1
+2,Carpentry,5.8,0,2659.2,True,synthetic_benchmark_v1
+3,Cleaning,2.4,0,720.47,True,synthetic_benchmark_v1
+2,Carpentry,1.8,0,826.34,True,synthetic_benchmark_v1
+1,Electrical,2.8,0,1125.43,True,synthetic_benchmark_v1
+2,Carpentry,2.1,0,936.33,True,synthetic_benchmark_v1
+2,Carpentry,3.9,0,1706.88,True,synthetic_benchmark_v1
+3,Cleaning,5.5,0,1648.03,True,synthetic_benchmark_v1
+3,Cleaning,1.3,0,471.37,True,synthetic_benchmark_v1
+0,Plumbing,1.1,1,503.89,True,synthetic_benchmark_v1
+0,Plumbing,1.9,0,619.63,True,synthetic_benchmark_v1
+1,Electrical,4.5,0,1848.41,True,synthetic_benchmark_v1
+0,Plumbing,3.8,1,1498.55,True,synthetic_benchmark_v1
+2,Carpentry,1.1,0,499.69,True,synthetic_benchmark_v1
+3,Cleaning,5.6,0,1714.07,True,synthetic_benchmark_v1
+0,Plumbing,4.8,0,1659.21,True,synthetic_benchmark_v1
+0,Plumbing,0.6,0,207.34,True,synthetic_benchmark_v1
+1,Electrical,4.1,0,1663.88,True,synthetic_benchmark_v1
+5,Painting,4.7,0,1838.76,True,synthetic_benchmark_v1
+1,Electrical,2.6,0,1010.79,True,synthetic_benchmark_v1
+2,Carpentry,0.9,0,437.02,True,synthetic_benchmark_v1
+3,Cleaning,0.9,0,279.55,True,synthetic_benchmark_v1
+1,Electrical,1.1,1,594.08,True,synthetic_benchmark_v1
+0,Plumbing,5.1,0,1784.81,True,synthetic_benchmark_v1
+3,Cleaning,5.5,0,1615.38,True,synthetic_benchmark_v1
+3,Cleaning,1.2,0,384.08,True,synthetic_benchmark_v1
+0,Plumbing,1.8,0,610.44,True,synthetic_benchmark_v1
+1,Electrical,1.4,0,533.01,True,synthetic_benchmark_v1
+0,Plumbing,1.5,0,547.14,True,synthetic_benchmark_v1
+5,Painting,5.1,0,1957.73,True,synthetic_benchmark_v1
+3,Cleaning,2.3,0,691.98,True,synthetic_benchmark_v1
+4,Appliance Repair,2.2,0,1016.99,True,synthetic_benchmark_v1
+4,Appliance Repair,1.8,0,845.65,True,synthetic_benchmark_v1
+2,Carpentry,3.8,0,1742.71,True,synthetic_benchmark_v1
+0,Plumbing,2.6,0,896.79,True,synthetic_benchmark_v1
+0,Plumbing,4.6,1,1785.35,True,synthetic_benchmark_v1
+2,Carpentry,1.6,0,725.29,True,synthetic_benchmark_v1
+2,Carpentry,4.8,0,2203.15,True,synthetic_benchmark_v1
+2,Carpentry,3.8,0,1706.91,True,synthetic_benchmark_v1
+3,Cleaning,1.1,0,321.09,True,synthetic_benchmark_v1
+5,Painting,2.8,1,1198.66,True,synthetic_benchmark_v1
+0,Plumbing,5.2,0,1824.73,True,synthetic_benchmark_v1
+3,Cleaning,5.6,0,1691.67,True,synthetic_benchmark_v1
+2,Carpentry,3.1,0,1407.15,True,synthetic_benchmark_v1
+0,Plumbing,3.1,0,1093.73,True,synthetic_benchmark_v1
+3,Cleaning,5.6,0,1696.78,True,synthetic_benchmark_v1
+5,Painting,3.7,1,1550.44,True,synthetic_benchmark_v1
+3,Cleaning,0.7,0,188.19,True,synthetic_benchmark_v1
+5,Painting,5.5,0,2066.0,True,synthetic_benchmark_v1
+2,Carpentry,1.9,1,1029.38,True,synthetic_benchmark_v1
+5,Painting,3.7,0,1417.76,True,synthetic_benchmark_v1
+0,Plumbing,1.4,0,443.6,True,synthetic_benchmark_v1
+2,Carpentry,0.7,0,342.42,True,synthetic_benchmark_v1
+0,Plumbing,2.2,1,967.01,True,synthetic_benchmark_v1
+4,Appliance Repair,4.8,0,2142.1,True,synthetic_benchmark_v1
+1,Electrical,2.0,0,808.4,True,synthetic_benchmark_v1
+5,Painting,1.7,0,634.16,True,synthetic_benchmark_v1
+1,Electrical,1.7,0,695.71,True,synthetic_benchmark_v1
+1,Electrical,3.3,0,1290.85,True,synthetic_benchmark_v1
+5,Painting,5.9,0,2240.21,True,synthetic_benchmark_v1
+2,Carpentry,3.0,0,1374.53,True,synthetic_benchmark_v1
+4,Appliance Repair,3.6,0,1650.89,True,synthetic_benchmark_v1
+0,Plumbing,5.2,1,1980.66,True,synthetic_benchmark_v1
+3,Cleaning,3.4,0,1011.52,True,synthetic_benchmark_v1
+0,Plumbing,1.5,0,485.18,True,synthetic_benchmark_v1
+3,Cleaning,2.1,0,611.06,True,synthetic_benchmark_v1
+0,Plumbing,2.2,0,758.27,True,synthetic_benchmark_v1
+5,Painting,2.7,0,1008.56,True,synthetic_benchmark_v1
+4,Appliance Repair,2.8,0,1261.49,True,synthetic_benchmark_v1
+3,Cleaning,4.9,0,1461.45,True,synthetic_benchmark_v1
+2,Carpentry,2.4,0,1084.3,True,synthetic_benchmark_v1
+0,Plumbing,3.1,0,1115.07,True,synthetic_benchmark_v1
+0,Plumbing,3.9,0,1354.84,True,synthetic_benchmark_v1
+3,Cleaning,2.6,0,745.43,True,synthetic_benchmark_v1
+2,Carpentry,5.1,1,2427.46,True,synthetic_benchmark_v1
+2,Carpentry,3.7,0,1679.59,True,synthetic_benchmark_v1
+5,Painting,2.1,1,964.95,True,synthetic_benchmark_v1
+5,Painting,4.4,1,1832.15,True,synthetic_benchmark_v1
+5,Painting,3.4,0,1324.52,True,synthetic_benchmark_v1
+5,Painting,3.4,0,1287.34,True,synthetic_benchmark_v1
+5,Painting,3.1,0,1229.3,True,synthetic_benchmark_v1
+5,Painting,3.2,0,1236.45,True,synthetic_benchmark_v1
+4,Appliance Repair,4.7,0,2051.91,True,synthetic_benchmark_v1
+2,Carpentry,1.1,0,540.02,True,synthetic_benchmark_v1
+5,Painting,2.3,0,854.83,True,synthetic_benchmark_v1
+2,Carpentry,0.9,0,379.15,True,synthetic_benchmark_v1
+2,Carpentry,4.6,0,2083.09,True,synthetic_benchmark_v1
+1,Electrical,2.0,0,756.55,True,synthetic_benchmark_v1
+4,Appliance Repair,5.4,0,2412.61,True,synthetic_benchmark_v1
+5,Painting,3.4,0,1330.93,True,synthetic_benchmark_v1
+0,Plumbing,4.9,0,1728.91,True,synthetic_benchmark_v1
+3,Cleaning,5.9,0,1790.31,True,synthetic_benchmark_v1
+0,Plumbing,5.1,1,1918.58,True,synthetic_benchmark_v1
+4,Appliance Repair,5.3,0,2346.54,True,synthetic_benchmark_v1
+3,Cleaning,2.7,0,827.67,True,synthetic_benchmark_v1
+4,Appliance Repair,3.5,0,1598.26,True,synthetic_benchmark_v1
+2,Carpentry,1.9,0,877.12,True,synthetic_benchmark_v1
+3,Cleaning,1.6,1,635.23,True,synthetic_benchmark_v1
+2,Carpentry,3.3,0,1460.82,True,synthetic_benchmark_v1
+0,Plumbing,3.8,1,1540.94,True,synthetic_benchmark_v1
+0,Plumbing,2.4,0,851.99,True,synthetic_benchmark_v1
+3,Cleaning,3.6,0,1075.65,True,synthetic_benchmark_v1
+3,Cleaning,5.4,0,1615.76,True,synthetic_benchmark_v1
+5,Painting,3.6,0,1371.74,True,synthetic_benchmark_v1
+4,Appliance Repair,4.5,0,2051.74,True,synthetic_benchmark_v1
+5,Painting,4.9,1,2016.74,True,synthetic_benchmark_v1
+4,Appliance Repair,5.9,1,2826.46,True,synthetic_benchmark_v1
+5,Painting,3.8,0,1447.78,True,synthetic_benchmark_v1
+2,Carpentry,4.9,1,2352.19,True,synthetic_benchmark_v1
+3,Cleaning,5.8,1,1906.03,True,synthetic_benchmark_v1
+0,Plumbing,5.7,0,2010.08,True,synthetic_benchmark_v1
+4,Appliance Repair,1.3,0,580.76,True,synthetic_benchmark_v1
+4,Appliance Repair,2.7,0,1196.27,True,synthetic_benchmark_v1
+0,Plumbing,2.3,0,813.54,True,synthetic_benchmark_v1
+5,Painting,1.0,0,381.96,True,synthetic_benchmark_v1
+4,Appliance Repair,4.0,0,1786.13,True,synthetic_benchmark_v1
+2,Carpentry,4.5,0,2003.94,True,synthetic_benchmark_v1
+3,Cleaning,5.2,0,1570.26,True,synthetic_benchmark_v1
+0,Plumbing,1.2,0,433.75,True,synthetic_benchmark_v1
+3,Cleaning,5.3,1,1731.0,True,synthetic_benchmark_v1
+4,Appliance Repair,4.0,1,1935.5,True,synthetic_benchmark_v1
+4,Appliance Repair,4.4,0,1959.24,True,synthetic_benchmark_v1
+0,Plumbing,5.5,1,2084.56,True,synthetic_benchmark_v1
+2,Carpentry,3.9,0,1734.9,True,synthetic_benchmark_v1
+1,Electrical,2.3,0,976.03,True,synthetic_benchmark_v1
+0,Plumbing,5.0,0,1739.74,True,synthetic_benchmark_v1
+1,Electrical,2.5,0,939.37,True,synthetic_benchmark_v1
+5,Painting,0.7,0,265.25,True,synthetic_benchmark_v1
+1,Electrical,5.1,0,2038.17,True,synthetic_benchmark_v1
+2,Carpentry,2.4,0,1107.79,True,synthetic_benchmark_v1
+5,Painting,4.8,0,1831.2,True,synthetic_benchmark_v1
+1,Electrical,2.5,0,979.15,True,synthetic_benchmark_v1
+5,Painting,5.2,0,1968.84,True,synthetic_benchmark_v1
+1,Electrical,1.7,0,688.19,True,synthetic_benchmark_v1
+2,Carpentry,5.9,0,2600.88,True,synthetic_benchmark_v1
+1,Electrical,4.8,0,1953.47,True,synthetic_benchmark_v1
+1,Electrical,1.1,0,419.22,True,synthetic_benchmark_v1
+1,Electrical,3.6,0,1475.43,True,synthetic_benchmark_v1
+0,Plumbing,5.9,0,2074.81,True,synthetic_benchmark_v1
+0,Plumbing,3.1,0,1100.74,True,synthetic_benchmark_v1
+0,Plumbing,1.5,0,553.74,True,synthetic_benchmark_v1
+2,Carpentry,3.2,0,1454.33,True,synthetic_benchmark_v1
+5,Painting,3.3,0,1270.82,True,synthetic_benchmark_v1
+4,Appliance Repair,4.6,0,2065.89,True,synthetic_benchmark_v1
+1,Electrical,4.3,0,1729.3,True,synthetic_benchmark_v1
+1,Electrical,2.7,0,1065.31,True,synthetic_benchmark_v1
+2,Carpentry,1.7,0,756.41,True,synthetic_benchmark_v1
+1,Electrical,4.0,0,1649.12,True,synthetic_benchmark_v1
+0,Plumbing,2.8,0,959.8,True,synthetic_benchmark_v1
+4,Appliance Repair,1.2,1,693.86,True,synthetic_benchmark_v1
+3,Cleaning,5.5,0,1652.84,True,synthetic_benchmark_v1
+1,Electrical,4.3,0,1712.23,True,synthetic_benchmark_v1
+0,Plumbing,4.3,0,1517.86,True,synthetic_benchmark_v1
+3,Cleaning,5.0,0,1514.74,True,synthetic_benchmark_v1
+4,Appliance Repair,3.4,0,1506.85,True,synthetic_benchmark_v1
+3,Cleaning,5.0,0,1502.53,True,synthetic_benchmark_v1
+0,Plumbing,3.2,0,1092.94,True,synthetic_benchmark_v1
+5,Painting,0.9,0,361.71,True,synthetic_benchmark_v1
+5,Painting,2.7,0,1030.41,True,synthetic_benchmark_v1
+3,Cleaning,3.2,1,1112.06,True,synthetic_benchmark_v1
+2,Carpentry,4.5,0,2041.48,True,synthetic_benchmark_v1
+3,Cleaning,1.1,0,323.11,True,synthetic_benchmark_v1
+1,Electrical,1.3,0,542.85,True,synthetic_benchmark_v1
+1,Electrical,2.0,0,776.29,True,synthetic_benchmark_v1
+5,Painting,2.0,0,795.3,True,synthetic_benchmark_v1
+2,Carpentry,4.5,0,2011.23,True,synthetic_benchmark_v1
+0,Plumbing,1.9,0,622.6,True,synthetic_benchmark_v1
+1,Electrical,4.0,0,1591.79,True,synthetic_benchmark_v1
+5,Painting,3.2,0,1204.95,True,synthetic_benchmark_v1
+4,Appliance Repair,3.7,1,1806.6,True,synthetic_benchmark_v1
+5,Painting,5.1,0,1943.79,True,synthetic_benchmark_v1
+1,Electrical,2.7,0,1107.45,True,synthetic_benchmark_v1
+1,Electrical,4.7,0,1875.21,True,synthetic_benchmark_v1
+5,Painting,2.8,0,1046.71,True,synthetic_benchmark_v1
+0,Plumbing,2.4,0,811.84,True,synthetic_benchmark_v1
+3,Cleaning,5.8,0,1728.3,True,synthetic_benchmark_v1
+1,Electrical,1.5,0,552.8,True,synthetic_benchmark_v1
+5,Painting,1.0,0,361.87,True,synthetic_benchmark_v1
+5,Painting,4.7,0,1817.1,True,synthetic_benchmark_v1
+2,Carpentry,0.9,0,384.42,True,synthetic_benchmark_v1
+3,Cleaning,5.1,0,1545.72,True,synthetic_benchmark_v1
+4,Appliance Repair,2.9,1,1424.34,True,synthetic_benchmark_v1
+0,Plumbing,5.5,0,1969.28,True,synthetic_benchmark_v1
+4,Appliance Repair,4.5,0,2070.94,True,synthetic_benchmark_v1
+3,Cleaning,3.9,1,1334.78,True,synthetic_benchmark_v1
+3,Cleaning,5.7,0,1759.78,True,synthetic_benchmark_v1
+3,Cleaning,2.7,1,968.89,True,synthetic_benchmark_v1
+4,Appliance Repair,5.7,0,2584.21,True,synthetic_benchmark_v1
+3,Cleaning,1.2,1,541.55,True,synthetic_benchmark_v1
+5,Painting,3.2,0,1220.49,True,synthetic_benchmark_v1
+4,Appliance Repair,2.0,0,861.19,True,synthetic_benchmark_v1
+3,Cleaning,3.5,0,1069.72,True,synthetic_benchmark_v1
+5,Painting,1.4,1,670.2,True,synthetic_benchmark_v1
+2,Carpentry,5.1,1,2435.06,True,synthetic_benchmark_v1
+3,Cleaning,5.2,0,1567.45,True,synthetic_benchmark_v1
+4,Appliance Repair,5.8,0,2624.16,True,synthetic_benchmark_v1
+1,Electrical,1.4,1,713.75,True,synthetic_benchmark_v1
+3,Cleaning,3.9,0,1185.89,True,synthetic_benchmark_v1
+1,Electrical,3.1,0,1222.33,True,synthetic_benchmark_v1
+5,Painting,2.4,1,1060.93,True,synthetic_benchmark_v1
+2,Carpentry,2.4,0,1101.23,True,synthetic_benchmark_v1
+0,Plumbing,2.8,0,1024.32,True,synthetic_benchmark_v1
+2,Carpentry,4.4,0,2033.16,True,synthetic_benchmark_v1
+3,Cleaning,3.8,0,1150.82,True,synthetic_benchmark_v1
+1,Electrical,3.0,1,1371.0,True,synthetic_benchmark_v1
+1,Electrical,0.9,0,409.54,True,synthetic_benchmark_v1
+4,Appliance Repair,0.9,1,538.23,True,synthetic_benchmark_v1
+1,Electrical,0.5,0,215.74,True,synthetic_benchmark_v1
+4,Appliance Repair,5.8,1,2779.21,True,synthetic_benchmark_v1
+5,Painting,0.5,0,226.2,True,synthetic_benchmark_v1
+0,Plumbing,1.1,0,356.57,True,synthetic_benchmark_v1
+3,Cleaning,2.2,0,636.51,True,synthetic_benchmark_v1
+4,Appliance Repair,4.9,0,2205.53,True,synthetic_benchmark_v1
+0,Plumbing,5.8,0,2039.44,True,synthetic_benchmark_v1
+1,Electrical,4.8,1,2098.07,True,synthetic_benchmark_v1
+1,Electrical,4.3,0,1732.94,True,synthetic_benchmark_v1
+0,Plumbing,3.4,0,1186.21,True,synthetic_benchmark_v1
+1,Electrical,1.0,0,410.41,True,synthetic_benchmark_v1
+5,Painting,5.8,0,2211.53,True,synthetic_benchmark_v1
+5,Painting,4.7,0,1829.63,True,synthetic_benchmark_v1
+0,Plumbing,4.0,1,1554.14,True,synthetic_benchmark_v1
+4,Appliance Repair,4.7,1,2255.42,True,synthetic_benchmark_v1
+4,Appliance Repair,4.5,1,2186.24,True,synthetic_benchmark_v1
+0,Plumbing,4.0,0,1404.96,True,synthetic_benchmark_v1
+4,Appliance Repair,5.9,0,2615.73,True,synthetic_benchmark_v1
+4,Appliance Repair,5.5,0,2474.61,True,synthetic_benchmark_v1
+5,Painting,4.1,0,1555.48,True,synthetic_benchmark_v1
+4,Appliance Repair,4.3,1,2071.4,True,synthetic_benchmark_v1
+2,Carpentry,0.8,0,385.89,True,synthetic_benchmark_v1
+3,Cleaning,4.2,0,1240.36,True,synthetic_benchmark_v1
+1,Electrical,0.7,0,291.39,True,synthetic_benchmark_v1
+2,Carpentry,3.7,0,1661.3,True,synthetic_benchmark_v1
+4,Appliance Repair,6.0,1,2852.69,True,synthetic_benchmark_v1
+5,Painting,3.6,0,1378.29,True,synthetic_benchmark_v1
+0,Plumbing,3.1,0,1052.31,True,synthetic_benchmark_v1
+4,Appliance Repair,2.2,1,1144.79,True,synthetic_benchmark_v1
+5,Painting,1.2,0,513.22,True,synthetic_benchmark_v1
+3,Cleaning,4.5,0,1311.08,True,synthetic_benchmark_v1
+4,Appliance Repair,1.6,0,718.56,True,synthetic_benchmark_v1
+0,Plumbing,1.1,0,413.08,True,synthetic_benchmark_v1
+5,Painting,2.8,0,1071.54,True,synthetic_benchmark_v1
+5,Painting,4.9,1,2029.2,True,synthetic_benchmark_v1
+5,Painting,4.6,0,1688.61,True,synthetic_benchmark_v1
+3,Cleaning,0.8,1,404.96,True,synthetic_benchmark_v1
+4,Appliance Repair,3.0,0,1330.96,True,synthetic_benchmark_v1
+3,Cleaning,3.4,0,1027.75,True,synthetic_benchmark_v1
+1,Electrical,4.0,0,1599.26,True,synthetic_benchmark_v1
+1,Electrical,4.1,0,1696.96,True,synthetic_benchmark_v1
+4,Appliance Repair,2.5,0,1138.67,True,synthetic_benchmark_v1
+3,Cleaning,3.6,1,1227.18,True,synthetic_benchmark_v1
+0,Plumbing,3.1,0,1047.26,True,synthetic_benchmark_v1
+5,Painting,5.4,0,2055.03,True,synthetic_benchmark_v1
+5,Painting,3.4,0,1312.58,True,synthetic_benchmark_v1
+4,Appliance Repair,2.9,0,1302.99,True,synthetic_benchmark_v1
+1,Electrical,2.7,0,1067.36,True,synthetic_benchmark_v1
+1,Electrical,3.6,0,1425.69,True,synthetic_benchmark_v1
+5,Painting,4.9,0,1875.38,True,synthetic_benchmark_v1
+4,Appliance Repair,3.5,0,1593.98,True,synthetic_benchmark_v1
+3,Cleaning,4.1,0,1264.03,True,synthetic_benchmark_v1
+1,Electrical,4.6,0,1815.13,True,synthetic_benchmark_v1
+3,Cleaning,3.4,0,1033.15,True,synthetic_benchmark_v1
+1,Electrical,2.8,0,1116.96,True,synthetic_benchmark_v1
+1,Electrical,5.3,1,2267.69,True,synthetic_benchmark_v1
+2,Carpentry,2.8,0,1270.05,True,synthetic_benchmark_v1
+1,Electrical,3.0,0,1210.19,True,synthetic_benchmark_v1
+0,Plumbing,5.9,0,2078.22,True,synthetic_benchmark_v1
+4,Appliance Repair,0.5,1,348.56,True,synthetic_benchmark_v1
+4,Appliance Repair,1.5,0,656.25,True,synthetic_benchmark_v1
+3,Cleaning,2.6,0,817.15,True,synthetic_benchmark_v1
+1,Electrical,5.6,1,2384.49,True,synthetic_benchmark_v1
+0,Plumbing,0.9,0,322.65,True,synthetic_benchmark_v1
+3,Cleaning,0.6,0,206.37,True,synthetic_benchmark_v1
+2,Carpentry,0.8,0,371.59,True,synthetic_benchmark_v1
+3,Cleaning,1.0,0,313.66,True,synthetic_benchmark_v1
+3,Cleaning,0.7,1,382.36,True,synthetic_benchmark_v1
+1,Electrical,3.1,0,1187.08,True,synthetic_benchmark_v1
+2,Carpentry,3.7,0,1652.75,True,synthetic_benchmark_v1
+3,Cleaning,2.0,0,611.72,True,synthetic_benchmark_v1
+0,Plumbing,2.7,0,979.69,True,synthetic_benchmark_v1
+0,Plumbing,1.0,0,351.65,True,synthetic_benchmark_v1
+4,Appliance Repair,2.4,0,1058.88,True,synthetic_benchmark_v1
+2,Carpentry,3.4,0,1509.55,True,synthetic_benchmark_v1
+2,Carpentry,4.5,0,2047.1,True,synthetic_benchmark_v1
+4,Appliance Repair,0.5,0,219.56,True,synthetic_benchmark_v1
+3,Cleaning,3.1,0,929.82,True,synthetic_benchmark_v1
+2,Carpentry,2.1,0,960.38,True,synthetic_benchmark_v1
+0,Plumbing,5.2,0,1747.46,True,synthetic_benchmark_v1
+0,Plumbing,4.4,1,1740.01,True,synthetic_benchmark_v1
+1,Electrical,3.7,0,1461.72,True,synthetic_benchmark_v1
+2,Carpentry,2.0,0,906.05,True,synthetic_benchmark_v1
+3,Cleaning,5.5,0,1607.38,True,synthetic_benchmark_v1
+4,Appliance Repair,0.7,0,304.44,True,synthetic_benchmark_v1
+4,Appliance Repair,1.1,0,526.12,True,synthetic_benchmark_v1
+3,Cleaning,2.7,0,762.1,True,synthetic_benchmark_v1
+5,Painting,1.2,0,484.16,True,synthetic_benchmark_v1
+1,Electrical,5.8,0,2313.16,True,synthetic_benchmark_v1
+4,Appliance Repair,4.9,0,2217.18,True,synthetic_benchmark_v1
+2,Carpentry,1.9,0,871.44,True,synthetic_benchmark_v1
+1,Electrical,3.7,0,1491.04,True,synthetic_benchmark_v1
+2,Carpentry,5.9,1,2783.38,True,synthetic_benchmark_v1
+0,Plumbing,5.4,0,1880.89,True,synthetic_benchmark_v1
+1,Electrical,3.8,0,1483.46,True,synthetic_benchmark_v1
+4,Appliance Repair,5.5,0,2487.29,True,synthetic_benchmark_v1
+1,Electrical,5.9,1,2552.55,True,synthetic_benchmark_v1
+1,Electrical,4.6,0,1794.39,True,synthetic_benchmark_v1
+1,Electrical,0.9,1,490.96,True,synthetic_benchmark_v1
+5,Painting,2.7,0,1021.46,True,synthetic_benchmark_v1
+1,Electrical,5.1,0,2044.33,True,synthetic_benchmark_v1
+2,Carpentry,1.8,1,981.98,True,synthetic_benchmark_v1
+0,Plumbing,5.1,0,1781.2,True,synthetic_benchmark_v1
+3,Cleaning,1.2,0,352.1,True,synthetic_benchmark_v1
+1,Electrical,0.8,0,347.58,True,synthetic_benchmark_v1
+4,Appliance Repair,2.6,1,1336.55,True,synthetic_benchmark_v1
+1,Electrical,0.7,0,293.47,True,synthetic_benchmark_v1
+4,Appliance Repair,5.8,0,2612.81,True,synthetic_benchmark_v1
+2,Carpentry,5.0,0,2274.58,True,synthetic_benchmark_v1
+4,Appliance Repair,4.9,0,2188.59,True,synthetic_benchmark_v1
+3,Cleaning,4.0,0,1180.18,True,synthetic_benchmark_v1
+0,Plumbing,1.7,1,763.65,True,synthetic_benchmark_v1
+4,Appliance Repair,3.4,1,1639.37,True,synthetic_benchmark_v1
+4,Appliance Repair,3.8,1,1862.3,True,synthetic_benchmark_v1
+0,Plumbing,3.4,0,1182.09,True,synthetic_benchmark_v1
+3,Cleaning,1.9,0,534.86,True,synthetic_benchmark_v1
+1,Electrical,3.3,0,1296.72,True,synthetic_benchmark_v1
+4,Appliance Repair,3.2,0,1437.28,True,synthetic_benchmark_v1
+0,Plumbing,6.0,0,2125.85,True,synthetic_benchmark_v1
+2,Carpentry,5.4,1,2563.68,True,synthetic_benchmark_v1
+0,Plumbing,3.0,0,1080.33,True,synthetic_benchmark_v1
+2,Carpentry,3.9,0,1756.58,True,synthetic_benchmark_v1
+3,Cleaning,4.6,0,1412.76,True,synthetic_benchmark_v1
+1,Electrical,0.7,0,264.89,True,synthetic_benchmark_v1
+0,Plumbing,5.4,0,1888.78,True,synthetic_benchmark_v1
+5,Painting,5.2,0,1985.21,True,synthetic_benchmark_v1
+4,Appliance Repair,3.0,0,1345.51,True,synthetic_benchmark_v1
+3,Cleaning,2.7,0,833.83,True,synthetic_benchmark_v1
+0,Plumbing,2.0,0,644.81,True,synthetic_benchmark_v1
+4,Appliance Repair,3.1,0,1455.56,True,synthetic_benchmark_v1
+0,Plumbing,0.7,0,266.44,True,synthetic_benchmark_v1
+2,Carpentry,5.2,0,2335.66,True,synthetic_benchmark_v1
+0,Plumbing,0.7,0,231.19,True,synthetic_benchmark_v1
+5,Painting,2.3,0,852.34,True,synthetic_benchmark_v1
+0,Plumbing,5.6,0,1976.14,True,synthetic_benchmark_v1
+0,Plumbing,4.5,0,1599.87,True,synthetic_benchmark_v1
+5,Painting,2.0,1,905.94,True,synthetic_benchmark_v1
+3,Cleaning,1.9,0,597.67,True,synthetic_benchmark_v1
+0,Plumbing,0.5,0,152.32,True,synthetic_benchmark_v1
+5,Painting,4.3,0,1606.9,True,synthetic_benchmark_v1
+4,Appliance Repair,0.8,0,405.33,True,synthetic_benchmark_v1
+2,Carpentry,3.4,0,1544.78,True,synthetic_benchmark_v1
+2,Carpentry,5.8,0,2644.92,True,synthetic_benchmark_v1
+0,Plumbing,1.1,0,363.65,True,synthetic_benchmark_v1
+3,Cleaning,5.4,0,1596.91,True,synthetic_benchmark_v1
+3,Cleaning,6.0,0,1791.03,True,synthetic_benchmark_v1
+4,Appliance Repair,0.8,0,339.4,True,synthetic_benchmark_v1
+0,Plumbing,5.4,0,1907.63,True,synthetic_benchmark_v1
+2,Carpentry,3.3,0,1466.22,True,synthetic_benchmark_v1
+3,Cleaning,5.5,0,1620.71,True,synthetic_benchmark_v1
+0,Plumbing,3.6,0,1263.55,True,synthetic_benchmark_v1
+3,Cleaning,4.1,0,1197.75,True,synthetic_benchmark_v1
+5,Painting,3.5,1,1435.01,True,synthetic_benchmark_v1
+3,Cleaning,5.3,0,1593.33,True,synthetic_benchmark_v1
+2,Carpentry,4.5,1,2131.27,True,synthetic_benchmark_v1
+1,Electrical,3.4,0,1379.38,True,synthetic_benchmark_v1
+4,Appliance Repair,5.3,0,2350.12,True,synthetic_benchmark_v1
+4,Appliance Repair,1.8,0,753.98,True,synthetic_benchmark_v1
+2,Carpentry,1.4,0,622.66,True,synthetic_benchmark_v1
+3,Cleaning,1.4,0,423.61,True,synthetic_benchmark_v1
+0,Plumbing,2.3,0,817.29,True,synthetic_benchmark_v1
+3,Cleaning,1.8,0,544.3,True,synthetic_benchmark_v1
+2,Carpentry,5.6,1,2643.52,True,synthetic_benchmark_v1
+4,Appliance Repair,1.1,0,512.83,True,synthetic_benchmark_v1
+3,Cleaning,4.3,0,1314.0,True,synthetic_benchmark_v1
+4,Appliance Repair,1.5,0,644.86,True,synthetic_benchmark_v1
+0,Plumbing,5.3,0,1850.47,True,synthetic_benchmark_v1
+4,Appliance Repair,5.8,0,2603.14,True,synthetic_benchmark_v1
+4,Appliance Repair,3.1,0,1400.51,True,synthetic_benchmark_v1
+1,Electrical,5.3,0,2114.88,True,synthetic_benchmark_v1
+1,Electrical,0.5,0,198.3,True,synthetic_benchmark_v1
+5,Painting,5.0,1,2066.05,True,synthetic_benchmark_v1
+1,Electrical,1.8,0,692.15,True,synthetic_benchmark_v1
+4,Appliance Repair,5.5,0,2493.43,True,synthetic_benchmark_v1
+2,Carpentry,0.5,1,403.53,True,synthetic_benchmark_v1
+4,Appliance Repair,3.6,0,1660.85,True,synthetic_benchmark_v1
+2,Carpentry,4.7,0,2061.42,True,synthetic_benchmark_v1
+2,Carpentry,1.9,1,1000.43,True,synthetic_benchmark_v1
+1,Electrical,1.6,0,590.87,True,synthetic_benchmark_v1
+3,Cleaning,1.0,0,239.12,True,synthetic_benchmark_v1
+0,Plumbing,2.3,0,808.6,True,synthetic_benchmark_v1
+1,Electrical,3.6,0,1430.02,True,synthetic_benchmark_v1
+1,Electrical,1.1,0,447.5,True,synthetic_benchmark_v1
+3,Cleaning,2.6,1,942.15,True,synthetic_benchmark_v1
+0,Plumbing,0.5,0,206.2,True,synthetic_benchmark_v1
+4,Appliance Repair,5.0,0,2251.35,True,synthetic_benchmark_v1
+5,Painting,1.2,1,679.08,True,synthetic_benchmark_v1
+5,Painting,2.1,0,805.66,True,synthetic_benchmark_v1
+4,Appliance Repair,0.6,0,316.06,True,synthetic_benchmark_v1
+1,Electrical,2.9,0,1101.68,True,synthetic_benchmark_v1
+0,Plumbing,5.1,0,1818.74,True,synthetic_benchmark_v1
+1,Electrical,2.7,0,1075.48,True,synthetic_benchmark_v1
+2,Carpentry,1.5,1,776.29,True,synthetic_benchmark_v1
+1,Electrical,4.6,0,1850.51,True,synthetic_benchmark_v1
+1,Electrical,4.8,0,1912.43,True,synthetic_benchmark_v1
+4,Appliance Repair,1.5,0,689.5,True,synthetic_benchmark_v1
+4,Appliance Repair,4.7,1,2290.28,True,synthetic_benchmark_v1
+4,Appliance Repair,5.7,1,2677.77,True,synthetic_benchmark_v1
+5,Painting,1.4,0,557.37,True,synthetic_benchmark_v1
+2,Carpentry,4.7,0,2115.16,True,synthetic_benchmark_v1
+4,Appliance Repair,4.4,0,2013.82,True,synthetic_benchmark_v1
+0,Plumbing,3.1,0,1079.87,True,synthetic_benchmark_v1
+5,Painting,0.8,0,292.24,True,synthetic_benchmark_v1
+3,Cleaning,0.9,0,270.68,True,synthetic_benchmark_v1
+0,Plumbing,5.2,1,1972.55,True,synthetic_benchmark_v1
+0,Plumbing,5.9,0,2048.43,True,synthetic_benchmark_v1
+4,Appliance Repair,4.2,0,1877.59,True,synthetic_benchmark_v1
+3,Cleaning,3.0,0,869.33,True,synthetic_benchmark_v1
+3,Cleaning,4.1,0,1219.13,True,synthetic_benchmark_v1
+5,Painting,3.8,0,1460.91,True,synthetic_benchmark_v1
+3,Cleaning,2.6,0,776.57,True,synthetic_benchmark_v1
+2,Carpentry,0.9,0,430.23,True,synthetic_benchmark_v1
+4,Appliance Repair,5.0,0,2245.36,True,synthetic_benchmark_v1
+3,Cleaning,2.5,1,864.21,True,synthetic_benchmark_v1
+5,Painting,5.0,0,1914.93,True,synthetic_benchmark_v1
+2,Carpentry,1.9,0,838.16,True,synthetic_benchmark_v1
+1,Electrical,0.5,1,344.17,True,synthetic_benchmark_v1
+1,Electrical,1.4,0,590.94,True,synthetic_benchmark_v1
+2,Carpentry,3.1,0,1365.98,True,synthetic_benchmark_v1
+5,Painting,5.7,1,2320.12,True,synthetic_benchmark_v1
+2,Carpentry,1.1,0,493.99,True,synthetic_benchmark_v1
+4,Appliance Repair,5.2,0,2357.52,True,synthetic_benchmark_v1
+4,Appliance Repair,3.4,0,1551.38,True,synthetic_benchmark_v1
+1,Electrical,5.0,0,2006.6,True,synthetic_benchmark_v1
+3,Cleaning,2.1,0,620.99,True,synthetic_benchmark_v1
+5,Painting,5.1,0,1949.83,True,synthetic_benchmark_v1
+1,Electrical,4.8,0,1953.39,True,synthetic_benchmark_v1
+3,Cleaning,1.8,0,539.32,True,synthetic_benchmark_v1
+3,Cleaning,1.2,0,353.32,True,synthetic_benchmark_v1
+4,Appliance Repair,5.3,0,2394.7,True,synthetic_benchmark_v1
+0,Plumbing,5.8,0,2030.97,True,synthetic_benchmark_v1
+0,Plumbing,0.7,1,361.56,True,synthetic_benchmark_v1
+2,Carpentry,4.5,0,2030.98,True,synthetic_benchmark_v1
+4,Appliance Repair,5.5,1,2591.33,True,synthetic_benchmark_v1
+3,Cleaning,5.2,0,1569.36,True,synthetic_benchmark_v1
+5,Painting,5.8,0,2184.07,True,synthetic_benchmark_v1
+0,Plumbing,4.7,0,1645.92,True,synthetic_benchmark_v1
+3,Cleaning,2.9,1,1029.76,True,synthetic_benchmark_v1
+0,Plumbing,2.2,0,831.35,True,synthetic_benchmark_v1
+0,Plumbing,2.3,0,823.57,True,synthetic_benchmark_v1
+0,Plumbing,4.5,0,1609.12,True,synthetic_benchmark_v1
+5,Painting,4.6,0,1794.79,True,synthetic_benchmark_v1
+4,Appliance Repair,1.6,0,732.23,True,synthetic_benchmark_v1
+5,Painting,5.3,1,2171.14,True,synthetic_benchmark_v1
+1,Electrical,4.4,1,1883.33,True,synthetic_benchmark_v1
+3,Cleaning,3.6,0,1077.08,True,synthetic_benchmark_v1
+4,Appliance Repair,3.1,0,1376.92,True,synthetic_benchmark_v1
+4,Appliance Repair,3.5,0,1564.97,True,synthetic_benchmark_v1
+4,Appliance Repair,1.4,0,676.77,True,synthetic_benchmark_v1
+4,Appliance Repair,1.6,0,722.87,True,synthetic_benchmark_v1
+5,Painting,1.0,0,358.1,True,synthetic_benchmark_v1
+4,Appliance Repair,1.3,0,619.36,True,synthetic_benchmark_v1
+2,Carpentry,3.0,1,1523.88,True,synthetic_benchmark_v1
+3,Cleaning,3.4,0,1045.19,True,synthetic_benchmark_v1
+4,Appliance Repair,0.6,0,219.85,True,synthetic_benchmark_v1
+3,Cleaning,4.9,0,1518.72,True,synthetic_benchmark_v1
+2,Carpentry,2.1,0,931.04,True,synthetic_benchmark_v1
+2,Carpentry,5.5,0,2494.45,True,synthetic_benchmark_v1
+3,Cleaning,5.8,0,1803.09,True,synthetic_benchmark_v1
+0,Plumbing,1.5,0,578.88,True,synthetic_benchmark_v1
+1,Electrical,3.0,1,1325.56,True,synthetic_benchmark_v1
+0,Plumbing,0.5,0,150.0,True,synthetic_benchmark_v1
+0,Plumbing,3.8,0,1365.76,True,synthetic_benchmark_v1
+5,Painting,3.8,0,1447.55,True,synthetic_benchmark_v1
+0,Plumbing,1.9,0,652.48,True,synthetic_benchmark_v1
+4,Appliance Repair,3.6,0,1635.53,True,synthetic_benchmark_v1
+5,Painting,1.7,1,791.93,True,synthetic_benchmark_v1
+5,Painting,1.4,0,549.53,True,synthetic_benchmark_v1
+2,Carpentry,4.1,0,1846.67,True,synthetic_benchmark_v1
+0,Plumbing,2.3,0,823.06,True,synthetic_benchmark_v1
+2,Carpentry,3.7,0,1642.64,True,synthetic_benchmark_v1
+3,Cleaning,2.9,0,905.61,True,synthetic_benchmark_v1
+1,Electrical,5.9,0,2377.44,True,synthetic_benchmark_v1
+5,Painting,1.3,1,660.16,True,synthetic_benchmark_v1
+3,Cleaning,3.1,0,902.06,True,synthetic_benchmark_v1
+3,Cleaning,4.2,0,1302.49,True,synthetic_benchmark_v1
+4,Appliance Repair,2.7,0,1214.66,True,synthetic_benchmark_v1
+1,Electrical,5.9,1,2528.2,True,synthetic_benchmark_v1
+3,Cleaning,4.5,0,1341.93,True,synthetic_benchmark_v1
+3,Cleaning,4.1,0,1236.52,True,synthetic_benchmark_v1
+1,Electrical,4.7,0,1887.43,True,synthetic_benchmark_v1
+1,Electrical,5.7,0,2209.5,True,synthetic_benchmark_v1
+3,Cleaning,5.5,0,1664.56,True,synthetic_benchmark_v1
+1,Electrical,4.5,0,1849.13,True,synthetic_benchmark_v1
+3,Cleaning,4.6,0,1393.49,True,synthetic_benchmark_v1
+3,Cleaning,1.3,0,366.06,True,synthetic_benchmark_v1
+4,Appliance Repair,1.1,1,661.25,True,synthetic_benchmark_v1
+0,Plumbing,3.6,0,1286.49,True,synthetic_benchmark_v1
+3,Cleaning,0.6,0,192.81,True,synthetic_benchmark_v1
+2,Carpentry,3.2,0,1438.15,True,synthetic_benchmark_v1
+5,Painting,1.7,0,639.95,True,synthetic_benchmark_v1
+0,Plumbing,2.4,0,833.84,True,synthetic_benchmark_v1
+0,Plumbing,4.8,0,1697.44,True,synthetic_benchmark_v1
+0,Plumbing,5.7,0,1959.82,True,synthetic_benchmark_v1
+4,Appliance Repair,0.9,0,395.7,True,synthetic_benchmark_v1
+3,Cleaning,3.4,0,1059.89,True,synthetic_benchmark_v1
+4,Appliance Repair,5.4,0,2470.85,True,synthetic_benchmark_v1
+3,Cleaning,1.0,0,263.05,True,synthetic_benchmark_v1
+4,Appliance Repair,5.0,0,2221.71,True,synthetic_benchmark_v1
+4,Appliance Repair,2.5,0,1118.23,True,synthetic_benchmark_v1
+5,Painting,2.3,0,896.31,True,synthetic_benchmark_v1
+2,Carpentry,5.9,0,2609.31,True,synthetic_benchmark_v1
+4,Appliance Repair,1.6,0,718.63,True,synthetic_benchmark_v1
+5,Painting,4.3,0,1622.15,True,synthetic_benchmark_v1
+1,Electrical,5.0,0,2033.15,True,synthetic_benchmark_v1
+2,Carpentry,0.7,0,273.08,True,synthetic_benchmark_v1
+4,Appliance Repair,4.2,0,1892.31,True,synthetic_benchmark_v1
+0,Plumbing,5.7,0,1985.16,True,synthetic_benchmark_v1
+1,Electrical,1.2,0,516.74,True,synthetic_benchmark_v1
+1,Electrical,5.4,0,2174.94,True,synthetic_benchmark_v1
+5,Painting,3.8,1,1579.35,True,synthetic_benchmark_v1
+1,Electrical,3.9,0,1581.33,True,synthetic_benchmark_v1
+2,Carpentry,3.9,0,1745.28,True,synthetic_benchmark_v1
+4,Appliance Repair,2.1,0,969.98,True,synthetic_benchmark_v1
+4,Appliance Repair,5.6,0,2514.07,True,synthetic_benchmark_v1
+0,Plumbing,5.7,0,2021.37,True,synthetic_benchmark_v1
+5,Painting,3.9,0,1492.9,True,synthetic_benchmark_v1
+0,Plumbing,4.8,1,1911.51,True,synthetic_benchmark_v1
+1,Electrical,3.9,0,1558.68,True,synthetic_benchmark_v1
+0,Plumbing,3.2,0,1129.57,True,synthetic_benchmark_v1
+2,Carpentry,4.1,0,1833.01,True,synthetic_benchmark_v1
+4,Appliance Repair,3.5,0,1575.07,True,synthetic_benchmark_v1
+1,Electrical,3.8,0,1452.45,True,synthetic_benchmark_v1
+0,Plumbing,4.8,0,1691.64,True,synthetic_benchmark_v1
+5,Painting,3.1,1,1361.57,True,synthetic_benchmark_v1
+2,Carpentry,0.7,0,324.92,True,synthetic_benchmark_v1
+2,Carpentry,1.4,0,597.15,True,synthetic_benchmark_v1
+0,Plumbing,2.9,1,1144.96,True,synthetic_benchmark_v1
+4,Appliance Repair,4.5,1,2114.25,True,synthetic_benchmark_v1
+0,Plumbing,3.8,0,1354.47,True,synthetic_benchmark_v1
+1,Electrical,4.1,0,1614.84,True,synthetic_benchmark_v1
+0,Plumbing,3.1,0,1084.28,True,synthetic_benchmark_v1
+2,Carpentry,3.9,1,1901.16,True,synthetic_benchmark_v1
+0,Plumbing,2.3,0,842.19,True,synthetic_benchmark_v1
+4,Appliance Repair,3.1,0,1397.13,True,synthetic_benchmark_v1
+5,Painting,4.6,0,1768.22,True,synthetic_benchmark_v1
+3,Cleaning,5.3,0,1603.66,True,synthetic_benchmark_v1
+0,Plumbing,2.9,1,1198.99,True,synthetic_benchmark_v1
+4,Appliance Repair,0.7,1,459.02,True,synthetic_benchmark_v1
+4,Appliance Repair,1.4,0,676.74,True,synthetic_benchmark_v1
+5,Painting,0.6,0,178.36,True,synthetic_benchmark_v1
+2,Carpentry,4.1,0,1866.44,True,synthetic_benchmark_v1
+4,Appliance Repair,2.3,0,1013.33,True,synthetic_benchmark_v1
+0,Plumbing,1.5,0,450.0,False,mysql_production_bookings
+0,Plumbing,1.5,0,200.0,False,mysql_production_bookings
+0,Plumbing,1.5,0,250.0,False,mysql_production_bookings
+1,Electrical,1.0,0,350.0,False,mysql_production_rates
+1,Electrical,1.0,0,300.0,False,mysql_production_rates
+1,Electrical,1.0,0,350.0,False,mysql_production_rates
+0,Plumbing,1.0,0,300.0,False,mysql_production_rates
+4,Appliance Repair,1.0,0,400.0,False,mysql_production_rates
+3,Home Cleaning,1.0,0,250.0,False,mysql_production_rates
+2,Carpentry,1.0,0,450.0,False,mysql_production_rates
+5,Painting,1.0,0,380.0,False,mysql_production_rates

@@ -1,23 +1,52 @@
+import os
+import joblib
 import numpy as np
 import pandas as pd
 from sklearn.ensemble import GradientBoostingRegressor
 import shap
 
+SAVED_MODELS_DIR = os.path.join(os.path.dirname(__file__), 'saved_models')
+
 class TrustEngine:
     """
     Gradient Boosting Machine Learning Engine with SHAP (SHapley Additive exPlanations)
     for transparent, explainable provider trust evaluation.
+    Loads pre-trained model and explainer from serialized joblib artifacts to avoid training on startup.
     """
     def __init__(self):
-        # Features used to calculate the Trust Score (0 - 100 scale)
         self.feature_names = [
             'completed_jobs',
             'cancellation_rate',
             'avg_response_minutes',
             'review_sentiment_avg'
         ]
-        
-        # Gradient Boosting Regressor: Sequential residual learning
+        self.model = None
+        self.explainer = None
+        self._load_or_initialize_model()
+
+    def _load_or_initialize_model(self):
+        """Loads serialized model if available; falls back to initial baseline training once."""
+        model_path = os.path.join(SAVED_MODELS_DIR, 'trust_model.joblib')
+        explainer_path = os.path.join(SAVED_MODELS_DIR, 'trust_explainer.joblib')
+
+        if os.path.exists(model_path) and os.path.exists(explainer_path):
+            try:
+                self.model = joblib.load(model_path)
+                self.explainer = joblib.load(explainer_path)
+                return
+            except Exception as e:
+                print(f"[TrustEngine] Warning: Could not load serialized model: {e}")
+
+        # Fallback initialization (only runs if saved model is missing)
+        self._train_and_save_fallback()
+
+    def _train_and_save_fallback(self):
+        """Trains baseline model on synthetic benchmark data and serializes to disk."""
+        from ml.datasets import generate_synthetic_trust_data
+        df = generate_synthetic_trust_data(n_samples=400)
+        X = df[self.feature_names]
+        y = df['trust_score']
+
         self.model = GradientBoostingRegressor(
             n_estimators=100,
             learning_rate=0.08,
@@ -25,42 +54,17 @@ class TrustEngine:
             subsample=0.85,
             random_state=42
         )
-        self.explainer = None
-        self._train_baseline_model()
-
-    def _train_baseline_model(self):
-        """
-        Trains the Gradient Boosting Regressor on synthetic historical service records.
-        """
-        np.random.seed(42)
-        n_samples = 400
-
-        completed_jobs = np.random.exponential(scale=25, size=n_samples).astype(int)
-        cancellation_rate = np.random.beta(a=1.5, b=8, size=n_samples) * 100
-        avg_response_minutes = np.random.gamma(shape=2, scale=15, size=n_samples).astype(int)
-        review_sentiment_avg = np.random.uniform(low=-0.2, high=1.0, size=n_samples)
-
-        # Ground-truth mathematical formula with realistic real-world trade dynamics
-        trust_scores = (
-            50.0  # Baseline neutral score
-            + np.clip(completed_jobs * 0.85, 0, 30)      # Volume reward (up to +30)
-            - (cancellation_rate * 0.55)                  # Cancellation penalty
-            - np.clip(avg_response_minutes * 0.18, 0, 15) # Delay penalty
-            + (review_sentiment_avg * 20.0)               # Verified NLP sentiment reward
-        )
-        trust_scores = np.clip(trust_scores, 15.0, 99.0)
-
-        X = pd.DataFrame({
-            'completed_jobs': completed_jobs,
-            'cancellation_rate': cancellation_rate,
-            'avg_response_minutes': avg_response_minutes,
-            'review_sentiment_avg': review_sentiment_avg
-        })
-        y = trust_scores
-
         self.model.fit(X, y)
-        # TreeExplainer works out-of-the-box with GradientBoostingRegressor
         self.explainer = shap.TreeExplainer(self.model)
+
+        os.makedirs(SAVED_MODELS_DIR, exist_ok=True)
+        model_path = os.path.join(SAVED_MODELS_DIR, 'trust_model.joblib')
+        explainer_path = os.path.join(SAVED_MODELS_DIR, 'trust_explainer.joblib')
+        try:
+            joblib.dump(self.model, model_path)
+            joblib.dump(self.explainer, explainer_path)
+        except Exception:
+            pass
 
     def calculate_and_explain(self, completed_jobs=0, cancellation_rate=0.0, avg_response_minutes=25, review_sentiment_avg=0.0, **kwargs):
         """

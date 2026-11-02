@@ -1,31 +1,47 @@
+import os
+import joblib
 import numpy as np
 import pandas as pd
 from sklearn.ensemble import GradientBoostingRegressor
 
+SAVED_MODELS_DIR = os.path.join(os.path.dirname(__file__), 'saved_models')
+
 class FairPriceEstimator:
     """
     Estimates fair local market prices using Gradient Boosting Regression.
+    Loads pre-trained model from disk using joblib to avoid training on startup.
     """
     def __init__(self):
+        self.model = None
+        self._load_or_initialize_model()
+
+    def _load_or_initialize_model(self):
+        model_path = os.path.join(SAVED_MODELS_DIR, 'price_model.joblib')
+        if os.path.exists(model_path):
+            try:
+                self.model = joblib.load(model_path)
+                return
+            except Exception as e:
+                print(f"[FairPriceEstimator] Warning: Could not load serialized model: {e}")
+
+        self._train_and_save_fallback()
+
+    def _train_and_save_fallback(self):
+        """Trains baseline model on synthetic benchmark data and serializes to disk."""
+        from ml.datasets import generate_synthetic_price_data
+        df = generate_synthetic_price_data(n_samples=500)
+        X = df[['cat', 'duration', 'emergency']]
+        y = df['price']
+
         self.model = GradientBoostingRegressor(n_estimators=80, learning_rate=0.1, random_state=42)
-        self._train_historical_model()
-
-    def _train_historical_model(self):
-        np.random.seed(42)
-        n = 500
-        categories = np.random.choice([0, 1, 2, 3, 4, 5], size=n) # Encoded categories
-        duration = np.random.uniform(0.5, 6.0, size=n)
-        emergency = np.random.choice([0, 1], size=n, p=[0.8, 0.2])
-
-        base_rates = {0: 350, 1: 400, 2: 450, 3: 300, 4: 450, 5: 380}
-        prices = [
-            (base_rates[cat] * dur) + (150 * em) + np.random.normal(0, 30)
-            for cat, dur, em in zip(categories, duration, emergency)
-        ]
-
-        X = pd.DataFrame({'cat': categories, 'duration': duration, 'emergency': emergency})
-        y = np.maximum(150, prices)
         self.model.fit(X, y)
+
+        os.makedirs(SAVED_MODELS_DIR, exist_ok=True)
+        model_path = os.path.join(SAVED_MODELS_DIR, 'price_model.joblib')
+        try:
+            joblib.dump(self.model, model_path)
+        except Exception:
+            pass
 
     def estimate_price_range(self, category_name=None, duration_hours=1.0, is_emergency=False, category=None, **kwargs):
         resolved_category = category or category_name or 'Plumbing'

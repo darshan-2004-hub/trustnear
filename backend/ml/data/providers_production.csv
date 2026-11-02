@@ -1,0 +1,9 @@
+provider_id,full_name,email,service_category,experience_years,hourly_rate,verification_status,is_available,is_synthetic,data_source
+2,Ramesh Kumar,ramesh.electrician@example.com,Electrical,7,350.0,verified,True,False,mysql_production
+3,Rohan Kumar,rohan465@gmail.com,Electrical,3,300.0,verified,True,False,mysql_production
+4,Rajesh Rao,rajesh.electric@example.com,Electrical,8,350.0,verified,True,False,mysql_production
+5,Suresh Poojary,suresh.plumbing@example.com,Plumbing,12,300.0,verified,True,False,mysql_production
+6,Anil D'Souza,anil.appliances@example.com,Appliance Repair,5,400.0,verified,True,False,mysql_production
+7,Pooja Hegde,pooja.cleaners@example.com,Home Cleaning,4,250.0,verified,True,False,mysql_production
+8,Ibrahim Sheikh,ibrahim.carpenter@example.com,Carpentry,15,450.0,verified,True,False,mysql_production
+12,Kavitha Shenoy,kavitha.painting@example.com,Painting,7,380.0,verified,True,False,mysql_production

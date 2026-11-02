@@ -1,0 +1,24 @@
+{
+  "trained_at": "2026-11-02T16:25:43.338485+00:00",
+  "trust_model": {
+    "model_path": "C:\\Users\\darsh\\trustnear\\backend\\ml\\saved_models\\trust_model.joblib",
+    "explainer_path": "C:\\Users\\darsh\\trustnear\\backend\\ml\\saved_models\\trust_explainer.joblib",
+    "test_metrics": {
+      "mae": 1.7349,
+      "rmse": 2.2699,
+      "r2": 0.9785
+    },
+    "train_samples": 480,
+    "test_samples": 120
+  },
+  "price_model": {
+    "model_path": "C:\\Users\\darsh\\trustnear\\backend\\ml\\saved_models\\price_model.joblib",
+    "test_metrics": {
+      "mae": 36.8471,
+      "rmse": 47.1005,
+      "r2": 0.9942
+    },
+    "train_samples": 640,
+    "test_samples": 160
+  }
+}
