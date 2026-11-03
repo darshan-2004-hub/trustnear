@@ -17,7 +17,7 @@ const ProviderCard = ({ provider, onBook, onViewReviews }) => {
     <div className="theme-card theme-card-hover p-6 flex flex-col justify-between">
       <div>
         {/* Header: Avatar, Name & Actions (Match Score + Trust Badge) */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+        <div className="flex items-start justify-between gap-3 mb-4">
           <div className="flex items-center space-x-3">
             <div className="w-12 h-12 rounded-full p-0.5 bg-gradient-to-tr from-[#6d5dfc] via-[#d946ef] to-[#2dd4bf] shrink-0">
               <div className="w-full h-full rounded-full bg-[#1c2036] flex items-center justify-center text-lg font-black text-white">
@@ -35,10 +35,10 @@ const ProviderCard = ({ provider, onBook, onViewReviews }) => {
             </div>
           </div>
 
-          {/* Header Right: Match Pill + Trust Badge (Natural Flex Row, No Overlap) */}
-          <div className="flex items-center flex-wrap gap-2 self-start sm:self-auto">
+          {/* Header Right: Match Pill + Trust Badge stacked vertically — never overlaps */}
+          <div className="flex flex-col items-end gap-1.5 self-start shrink-0">
             {matchVal !== null && matchVal !== undefined && (
-              <span className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-full bg-[#2dd4bf]/15 text-[#2dd4bf] text-xs font-bold border border-[#2dd4bf]/30 shadow-xs whitespace-nowrap">
+              <span className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-full bg-[#2dd4bf]/15 text-[#2dd4bf] text-xs font-bold border border-[#2dd4bf]/30 whitespace-nowrap">
                 <span>✨</span>
                 <span>{matchVal}% Match</span>
               </span>
