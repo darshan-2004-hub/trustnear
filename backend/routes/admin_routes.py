@@ -1,3 +1,4 @@
+import re
 from functools import wraps
 from flask import Blueprint, request, jsonify
 from models.schema_models import db, User, ProviderProfile, Booking, Review, TrustMetric
@@ -121,7 +122,7 @@ def update_provider_verification(current_user, user_id):
 @admin_required
 def list_flagged_reviews(current_user):
     """
-    Lists all reviews flagged by NLP for admin moderation.
+    Lists all reviews flagged by NLP for admin moderation with flag_reasons and similarity_score.
     """
     reviews = Review.query.filter_by(is_approved_by_admin=False)\
         .order_by(Review.created_at.desc()).all()
@@ -131,6 +132,16 @@ def list_flagged_reviews(current_user):
         customer = User.query.get(r.customer_id)
         provider = User.query.get(r.provider_id)
         booking = Booking.query.get(r.booking_id)
+
+        flag_reasons = [fr.strip() for fr in r.flag_reason.split(' | ')] if r.flag_reason else []
+        sim_score = None
+        if r.flag_reason:
+            m = re.search(r'([\d\.]+)%\s+TF-IDF\s+similarity', r.flag_reason)
+            if m:
+                try:
+                    sim_score = round(float(m.group(1)) / 100.0, 4)
+                except ValueError:
+                    pass
 
         flagged_list.append({
             'id': r.id,
@@ -143,6 +154,8 @@ def list_flagged_reviews(current_user):
             'review_text': r.review_text,
             'sentiment_score': float(r.sentiment_score) if r.sentiment_score is not None else 0.0,
             'flag_reason': r.flag_reason,
+            'flag_reasons': flag_reasons,
+            'similarity_score': sim_score,
             'created_at': r.created_at.isoformat() if r.created_at else None
         })
 

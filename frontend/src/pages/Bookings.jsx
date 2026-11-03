@@ -49,6 +49,59 @@ const Bookings = () => {
   const isCustomer = user?.role === 'customer';
   const isProvider = user?.role === 'provider';
 
+  // Live Provider ML Trust Metrics State
+  const [providerTrustData, setProviderTrustData] = useState(null);
+  const [trustLoading, setTrustLoading] = useState(false);
+
+  const fetchProviderMetrics = async () => {
+    if (user?.role !== 'provider') return;
+    setTrustLoading(true);
+    try {
+      const [meRes, providersRes] = await Promise.allSettled([
+        api.get('/auth/me'),
+        api.get('/providers')
+      ]);
+
+      let score = null;
+      let shap = null;
+      let note = null;
+
+      if (providersRes.status === 'fulfilled' && providersRes.value.data?.success) {
+        const found = (providersRes.value.data.providers || []).find(
+          (p) => p.user_id === user.id || p.id === user.id
+        );
+        if (found) {
+          score = found.trust_score;
+          shap = found.shap_factors;
+          note = found.evidence_note;
+        }
+      }
+
+      if (score === null && meRes.status === 'fulfilled' && meRes.value.data?.success) {
+        const tm = meRes.value.data.user?.trust_metrics;
+        if (tm && tm.trust_score !== null && tm.trust_score !== undefined) {
+          score = Number(tm.trust_score);
+          shap = tm.shap_factors;
+        }
+      }
+
+      if (score !== null && score !== undefined) {
+        setProviderTrustData({
+          trust_score: Number(score),
+          shap_factors: shap,
+          evidence_note: note,
+        });
+      } else {
+        setProviderTrustData(null);
+      }
+    } catch (err) {
+      console.warn('Could not fetch real-time provider trust metrics:', err.message);
+      setProviderTrustData(null);
+    } finally {
+      setTrustLoading(false);
+    }
+  };
+
   const fetchBookings = async () => {
     setLoading(true);
     try {
@@ -65,6 +118,9 @@ const Bookings = () => {
 
   useEffect(() => {
     fetchBookings();
+    if (user?.role === 'provider') {
+      fetchProviderMetrics();
+    }
 
     const socket = io('http://localhost:5000', {
       transports: ['websocket', 'polling'],
@@ -91,7 +147,7 @@ const Bookings = () => {
     return () => {
       socket.disconnect();
     };
-  }, [token]);
+  }, [token, user?.role, user?.id]);
 
   const handleStatusUpdate = async (bookingId, newStatus) => {
     setActionLoading(bookingId);
@@ -101,6 +157,10 @@ const Bookings = () => {
         setBookings((prev) =>
           prev.map((b) => (b.id === bookingId ? { ...b, status: newStatus } : b))
         );
+        // Refresh provider trust metrics on job completion or cancellation
+        if (isProvider && (newStatus === 'completed' || newStatus === 'cancelled')) {
+          fetchProviderMetrics();
+        }
       }
     } catch (err) {
       alert(err.response?.data?.message || 'Failed to update appointment status.');
@@ -118,9 +178,12 @@ const Bookings = () => {
     .filter((b) => b.status === 'completed')
     .reduce((sum, b) => sum + (parseFloat(b.agreed_price) || 0), 0);
 
-  const providerTrustScore = user?.trust_metrics?.trust_score !== undefined && user?.trust_metrics?.trust_score !== null
-    ? Number(user.trust_metrics.trust_score)
-    : 50.0;
+  // Real provider trust score — never defaults to misleading 50.0
+  const providerTrustScore = providerTrustData?.trust_score !== undefined && providerTrustData?.trust_score !== null
+    ? Number(providerTrustData.trust_score)
+    : user?.trust_metrics?.trust_score !== undefined && user?.trust_metrics?.trust_score !== null
+      ? Number(user.trust_metrics.trust_score)
+      : null;
 
   // Filter list
   const filteredBookings = bookings.filter((b) => {
@@ -231,12 +294,37 @@ const Bookings = () => {
                 <span className="text-xs text-[#2dd4bf]">★</span>
               </div>
               <div>
-                <p className="text-2xl sm:text-3xl font-black text-[#2dd4bf]">
-                  {Number(providerTrustScore).toFixed(1)} <span className="text-xs font-normal text-[#a9b0d0]">/ 100</span>
-                </p>
-                <div className="mt-2">
-                  <TrustBadge score={providerTrustScore} providerName={user?.full_name} />
-                </div>
+                {trustLoading ? (
+                  <div className="py-2">
+                    <div className="h-8 w-24 bg-[#1c2036] rounded-lg animate-pulse mb-2" />
+                    <span className="text-[11px] text-[#a9b0d0]">Fetching verified metrics...</span>
+                  </div>
+                ) : providerTrustScore !== null && providerTrustScore !== undefined ? (
+                  <>
+                    <p className="text-2xl sm:text-3xl font-black text-[#2dd4bf]">
+                      {Number(providerTrustScore).toFixed(1)} <span className="text-xs font-normal text-[#a9b0d0]">/ 100</span>
+                    </p>
+                    <div className="mt-2">
+                      <TrustBadge 
+                        score={providerTrustScore} 
+                        providerName={user?.full_name} 
+                        shapFactors={providerTrustData?.shap_factors}
+                      />
+                    </div>
+                    {providerTrustData?.evidence_note && (
+                      <p className="text-[10px] text-[#a9b0d0] mt-1.5 truncate" title={providerTrustData.evidence_note}>
+                        {providerTrustData.evidence_note}
+                      </p>
+                    )}
+                  </>
+                ) : (
+                  <div className="py-1">
+                    <p className="text-lg font-bold text-[#fbbf24]">Unavailable</p>
+                    <span className="text-[11px] text-[#a9b0d0] block mt-0.5">
+                      Pending verified jobs & reviews
+                    </span>
+                  </div>
+                )}
               </div>
             </div>
           )}
@@ -319,9 +407,13 @@ const Bookings = () => {
                           {b.booking_date} • {b.booking_time}
                         </td>
 
-                        {/* Fee */}
+                        {/* Fee — Actual booking price or TBD (never fabricated fallback) */}
                         <td className="py-3.5 pr-2 font-bold text-white whitespace-nowrap">
-                          ₹{b.agreed_price || 350}
+                          {b.agreed_price ? (
+                            `₹${parseFloat(b.agreed_price).toFixed(0)}`
+                          ) : (
+                            <span className="text-[#a9b0d0] italic text-[11px]">TBD</span>
+                          )}
                         </td>
 
                         {/* Status Pill */}

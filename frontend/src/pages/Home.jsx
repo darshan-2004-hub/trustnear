@@ -148,7 +148,7 @@ const Home = () => {
             Find people you can <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#6d5dfc] via-[#d946ef] to-[#2dd4bf]">trust</span>, right near you
           </h1>
 
-          <p className="text-base sm:text-lg text-[#a9b0d0] max-w-2xl mx-auto mb-10 font-normal">
+          <p className="text-base sm:lg text-[#a9b0d0] max-w-2xl mx-auto mb-10 font-normal">
             No more deceptive 5-star ratings. TrustNear evaluates real completed jobs, cancellation history, and fair market pricing with verifiable Machine Learning.
           </p>
 
@@ -275,7 +275,7 @@ const Home = () => {
             onClick={() => navigate('/providers')}
             className="text-xs font-bold text-[#6d5dfc] hover:text-[#d946ef] transition-colors flex items-center space-x-1 cursor-pointer"
           >
-            <span>Explore Map</span>
+            <span>View All Providers</span>
             <ArrowRight className="w-3.5 h-3.5" />
           </button>
         </div>

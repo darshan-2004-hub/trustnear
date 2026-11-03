@@ -87,7 +87,7 @@ const Navbar = () => {
                 }`}
               >
                 <CalendarCheck className="w-4 h-4 text-[#d946ef]" />
-                <span>My Bookings</span>
+                <span>{user?.role === 'provider' ? 'Job Queue' : 'My Bookings'}</span>
               </Link>
             )}
 
@@ -188,7 +188,7 @@ const Navbar = () => {
               onClick={() => setMobileMenuOpen(false)}
               className="block px-3 py-2 rounded-xl text-sm font-medium text-white hover:bg-[#1c2036]"
             >
-              My Bookings
+              {user?.role === 'provider' ? 'Job Queue' : 'My Bookings'}
             </Link>
           )}
 

@@ -319,34 +319,88 @@ const AdminDashboard = () => {
               </div>
             ) : (
               <div className="space-y-4 text-xs">
-                {flaggedReviews.map((r) => (
-                  <div key={r.id} className="p-4 rounded-xl bg-[#1c2036] border border-[#363d66] space-y-2">
-                    <div className="flex items-center justify-between">
-                      <span className="font-bold text-white">{r.customer_name} → {r.provider_name}</span>
-                      <span className="text-[#fbbf24] font-bold">Rating: {r.rating} ★</span>
+                {flaggedReviews.map((r) => {
+                  const reasons = Array.isArray(r.flag_reasons) && r.flag_reasons.length > 0
+                    ? r.flag_reasons
+                    : r.flag_reason
+                      ? r.flag_reason.split(' | ').filter(Boolean)
+                      : ['NLP Sentiment discrepancy or duplicate template pattern'];
+
+                  return (
+                    <div key={r.id} className="p-4 rounded-xl bg-[#1c2036] border border-[#363d66] space-y-3">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <span className="font-bold text-white">{r.customer_name}</span>
+                          <span className="text-[#a9b0d0] mx-1.5">→</span>
+                          <span className="font-bold text-[#6d5dfc]">{r.provider_name}</span>
+                          {r.service_title && (
+                            <span className="text-[11px] text-[#a9b0d0] ml-2">({r.service_title})</span>
+                          )}
+                        </div>
+                        <span className="text-[#fbbf24] font-bold">Rating: {r.rating} ★</span>
+                      </div>
+
+                      <p className="text-[#a9b0d0] italic bg-[#262b47]/40 p-2.5 rounded-lg border border-[#363d66]/50">
+                        "{r.review_text}"
+                      </p>
+
+                      {/* NLP Metrics Badges (Sentiment & Similarity) */}
+                      <div className="flex flex-wrap items-center gap-2">
+                        {r.sentiment_score !== undefined && r.sentiment_score !== null && (
+                          <span className={`px-2 py-0.5 rounded-md font-semibold text-[11px] border ${
+                            r.sentiment_score < -0.05 
+                              ? 'bg-rose-500/15 text-rose-300 border-rose-500/30' 
+                              : r.sentiment_score > 0.05 
+                                ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30' 
+                                : 'bg-slate-500/15 text-[#a9b0d0] border-[#363d66]'
+                          }`}>
+                            VADER Sentiment: {Number(r.sentiment_score) > 0 ? `+${Number(r.sentiment_score).toFixed(2)}` : Number(r.sentiment_score).toFixed(2)}
+                          </span>
+                        )}
+
+                        {r.similarity_score !== undefined && r.similarity_score !== null && (
+                          <span className="px-2 py-0.5 rounded-md font-semibold text-[11px] bg-[#fbbf24]/15 text-[#fbbf24] border border-[#fbbf24]/30">
+                            TF-IDF Similarity: {(Number(r.similarity_score) * 100).toFixed(1)}%
+                          </span>
+                        )}
+                      </div>
+
+                      {/* Phase 4 Flag Reasons Breakdown */}
+                      <div className="space-y-1.5">
+                        <span className="text-[10px] font-bold text-[#a9b0d0] uppercase tracking-wider block">
+                          NLP Screening Reasons:
+                        </span>
+                        {reasons.map((reason, idx) => (
+                          <div
+                            key={idx}
+                            className="p-2 rounded-lg bg-rose-500/10 border border-rose-500/20 text-rose-300 font-medium text-[11px] flex items-start space-x-1.5"
+                          >
+                            <span className="text-rose-400 font-bold shrink-0">•</span>
+                            <span>{reason}</span>
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Moderation Controls */}
+                      <div className="flex justify-end space-x-2 pt-2 border-t border-[#363d66]/50">
+                        <button
+                          onClick={() => handleReviewAction(r.id, 'approve')}
+                          disabled={actionLoading === `review-${r.id}`}
+                          className="px-3.5 py-1.5 rounded-xl bg-[#2dd4bf]/20 text-[#2dd4bf] hover:bg-[#2dd4bf]/30 font-bold transition cursor-pointer"
+                        >
+                          Approve (Keep)
+                        </button>
+                        <button
+                          onClick={() => handleReviewAction(r.id, 'delete')}
+                          disabled={actionLoading === `review-${r.id}`}
+                          className="px-3.5 py-1.5 rounded-xl bg-rose-500/20 text-rose-400 hover:bg-rose-500/30 font-bold transition cursor-pointer"
+                        >
+                          Remove Review
+                        </button>
+                      </div>
                     </div>
-                    <p className="text-[#a9b0d0] italic">"{r.review_text}"</p>
-                    <div className="p-2.5 rounded-lg bg-rose-500/10 border border-rose-500/20 text-rose-300 font-semibold text-[11px]">
-                      Flag Reason: {r.flag_reason || 'NLP Sentiment discrepancy or duplicate template pattern'}
-                    </div>
-                    <div className="flex justify-end space-x-2 pt-2">
-                      <button
-                        onClick={() => handleReviewAction(r.id, 'approve')}
-                        disabled={actionLoading === `review-${r.id}`}
-                        className="px-3 py-1.5 rounded-xl bg-[#2dd4bf]/20 text-[#2dd4bf] hover:bg-[#2dd4bf]/30 font-bold"
-                      >
-                        Approve (Keep)
-                      </button>
-                      <button
-                        onClick={() => handleReviewAction(r.id, 'delete')}
-                        disabled={actionLoading === `review-${r.id}`}
-                        className="px-3 py-1.5 rounded-xl bg-rose-500/20 text-rose-400 hover:bg-rose-500/30 font-bold"
-                      >
-                        Delete Fake Review
-                      </button>
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             )}
           </div>
