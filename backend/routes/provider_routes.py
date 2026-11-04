@@ -1,7 +1,9 @@
 import math
+from datetime import datetime, timezone
 from flask import Blueprint, request, jsonify
 from sqlalchemy import func
-from models.schema_models import db, User, ProviderProfile, TrustMetric, Review
+from models.schema_models import db, User, ProviderProfile, TrustMetric, Review, Booking
+from routes.auth_routes import token_required
 from ml.price_estimator import price_estimator
 from ml.ranker import personalize_ranking
 
@@ -129,6 +131,192 @@ def estimate_price():
     return jsonify({
         'success': True,
         'estimation': estimation
+    }), 200
+
+
+@provider_bp.route('/dashboard/analytics', methods=['GET'])
+@token_required
+def get_provider_dashboard_analytics(current_user):
+    """
+    Returns dedicated analytics and performance KPIs for the authenticated provider.
+    Enforces role-based access and provider data ownership.
+    """
+    if current_user.role != 'provider':
+        return jsonify({'success': False, 'message': 'Forbidden: Provider access required.'}), 403
+
+    provider_id = current_user.id
+    profile = ProviderProfile.query.filter_by(user_id=provider_id).first()
+    if not profile:
+        return jsonify({'success': False, 'message': 'Provider profile not found.'}), 404
+
+    # 1. Query all bookings for this provider
+    bookings = Booking.query.filter_by(provider_id=provider_id)\
+        .order_by(Booking.booking_date.asc(), Booking.created_at.asc()).all()
+
+    total_bookings = len(bookings)
+    pending_count = sum(1 for b in bookings if b.status == 'pending')
+    accepted_count = sum(1 for b in bookings if b.status == 'accepted')
+    in_progress_count = sum(1 for b in bookings if b.status == 'in_progress')
+    active_count = accepted_count + in_progress_count
+    completed_count = sum(1 for b in bookings if b.status == 'completed')
+    cancelled_count = sum(1 for b in bookings if b.status == 'cancelled')
+
+    # Total earnings from completed bookings only, using actual agreed prices
+    total_earnings = sum(
+        float(b.agreed_price) for b in bookings
+        if b.status == 'completed' and b.agreed_price is not None
+    )
+
+    # Status distribution with counts and percentages
+    status_distribution = {
+        'pending': pending_count,
+        'accepted': accepted_count,
+        'in_progress': in_progress_count,
+        'active': active_count,
+        'completed': completed_count,
+        'cancelled': cancelled_count,
+        'percentages': {
+            'pending': round((pending_count / total_bookings * 100), 1) if total_bookings > 0 else 0.0,
+            'active': round((active_count / total_bookings * 100), 1) if total_bookings > 0 else 0.0,
+            'completed': round((completed_count / total_bookings * 100), 1) if total_bookings > 0 else 0.0,
+            'cancelled': round((cancelled_count / total_bookings * 100), 1) if total_bookings > 0 else 0.0,
+        }
+    }
+
+    # 2. Monthly Earnings & Booking Trends
+    today = datetime.now(timezone.utc).date()
+    month_keys = []
+    for i in range(5, -1, -1):
+        year = today.year
+        month = today.month - i
+        while month <= 0:
+            month += 12
+            year -= 1
+        m_date = datetime(year, month, 1).date()
+        month_keys.append(m_date.strftime('%Y-%m'))
+
+    for b in bookings:
+        if b.booking_date:
+            b_key = b.booking_date.strftime('%Y-%m')
+            if b_key not in month_keys:
+                month_keys.append(b_key)
+
+    month_keys.sort()
+    if len(month_keys) > 12:
+        month_keys = month_keys[-12:]
+
+    monthly_stats = {
+        m_key: {
+            'month_key': m_key,
+            'month': datetime.strptime(m_key, '%Y-%m').strftime('%b %Y'),
+            'short_month': datetime.strptime(m_key, '%Y-%m').strftime('%b'),
+            'earnings': 0.0,
+            'completed_count': 0,
+            'total_bookings': 0,
+            'cancelled_count': 0,
+            'active_count': 0
+        }
+        for m_key in month_keys
+    }
+
+    for b in bookings:
+        if b.booking_date:
+            b_key = b.booking_date.strftime('%Y-%m')
+            if b_key in monthly_stats:
+                monthly_stats[b_key]['total_bookings'] += 1
+                if b.status == 'completed':
+                    monthly_stats[b_key]['completed_count'] += 1
+                    if b.agreed_price is not None:
+                        monthly_stats[b_key]['earnings'] += float(b.agreed_price)
+                elif b.status == 'cancelled':
+                    monthly_stats[b_key]['cancelled_count'] += 1
+                elif b.status in ['accepted', 'in_progress', 'pending']:
+                    monthly_stats[b_key]['active_count'] += 1
+
+    monthly_series = [monthly_stats[k] for k in month_keys]
+
+    # 3. Trust Score, Evidence & Performance Metrics
+    trust_record = TrustMetric.query.filter_by(provider_id=provider_id).first()
+
+    reviews_all = Review.query.filter_by(
+        provider_id=provider_id,
+        is_approved_by_admin=True,
+        is_suspicious=False
+    ).order_by(Review.created_at.desc()).all()
+
+    review_count = len(reviews_all)
+    avg_rating = round(sum(r.rating for r in reviews_all) / review_count, 1) if review_count > 0 else None
+
+    recent_reviews = []
+    for r in reviews_all[:5]:
+        cust = User.query.get(r.customer_id)
+        b_item = Booking.query.get(r.booking_id)
+        recent_reviews.append({
+            'id': r.id,
+            'rating': r.rating,
+            'review_text': r.review_text,
+            'sentiment_score': float(r.sentiment_score) if r.sentiment_score is not None else None,
+            'customer_name': cust.full_name if cust else 'Verified Customer',
+            'service_title': b_item.service_title if b_item else 'Home Service',
+            'created_at': r.created_at.strftime('%d %b %Y') if r.created_at else None
+        })
+
+    if trust_record:
+        trust_score = float(trust_record.trust_score) if trust_record.trust_score is not None else None
+        cancellation_rate = float(trust_record.cancellation_rate) if trust_record.cancellation_rate is not None else 0.0
+        avg_response_minutes = trust_record.avg_response_minutes
+        shap_factors = trust_record.shap_factors
+    else:
+        trust_score = None
+        cancellation_rate = 0.0
+        avg_response_minutes = None
+        shap_factors = None
+
+    if completed_count > 0 and review_count > 0:
+        data_source = 'real'
+        evidence_note = f"Score computed from {completed_count} verified booking(s) and {review_count} real community review(s)."
+    elif completed_count > 0 or review_count > 0:
+        data_source = 'hybrid'
+        evidence_note = f"Score based on {completed_count} completed job(s) and {review_count} review(s), augmented with local benchmark data."
+    else:
+        data_source = 'synthetic'
+        evidence_note = "Baseline score — provider has no completed jobs or reviews yet. Metric will update automatically as services are delivered."
+
+    return jsonify({
+        'success': True,
+        'profile': {
+            'user_id': current_user.id,
+            'full_name': current_user.full_name,
+            'email': current_user.email,
+            'phone': current_user.phone,
+            'service_category': profile.service_category,
+            'experience_years': profile.experience_years,
+            'hourly_rate': float(profile.hourly_rate),
+            'service_address': profile.service_address,
+            'verification_status': profile.verification_status,
+            'is_available': profile.is_available,
+        },
+        'kpis': {
+            'total_bookings': total_bookings,
+            'pending_requests': pending_count,
+            'active_jobs': active_count,
+            'completed_jobs': completed_count,
+            'cancelled_jobs': cancelled_count,
+            'total_earnings': round(total_earnings, 2),
+            'trust_score': trust_score,
+            'evidence_note': evidence_note,
+            'data_source': data_source,
+            'shap_factors': shap_factors,
+            'avg_rating': avg_rating,
+            'reviews_count': review_count,
+            'avg_response_minutes': avg_response_minutes,
+            'cancellation_rate': cancellation_rate,
+        },
+        'analytics': {
+            'monthly_series': monthly_series,
+            'status_distribution': status_distribution,
+        },
+        'recent_reviews': recent_reviews
     }), 200
 
 

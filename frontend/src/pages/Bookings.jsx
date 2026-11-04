@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import { io } from 'socket.io-client';
 import api from '../services/api';
 import { useAuth } from '../context/AuthContext';
@@ -22,7 +23,9 @@ import {
   Users,
   IndianRupee,
   ShoppingBag,
-  FileText
+  FileText,
+  TrendingUp,
+  ChevronRight
 } from 'lucide-react';
 
 const STATUS_PILLS = {
@@ -226,7 +229,7 @@ const Bookings = () => {
           <div>
             <div className="flex items-center space-x-2.5">
               <h1 className="text-2xl sm:text-3xl font-black text-white">
-                {isCustomer ? 'My Bookings & Appointments' : 'Provider Service Dashboard'}
+                {isCustomer ? 'My Bookings & Appointments' : 'Provider Job Queue & Work Orders'}
               </h1>
               <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded-full bg-[#2dd4bf]/15 text-[#2dd4bf] border border-[#2dd4bf]/30">
                 {user?.role}
@@ -235,9 +238,21 @@ const Bookings = () => {
             <p className="text-xs text-[#a9b0d0] mt-1">
               {isCustomer
                 ? 'Track your home service requests, coordinate live with assigned pros, and view official invoices.'
-                : 'Manage incoming customer service requests, update work progress, and monitor your ML Trust Score.'}
+                : 'Manage active customer jobs, accept or decline incoming requests, update work progress, and coordinate with clients.'}
             </p>
           </div>
+
+          {/* Quick link for providers to jump to their dedicated dashboard */}
+          {isProvider && (
+            <Link
+              to="/provider-dashboard"
+              className="btn-secondary px-3.5 py-2 text-xs font-bold flex items-center space-x-1.5 shadow-sm hover:border-[#6d5dfc] transition-colors"
+            >
+              <TrendingUp className="w-3.5 h-3.5 text-[#2dd4bf]" />
+              <span>Provider Analytics</span>
+              <ChevronRight className="w-3.5 h-3.5 text-[#a9b0d0]" />
+            </Link>
+          )}
         </div>
 
         {/* 4 STAT CARDS */}

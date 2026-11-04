@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { ShieldCheck, Mail, Lock, AlertCircle, ArrowRight, Sparkles } from 'lucide-react';
 
@@ -12,6 +12,7 @@ const Login = () => {
 
   const { login } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const validate = () => {
     const errs = {};
@@ -42,7 +43,16 @@ const Login = () => {
     try {
       const res = await login(email.trim().toLowerCase(), password);
       if (res.success) {
-        navigate('/');
+        const fromPath = location.state?.from?.pathname;
+        if (fromPath && fromPath !== '/login') {
+          navigate(fromPath, { replace: true });
+        } else if (res.user?.role === 'provider') {
+          navigate('/provider-dashboard', { replace: true });
+        } else if (res.user?.role === 'admin') {
+          navigate('/admin', { replace: true });
+        } else {
+          navigate('/', { replace: true });
+        }
       } else {
         setServerError(res.message || 'Invalid email or password.');
       }

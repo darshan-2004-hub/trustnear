@@ -9,7 +9,9 @@ import {
   LogOut, 
   Menu, 
   X, 
-  Sparkles 
+  Sparkles,
+  TrendingUp,
+  Briefcase
 } from 'lucide-react';
 
 const Navbar = () => {
@@ -26,6 +28,8 @@ const Navbar = () => {
 
   const isActive = (path) => location.pathname === path;
   const isUserLoggedIn = Boolean(user || isAuthenticated);
+  const isProvider = user?.role === 'provider';
+  const isAdmin = user?.role === 'admin';
 
   return (
     <nav className="sticky top-0 z-40 bg-[#1c2036]/90 backdrop-blur-xl border-b border-[#363d66]">
@@ -52,7 +56,7 @@ const Navbar = () => {
             </div>
           </Link>
 
-          {/* Nav Links */}
+          {/* Desktop Nav Links */}
           <div className="hidden md:flex items-center space-x-2">
             <Link
               to="/"
@@ -64,6 +68,36 @@ const Navbar = () => {
             >
               Home
             </Link>
+
+            {/* Provider-Specific Dashboard Link */}
+            {isUserLoggedIn && isProvider && (
+              <Link
+                to="/provider-dashboard"
+                className={`flex items-center space-x-1.5 px-3.5 py-2 rounded-xl text-sm font-medium transition-all ${
+                  isActive('/provider-dashboard') 
+                    ? 'bg-[#6d5dfc]/15 text-[#6d5dfc] border border-[#6d5dfc]/30' 
+                    : 'text-[#a9b0d0] hover:text-white hover:bg-[#262b47]'
+                }`}
+              >
+                <TrendingUp className="w-4 h-4 text-[#2dd4bf]" />
+                <span>Dashboard</span>
+              </Link>
+            )}
+
+            {/* Job Queue for Providers / My Bookings for Customers */}
+            {isUserLoggedIn && (
+              <Link
+                to={isProvider ? "/job-queue" : "/bookings"}
+                className={`flex items-center space-x-1.5 px-3.5 py-2 rounded-xl text-sm font-medium transition-all ${
+                  isActive('/bookings') || isActive('/job-queue')
+                    ? 'bg-[#6d5dfc]/15 text-[#6d5dfc] border border-[#6d5dfc]/30' 
+                    : 'text-[#a9b0d0] hover:text-white hover:bg-[#262b47]'
+                }`}
+              >
+                <CalendarCheck className="w-4 h-4 text-[#d946ef]" />
+                <span>{isProvider ? 'Job Queue' : 'My Bookings'}</span>
+              </Link>
+            )}
 
             <Link
               to="/providers"
@@ -77,21 +111,7 @@ const Navbar = () => {
               <span>Find Services</span>
             </Link>
 
-            {isUserLoggedIn && (
-              <Link
-                to="/bookings"
-                className={`flex items-center space-x-1.5 px-3.5 py-2 rounded-xl text-sm font-medium transition-all ${
-                  isActive('/bookings') 
-                    ? 'bg-[#6d5dfc]/15 text-[#6d5dfc] border border-[#6d5dfc]/30' 
-                    : 'text-[#a9b0d0] hover:text-white hover:bg-[#262b47]'
-                }`}
-              >
-                <CalendarCheck className="w-4 h-4 text-[#d946ef]" />
-                <span>{user?.role === 'provider' ? 'Job Queue' : 'My Bookings'}</span>
-              </Link>
-            )}
-
-            {isUserLoggedIn && user?.role === 'admin' && (
+            {isUserLoggedIn && isAdmin && (
               <Link
                 to="/admin"
                 className={`flex items-center space-x-1.5 px-3.5 py-2 rounded-xl text-sm font-medium transition-all ${
@@ -111,7 +131,7 @@ const Navbar = () => {
             {isUserLoggedIn ? (
               <div className="flex items-center space-x-3">
                 <Link
-                  to="/bookings"
+                  to={isProvider ? "/provider-dashboard" : isAdmin ? "/admin" : "/bookings"}
                   className="flex items-center space-x-2 px-3 py-1.5 rounded-xl bg-[#262b47] border border-[#363d66] hover:border-[#6d5dfc] transition-colors"
                 >
                   <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-[#6d5dfc] to-[#d946ef] text-white flex items-center justify-center font-bold text-xs">
@@ -175,6 +195,24 @@ const Navbar = () => {
           >
             Home
           </Link>
+          {isUserLoggedIn && isProvider && (
+            <Link
+              to="/provider-dashboard"
+              onClick={() => setMobileMenuOpen(false)}
+              className="block px-3 py-2 rounded-xl text-sm font-medium text-white hover:bg-[#1c2036]"
+            >
+              Provider Dashboard
+            </Link>
+          )}
+          {isUserLoggedIn && (
+            <Link
+              to={isProvider ? "/job-queue" : "/bookings"}
+              onClick={() => setMobileMenuOpen(false)}
+              className="block px-3 py-2 rounded-xl text-sm font-medium text-white hover:bg-[#1c2036]"
+            >
+              {isProvider ? 'Job Queue' : 'My Bookings'}
+            </Link>
+          )}
           <Link
             to="/providers"
             onClick={() => setMobileMenuOpen(false)}
@@ -182,13 +220,13 @@ const Navbar = () => {
           >
             Find Services
           </Link>
-          {isUserLoggedIn && (
+          {isUserLoggedIn && isAdmin && (
             <Link
-              to="/bookings"
+              to="/admin"
               onClick={() => setMobileMenuOpen(false)}
-              className="block px-3 py-2 rounded-xl text-sm font-medium text-white hover:bg-[#1c2036]"
+              className="block px-3 py-2 rounded-xl text-sm font-medium text-purple-300 hover:bg-[#1c2036]"
             >
-              {user?.role === 'provider' ? 'Job Queue' : 'My Bookings'}
+              Admin Console
             </Link>
           )}
 

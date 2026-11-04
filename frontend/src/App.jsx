@@ -7,6 +7,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import SearchProviders from './pages/SearchProviders';
 import Bookings from './pages/Bookings';
+import ProviderDashboard from './pages/ProviderDashboard';
 import AdminDashboard from './pages/AdminDashboard';
 import AIAssistantWidget from './components/AIAssistantWidget';
 
@@ -17,6 +18,27 @@ const ProtectedRoute = ({ children, adminOnly = false }) => {
   if (!user) return <Navigate to="/login" replace />;
   if (adminOnly && user.role !== 'admin') return <Navigate to="/" replace />;
   return children;
+};
+
+// Route guard specifically for providers
+const ProviderRoute = ({ children }) => {
+  const { user, loading } = useAuth();
+  if (loading) return null;
+  if (!user) return <Navigate to="/login" replace />;
+  if (user.role !== 'provider') return <Navigate to="/bookings" replace />;
+  return children;
+};
+
+// Smart redirect for legacy /dashboard route
+const DashboardRedirect = () => {
+  const { user } = useAuth();
+  if (user?.role === 'provider') {
+    return <Navigate to="/provider-dashboard" replace />;
+  }
+  if (user?.role === 'admin') {
+    return <Navigate to="/admin" replace />;
+  }
+  return <Navigate to="/bookings" replace />;
 };
 
 function App() {
@@ -33,6 +55,22 @@ function App() {
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
               <Route 
+                path="/provider-dashboard" 
+                element={
+                  <ProviderRoute>
+                    <ProviderDashboard />
+                  </ProviderRoute>
+                } 
+              />
+              <Route 
+                path="/job-queue" 
+                element={
+                  <ProtectedRoute>
+                    <Bookings />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
                 path="/bookings" 
                 element={
                   <ProtectedRoute>
@@ -44,7 +82,7 @@ function App() {
                 path="/dashboard" 
                 element={
                   <ProtectedRoute>
-                    <Bookings />
+                    <DashboardRedirect />
                   </ProtectedRoute>
                 } 
               />
@@ -56,10 +94,12 @@ function App() {
                   </ProtectedRoute>
                 } 
               />
+              {/* Fallback */}
+              <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </main>
           
-          {/* AI Floating Assistant */}
+          {/* Global Floating AI Assistant Widget */}
           <AIAssistantWidget />
         </div>
       </Router>
