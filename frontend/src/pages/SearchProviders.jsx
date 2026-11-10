@@ -81,7 +81,7 @@ const SearchProviders = () => {
   const handleBook = (provider) => {
     if (!isAuthenticated) {
       const providerId = provider.user_id || provider.id;
-      navigate('/login', {
+      navigate('/login/customer', {
         state: {
           from: location.pathname,
           bookProviderId: providerId,
@@ -94,45 +94,45 @@ const SearchProviders = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#1c2036] text-[#f1f3ff] py-8 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-[#f8fafc] text-[#172033] py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto space-y-6">
         
         {/* Top Header */}
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl sm:text-3xl font-black text-white">Explore Verified Local Pros</h1>
-            <p className="text-xs text-[#a9b0d0] mt-1">
+            <h1 className="text-2xl sm:text-3xl font-black text-[#172033]">Explore Verified Local Pros</h1>
+            <p className="text-xs text-[#475569] mt-1">
               Live geolocation radar in Mangaluru with explainable Trust Intelligence & fair pricing.
             </p>
           </div>
 
           <button
             onClick={() => setShowFairPriceModal(true)}
-            className="btn-secondary px-4 py-2.5 text-xs font-bold flex items-center space-x-2"
+            className="btn-secondary px-4 py-2.5 text-xs font-bold flex items-center space-x-2 rounded-xl cursor-pointer shadow-2xs"
           >
-            <Calculator className="w-4 h-4 text-[#2dd4bf]" />
+            <Calculator className="w-4 h-4 text-blue-600" />
             <span>Fair Price Calculator</span>
           </button>
         </div>
 
         {/* Filter & Priority Bar */}
-        <div className="theme-card p-4 flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4">
+        <div className="bg-white rounded-2xl border border-[#e2e8f0] p-4 flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4 shadow-sm">
           
           {/* Search Input */}
-          <div className="relative flex-1 flex items-center bg-[#1c2036] border border-[#363d66] rounded-xl px-3 py-2">
-            <Search className="w-4 h-4 text-[#a9b0d0] mr-2" />
+          <div className="relative flex-1 flex items-center bg-slate-50 border border-[#e2e8f0] rounded-xl px-3 py-2.5 focus-within:bg-white focus-within:border-blue-600 focus-within:ring-1 focus-within:ring-blue-600 transition">
+            <Search className="w-4 h-4 text-[#475569] mr-2 shrink-0" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search trade, area, or technician..."
-              className="w-full bg-transparent text-xs text-white outline-none"
+              className="w-full bg-transparent text-xs text-[#172033] placeholder-slate-400 outline-none"
             />
           </div>
 
           {/* Priority Tabs */}
-          <div className="flex items-center space-x-1.5 bg-[#1c2036] p-1 rounded-xl border border-[#363d66] text-xs">
-            <span className="text-[10px] font-extrabold uppercase text-[#a9b0d0] px-2">Rank By:</span>
+          <div className="flex items-center space-x-1.5 bg-slate-100 p-1 rounded-xl border border-[#e2e8f0] text-xs">
+            <span className="text-[10px] font-extrabold uppercase text-[#475569] px-2">Rank By:</span>
             {[
               { id: 'trust', label: '⭐ Trust First' },
               { id: 'speed', label: '⚡ Speed First' },
@@ -143,8 +143,8 @@ const SearchProviders = () => {
                 onClick={() => setPriority(tab.id)}
                 className={`px-3 py-1.5 rounded-lg font-bold transition-all cursor-pointer ${
                   priority === tab.id
-                    ? 'bg-[#6d5dfc] text-white shadow-md'
-                    : 'text-[#a9b0d0] hover:text-white'
+                    ? 'bg-blue-600 text-white shadow-xs'
+                    : 'text-[#475569] hover:text-[#172033] hover:bg-slate-200/60'
                 }`}
               >
                 {tab.label}
@@ -162,8 +162,8 @@ const SearchProviders = () => {
               onClick={() => setCategory(cat)}
               className={`px-3.5 py-1.5 rounded-xl whitespace-nowrap transition cursor-pointer font-semibold ${
                 category === cat
-                  ? 'bg-[#d946ef] text-white font-bold shadow-md'
-                  : 'bg-[#262b47] border border-[#363d66] text-[#a9b0d0] hover:text-white'
+                  ? 'bg-blue-600 text-white font-bold shadow-xs'
+                  : 'bg-white border border-[#e2e8f0] text-[#475569] hover:text-[#172033] hover:bg-slate-50'
               }`}
             >
               {cat}
@@ -179,13 +179,13 @@ const SearchProviders = () => {
             {loading ? (
               <div className="space-y-4">
                 {[1, 2, 3].map((n) => (
-                  <div key={n} className="theme-card p-6 h-48 animate-pulse" />
+                  <div key={n} className="bg-white rounded-2xl border border-[#e2e8f0] p-6 h-48 animate-pulse shadow-sm" />
                 ))}
               </div>
             ) : filteredProviders.length === 0 ? (
-              <div className="theme-card p-12 text-center text-xs text-[#a9b0d0]">
-                <Search className="w-10 h-10 text-[#6d5dfc] mx-auto mb-3 opacity-60" />
-                <p className="text-base font-bold text-white mb-1">No providers found</p>
+              <div className="bg-white rounded-2xl border border-[#e2e8f0] p-12 text-center text-xs text-[#475569] shadow-sm">
+                <Search className="w-10 h-10 text-blue-600 mx-auto mb-3 opacity-60" />
+                <p className="text-base font-bold text-[#172033] mb-1">No providers found</p>
                 <p>Try searching for a different category or clearing search filters.</p>
               </div>
             ) : (
@@ -200,7 +200,7 @@ const SearchProviders = () => {
             )}
           </div>
 
-          {/* Leaflet Dark Matter Radar Map */}
+          {/* Leaflet Light Matter Radar Map */}
           <div className="lg:col-span-5">
             <div className="sticky top-20">
               <ProviderMap

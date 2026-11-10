@@ -39,7 +39,7 @@ const InvoiceModal = ({ booking, onClose }) => {
 
   return (
     <div 
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 overflow-y-auto"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-xs p-4 overflow-y-auto"
       onClick={onClose}
     >
       {/* Print-specific CSS styles */}
@@ -71,27 +71,27 @@ const InvoiceModal = ({ booking, onClose }) => {
       `}</style>
 
       <div 
-        className="theme-card max-w-2xl w-full p-6 sm:p-8 relative shadow-2xl animate-in fade-in zoom-in-95 my-8"
+        className="bg-white rounded-2xl border border-[#e2e8f0] max-w-2xl w-full p-6 sm:p-8 relative shadow-xl animate-in fade-in zoom-in-95 my-8"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Top Control Bar (Hidden on actual print) */}
-        <div className="flex items-center justify-between pb-4 mb-6 border-b border-[#363d66] no-print">
+        <div className="flex items-center justify-between pb-4 mb-6 border-b border-[#e2e8f0] no-print">
           <div className="flex items-center space-x-2">
-            <FileText className="w-5 h-5 text-[#2dd4bf]" />
-            <h3 className="font-bold text-white text-base">Service Receipt & Proof of Work</h3>
+            <FileText className="w-5 h-5 text-blue-600" />
+            <h3 className="font-bold text-[#172033] text-base">Service Receipt & Proof of Work</h3>
           </div>
 
           <div className="flex items-center space-x-2">
             <button
               onClick={handlePrint}
-              className="btn-primary px-4 py-2 text-xs font-bold flex items-center space-x-1.5 shadow-lg cursor-pointer"
+              className="btn-primary px-4 py-2 text-xs font-bold flex items-center space-x-1.5 shadow-sm cursor-pointer"
             >
               <Printer className="w-4 h-4" />
               <span>Print / Save PDF</span>
             </button>
             <button
               onClick={onClose}
-              className="p-2 text-[#a9b0d0] hover:text-white rounded-xl hover:bg-[#363d66] transition cursor-pointer"
+              className="p-2 text-[#475569] hover:text-[#172033] rounded-xl hover:bg-slate-100 transition cursor-pointer"
             >
               <X className="w-5 h-5" />
             </button>
@@ -107,11 +107,11 @@ const InvoiceModal = ({ booking, onClose }) => {
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-6 border-b border-slate-200">
             <div>
               <div className="flex items-center space-x-2">
-                <div className="w-8 h-8 rounded-lg bg-indigo-600 text-white flex items-center justify-center font-bold">
+                <div className="w-8 h-8 rounded-lg bg-blue-600 text-white flex items-center justify-center font-bold">
                   <ShieldCheck className="w-5 h-5" />
                 </div>
                 <span className="text-xl font-black tracking-tight text-slate-900">
-                  Trust<span className="text-indigo-600">Near</span>
+                  Trust<span className="text-blue-600">Near</span>
                 </span>
                 <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 uppercase">
                   Verified
@@ -145,7 +145,7 @@ const InvoiceModal = ({ booking, onClose }) => {
             <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-1">
               <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Service Provider (Contractor)</span>
               <p className="font-bold text-slate-900 text-sm">{providerName}</p>
-              <p className="text-indigo-600 font-semibold">{booking.service_category} Specialist</p>
+              <p className="text-blue-600 font-semibold">{booking.service_category} Specialist</p>
               <p className="text-slate-500 text-[11px]">KYC Background Checked & Verified</p>
             </div>
           </div>
@@ -200,7 +200,7 @@ const InvoiceModal = ({ booking, onClose }) => {
               </div>
               <div className="pt-2 border-t border-slate-300 flex justify-between font-black text-slate-900 text-base">
                 <span>Total Amount:</span>
-                <span className="text-indigo-600">₹{agreedPrice.toFixed(2)}</span>
+                <span className="text-blue-600">₹{agreedPrice.toFixed(2)}</span>
               </div>
             </div>
           </div>

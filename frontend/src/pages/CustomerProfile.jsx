@@ -165,15 +165,15 @@ const CustomerProfile = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#1c2036] text-[#f1f3ff] py-12 px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen bg-[#f8fafc] text-[#172033] py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto space-y-6 animate-pulse">
-          <div className="theme-card p-8 h-40" />
+          <div className="bg-white rounded-2xl border border-[#e2e8f0] p-8 h-40 shadow-sm" />
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
             {[1, 2, 3, 4].map((i) => (
-              <div key={i} className="theme-card p-4 h-24" />
+              <div key={i} className="bg-white rounded-2xl border border-[#e2e8f0] p-4 h-24 shadow-sm" />
             ))}
           </div>
-          <div className="theme-card p-8 h-64" />
+          <div className="bg-white rounded-2xl border border-[#e2e8f0] p-8 h-64 shadow-sm" />
         </div>
       </div>
     );
@@ -182,40 +182,38 @@ const CustomerProfile = () => {
   const displayName = profileData.fullName || authUser?.full_name || 'Customer';
 
   return (
-    <div className="min-h-screen bg-[#1c2036] text-[#f1f3ff] py-8 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-[#f8fafc] text-[#172033] py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto space-y-6">
 
         {/* Header Profile Card */}
-        <div className="theme-card p-6 sm:p-8 relative overflow-hidden">
+        <div className="bg-white rounded-2xl border border-[#e2e8f0] p-6 sm:p-8 relative overflow-hidden shadow-sm">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
             <div className="flex items-center space-x-4 sm:space-x-5">
-              <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl p-0.5 bg-gradient-to-tr from-[#6d5dfc] via-[#d946ef] to-[#2dd4bf] shrink-0">
-                <div className="w-full h-full rounded-2xl bg-[#1c2036] flex items-center justify-center text-2xl sm:text-3xl font-black text-white">
-                  {displayName.charAt(0)}
-                </div>
+              <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-blue-600 text-white flex items-center justify-center text-2xl sm:text-3xl font-black shadow-md shrink-0">
+                {displayName.charAt(0)}
               </div>
               <div>
                 <div className="flex items-center space-x-2">
-                  <h1 className="text-xl sm:text-2xl font-black text-white">{displayName}</h1>
-                  <span className="px-2.5 py-0.5 rounded-full bg-[#6d5dfc]/15 text-[#6d5dfc] text-xs font-bold border border-[#6d5dfc]/30 uppercase tracking-wide">
+                  <h1 className="text-xl sm:text-2xl font-black text-[#172033]">{displayName}</h1>
+                  <span className="px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-700 text-xs font-bold border border-blue-200 uppercase tracking-wide">
                     {profileData.role}
                   </span>
                 </div>
-                <p className="text-xs text-[#a9b0d0] mt-1 flex items-center space-x-1.5">
-                  <Mail className="w-3.5 h-3.5 text-[#2dd4bf]" />
+                <p className="text-xs text-[#475569] mt-1 flex items-center space-x-1.5">
+                  <Mail className="w-3.5 h-3.5 text-blue-600" />
                   <span>{profileData.email}</span>
                 </p>
                 {profileData.phone && (
-                  <p className="text-xs text-[#a9b0d0] mt-0.5 flex items-center space-x-1.5">
-                    <Phone className="w-3.5 h-3.5 text-[#2dd4bf]" />
+                  <p className="text-xs text-[#475569] mt-0.5 flex items-center space-x-1.5">
+                    <Phone className="w-3.5 h-3.5 text-blue-600" />
                     <span>{profileData.phone}</span>
                   </p>
                 )}
               </div>
             </div>
 
-            <div className="flex items-center space-x-2 px-3 py-1.5 rounded-xl bg-[#2dd4bf]/10 border border-[#2dd4bf]/20 text-[#2dd4bf] text-xs font-semibold self-start sm:self-auto">
-              <ShieldCheck className="w-4 h-4" />
+            <div className="flex items-center space-x-2 px-3 py-1.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-semibold self-start sm:self-auto">
+              <ShieldCheck className="w-4 h-4 text-emerald-600" />
               <span>Verified Account</span>
             </div>
           </div>
@@ -223,49 +221,49 @@ const CustomerProfile = () => {
 
         {/* Real Customer Activity Metrics */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-          <div className="theme-card p-4">
-            <span className="text-[10px] font-bold text-[#a9b0d0] uppercase tracking-wider block">Total Bookings</span>
-            <span className="text-xl sm:text-2xl font-black text-white mt-1 block">{stats.total}</span>
+          <div className="bg-white rounded-2xl border border-[#e2e8f0] p-4 shadow-sm">
+            <span className="text-[10px] font-bold text-[#475569] uppercase tracking-wider block">Total Bookings</span>
+            <span className="text-xl sm:text-2xl font-black text-[#172033] mt-1 block">{stats.total}</span>
           </div>
-          <div className="theme-card p-4">
-            <span className="text-[10px] font-bold text-[#a9b0d0] uppercase tracking-wider block">Active Jobs</span>
-            <span className="text-xl sm:text-2xl font-black text-[#6d5dfc] mt-1 block">{stats.active}</span>
+          <div className="bg-white rounded-2xl border border-[#e2e8f0] p-4 shadow-sm">
+            <span className="text-[10px] font-bold text-[#475569] uppercase tracking-wider block">Active Jobs</span>
+            <span className="text-xl sm:text-2xl font-black text-blue-600 mt-1 block">{stats.active}</span>
           </div>
-          <div className="theme-card p-4">
-            <span className="text-[10px] font-bold text-[#a9b0d0] uppercase tracking-wider block">Completed</span>
-            <span className="text-xl sm:text-2xl font-black text-[#2dd4bf] mt-1 block">{stats.completed}</span>
+          <div className="bg-white rounded-2xl border border-[#e2e8f0] p-4 shadow-sm">
+            <span className="text-[10px] font-bold text-[#475569] uppercase tracking-wider block">Completed</span>
+            <span className="text-xl sm:text-2xl font-black text-emerald-600 mt-1 block">{stats.completed}</span>
           </div>
-          <div className="theme-card p-4">
-            <span className="text-[10px] font-bold text-[#a9b0d0] uppercase tracking-wider block">Completed Spend</span>
-            <span className="text-xl sm:text-2xl font-black text-white mt-1 flex items-center">
-              <IndianRupee className="w-4 h-4 text-[#2dd4bf]" />
+          <div className="bg-white rounded-2xl border border-[#e2e8f0] p-4 shadow-sm">
+            <span className="text-[10px] font-bold text-[#475569] uppercase tracking-wider block">Completed Spend</span>
+            <span className="text-xl sm:text-2xl font-black text-[#172033] mt-1 flex items-center">
+              <IndianRupee className="w-4 h-4 text-blue-600" />
               {stats.totalSpent.toFixed(0)}
             </span>
           </div>
         </div>
 
         {/* Edit Profile Form */}
-        <div className="theme-card p-6 sm:p-8 space-y-6">
-          <div className="border-b border-[#363d66] pb-4">
-            <h2 className="text-base font-bold text-white flex items-center space-x-2">
-              <User className="w-4 h-4 text-[#6d5dfc]" />
+        <div className="bg-white rounded-2xl border border-[#e2e8f0] p-6 sm:p-8 space-y-6 shadow-sm">
+          <div className="border-b border-[#e2e8f0] pb-4">
+            <h2 className="text-base font-bold text-[#172033] flex items-center space-x-2">
+              <User className="w-4 h-4 text-blue-600" />
               <span>Personal Information</span>
             </h2>
-            <p className="text-xs text-[#a9b0d0] mt-0.5">
+            <p className="text-xs text-[#475569] mt-0.5">
               Update your customer profile details and contact information.
             </p>
           </div>
 
           {profileSuccess && (
-            <div className="p-3 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-xs flex items-center space-x-2">
-              <CheckCircle2 className="w-4 h-4 shrink-0" />
+            <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs flex items-center space-x-2">
+              <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-600" />
               <span>{profileSuccess}</span>
             </div>
           )}
 
           {profileError && (
-            <div className="p-3 rounded-xl bg-rose-500/15 border border-rose-500/30 text-rose-300 text-xs flex items-center space-x-2">
-              <AlertCircle className="w-4 h-4 shrink-0" />
+            <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-center space-x-2">
+              <AlertCircle className="w-4 h-4 shrink-0 text-rose-600" />
               <span>{profileError}</span>
             </div>
           )}
@@ -273,33 +271,33 @@ const CustomerProfile = () => {
           <form onSubmit={handleProfileSubmit} className="space-y-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-semibold text-[#a9b0d0] uppercase mb-1.5">
-                  Full Name <span className="text-[#d946ef]">*</span>
+                <label className="block text-xs font-semibold text-[#475569] uppercase mb-1.5">
+                  Full Name <span className="text-rose-500">*</span>
                 </label>
                 <div className="relative">
-                  <User className="w-4 h-4 text-[#a9b0d0] absolute left-3 top-3" />
+                  <User className="w-4 h-4 text-[#475569] absolute left-3 top-3 pointer-events-none" />
                   <input
                     type="text"
                     required
                     value={profileData.fullName}
                     onChange={(e) => setProfileData({ ...profileData, fullName: e.target.value })}
-                    className="w-full pl-9 pr-3 py-2 bg-[#1c2036] border border-[#363d66] rounded-xl text-sm text-white placeholder-[#a9b0d0]/50 focus:outline-none focus:border-[#6d5dfc] transition"
+                    className="w-full pl-9 pr-3.5 py-2.5 bg-white border border-[#e2e8f0] rounded-xl text-sm text-[#172033] placeholder-slate-400 focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 transition"
                     placeholder="Enter your name"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-[#a9b0d0] uppercase mb-1.5">
+                <label className="block text-xs font-semibold text-[#475569] uppercase mb-1.5">
                   Phone Number
                 </label>
                 <div className="relative">
-                  <Phone className="w-4 h-4 text-[#a9b0d0] absolute left-3 top-3" />
+                  <Phone className="w-4 h-4 text-[#475569] absolute left-3 top-3 pointer-events-none" />
                   <input
                     type="tel"
                     value={profileData.phone}
                     onChange={(e) => setProfileData({ ...profileData, phone: e.target.value })}
-                    className="w-full pl-9 pr-3 py-2 bg-[#1c2036] border border-[#363d66] rounded-xl text-sm text-white placeholder-[#a9b0d0]/50 focus:outline-none focus:border-[#6d5dfc] transition"
+                    className="w-full pl-9 pr-3.5 py-2.5 bg-white border border-[#e2e8f0] rounded-xl text-sm text-[#172033] placeholder-slate-400 focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 transition"
                     placeholder="10-digit mobile number"
                   />
                 </div>
@@ -308,32 +306,32 @@ const CustomerProfile = () => {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-semibold text-[#a9b0d0] uppercase mb-1.5">
+                <label className="block text-xs font-semibold text-[#475569] uppercase mb-1.5">
                   Email Address (Login ID)
                 </label>
                 <div className="relative">
-                  <Mail className="w-4 h-4 text-[#a9b0d0] absolute left-3 top-3" />
+                  <Mail className="w-4 h-4 text-[#475569] absolute left-3 top-3 pointer-events-none" />
                   <input
                     type="email"
                     disabled
                     value={profileData.email}
-                    className="w-full pl-9 pr-3 py-2 bg-[#1c2036]/60 border border-[#363d66]/50 rounded-xl text-sm text-[#a9b0d0] cursor-not-allowed"
+                    className="w-full pl-9 pr-3.5 py-2.5 bg-slate-50 border border-[#e2e8f0] rounded-xl text-sm text-[#475569] cursor-not-allowed"
                   />
                 </div>
-                <span className="text-[11px] text-[#a9b0d0]/70 mt-1 block">
+                <span className="text-[11px] text-[#475569] mt-1 block">
                   Email cannot be modified directly as it is your authentication identity.
                 </span>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-[#a9b0d0] uppercase mb-1.5">
+                <label className="block text-xs font-semibold text-[#475569] uppercase mb-1.5">
                   Account Role
                 </label>
                 <input
                   type="text"
                   disabled
                   value="Verified Customer"
-                  className="w-full px-3 py-2 bg-[#1c2036]/60 border border-[#363d66]/50 rounded-xl text-sm text-[#a9b0d0] cursor-not-allowed capitalize"
+                  className="w-full px-3.5 py-2.5 bg-slate-50 border border-[#e2e8f0] rounded-xl text-sm text-[#475569] cursor-not-allowed capitalize font-medium"
                 />
               </div>
             </div>
@@ -342,7 +340,7 @@ const CustomerProfile = () => {
               <button
                 type="submit"
                 disabled={profileSaving}
-                className="btn-primary px-6 py-2.5 text-xs font-bold inline-flex items-center space-x-2 shadow-lg disabled:opacity-50 cursor-pointer"
+                className="btn-primary px-6 py-2.5 text-xs font-bold inline-flex items-center space-x-2 shadow-sm rounded-xl disabled:opacity-50 cursor-pointer"
               >
                 <Save className="w-4 h-4" />
                 <span>{profileSaving ? 'Saving Changes...' : 'Save Profile Details'}</span>
@@ -352,44 +350,44 @@ const CustomerProfile = () => {
         </div>
 
         {/* Security & Password Section */}
-        <div className="theme-card p-6 sm:p-8 space-y-6">
-          <div className="border-b border-[#363d66] pb-4">
-            <h2 className="text-base font-bold text-white flex items-center space-x-2">
-              <Lock className="w-4 h-4 text-[#2dd4bf]" />
+        <div className="bg-white rounded-2xl border border-[#e2e8f0] p-6 sm:p-8 space-y-6 shadow-sm">
+          <div className="border-b border-[#e2e8f0] pb-4">
+            <h2 className="text-base font-bold text-[#172033] flex items-center space-x-2">
+              <Lock className="w-4 h-4 text-blue-600" />
               <span>Security & Password</span>
             </h2>
-            <p className="text-xs text-[#a9b0d0] mt-0.5">
+            <p className="text-xs text-[#475569] mt-0.5">
               Change your password to keep your account safe and secure.
             </p>
           </div>
 
           {passwordSuccess && (
-            <div className="p-3 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-xs flex items-center space-x-2">
-              <CheckCircle2 className="w-4 h-4 shrink-0" />
+            <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs flex items-center space-x-2">
+              <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-600" />
               <span>{passwordSuccess}</span>
             </div>
           )}
 
           {passwordError && (
-            <div className="p-3 rounded-xl bg-rose-500/15 border border-rose-500/30 text-rose-300 text-xs flex items-center space-x-2">
-              <AlertCircle className="w-4 h-4 shrink-0" />
+            <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-center space-x-2">
+              <AlertCircle className="w-4 h-4 shrink-0 text-rose-600" />
               <span>{passwordError}</span>
             </div>
           )}
 
           <form onSubmit={handlePasswordSubmit} className="space-y-4">
             <div>
-              <label className="block text-xs font-semibold text-[#a9b0d0] uppercase mb-1.5">
-                Current Password <span className="text-[#d946ef]">*</span>
+              <label className="block text-xs font-semibold text-[#475569] uppercase mb-1.5">
+                Current Password <span className="text-rose-500">*</span>
               </label>
               <div className="relative">
-                <Lock className="w-4 h-4 text-[#a9b0d0] absolute left-3 top-3" />
+                <Lock className="w-4 h-4 text-[#475569] absolute left-3 top-3 pointer-events-none" />
                 <input
                   type="password"
                   required
                   value={passwordData.currentPassword}
                   onChange={(e) => setPasswordData({ ...passwordData, currentPassword: e.target.value })}
-                  className="w-full pl-9 pr-3 py-2 bg-[#1c2036] border border-[#363d66] rounded-xl text-sm text-white placeholder-[#a9b0d0]/50 focus:outline-none focus:border-[#6d5dfc] transition"
+                  className="w-full pl-9 pr-3.5 py-2.5 bg-white border border-[#e2e8f0] rounded-xl text-sm text-[#172033] placeholder-slate-400 focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 transition"
                   placeholder="Enter your current password"
                 />
               </div>
@@ -397,36 +395,36 @@ const CustomerProfile = () => {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-semibold text-[#a9b0d0] uppercase mb-1.5">
-                  New Password <span className="text-[#d946ef]">*</span>
+                <label className="block text-xs font-semibold text-[#475569] uppercase mb-1.5">
+                  New Password <span className="text-rose-500">*</span>
                 </label>
                 <div className="relative">
-                  <Lock className="w-4 h-4 text-[#a9b0d0] absolute left-3 top-3" />
+                  <Lock className="w-4 h-4 text-[#475569] absolute left-3 top-3 pointer-events-none" />
                   <input
                     type="password"
                     required
                     minLength={6}
                     value={passwordData.newPassword}
                     onChange={(e) => setPasswordData({ ...passwordData, newPassword: e.target.value })}
-                    className="w-full pl-9 pr-3 py-2 bg-[#1c2036] border border-[#363d66] rounded-xl text-sm text-white placeholder-[#a9b0d0]/50 focus:outline-none focus:border-[#6d5dfc] transition"
+                    className="w-full pl-9 pr-3.5 py-2.5 bg-white border border-[#e2e8f0] rounded-xl text-sm text-[#172033] placeholder-slate-400 focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 transition"
                     placeholder="At least 6 characters"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-[#a9b0d0] uppercase mb-1.5">
-                  Confirm New Password <span className="text-[#d946ef]">*</span>
+                <label className="block text-xs font-semibold text-[#475569] uppercase mb-1.5">
+                  Confirm New Password <span className="text-rose-500">*</span>
                 </label>
                 <div className="relative">
-                  <Lock className="w-4 h-4 text-[#a9b0d0] absolute left-3 top-3" />
+                  <Lock className="w-4 h-4 text-[#475569] absolute left-3 top-3 pointer-events-none" />
                   <input
                     type="password"
                     required
                     minLength={6}
                     value={passwordData.confirmPassword}
                     onChange={(e) => setPasswordData({ ...passwordData, confirmPassword: e.target.value })}
-                    className="w-full pl-9 pr-3 py-2 bg-[#1c2036] border border-[#363d66] rounded-xl text-sm text-white placeholder-[#a9b0d0]/50 focus:outline-none focus:border-[#6d5dfc] transition"
+                    className="w-full pl-9 pr-3.5 py-2.5 bg-white border border-[#e2e8f0] rounded-xl text-sm text-[#172033] placeholder-slate-400 focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 transition"
                     placeholder="Repeat new password"
                   />
                 </div>
@@ -437,7 +435,7 @@ const CustomerProfile = () => {
               <button
                 type="submit"
                 disabled={passwordSaving}
-                className="btn-primary px-6 py-2.5 text-xs font-bold inline-flex items-center space-x-2 shadow-lg disabled:opacity-50 cursor-pointer"
+                className="btn-primary px-6 py-2.5 text-xs font-bold inline-flex items-center space-x-2 shadow-sm rounded-xl disabled:opacity-50 cursor-pointer"
               >
                 <Lock className="w-4 h-4" />
                 <span>{passwordSaving ? 'Updating Password...' : 'Update Password'}</span>

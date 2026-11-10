@@ -6,80 +6,87 @@
 
 @layer base {
   body {
-    @apply bg-[#1c2036] text-[#f1f3ff] antialiased selection:bg-[#6d5dfc] selection:text-white min-h-screen;
+    @apply bg-[#f8fafc] text-[#172033] antialiased selection:bg-[#2563eb] selection:text-white min-h-screen;
     font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
   }
 }
 
-/* Theme Cards: #262b47 with 1px #363d66 border and 18px radius */
+/* Light Theme Cards: Crisp white with subtle border and elevation */
 .theme-card {
-  background-color: #262b47;
-  border: 1px solid #363d66;
-  border-radius: 18px;
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05);
 }
 
 .theme-card-hover {
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .theme-card-hover:hover {
-  border-color: #6d5dfc;
-  transform: translateY(-3px);
-  box-shadow: 0 16px 32px -10px rgba(109, 93, 252, 0.35);
+  border-color: #2563eb;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.12), 0 8px 10px -6px rgba(37, 99, 235, 0.08);
 }
 
-/* Primary Button: Violet-to-Pink gradient */
+/* Primary Button: Professional Royal Blue */
 .btn-primary {
-  background: linear-gradient(135deg, #6d5dfc 0%, #d946ef 100%);
+  background-color: #2563eb;
   color: #ffffff;
   font-weight: 700;
   border-radius: 12px;
-  transition: all 0.2s ease-in-out;
+  transition: all 0.15s ease-in-out;
   cursor: pointer;
 }
 
 .btn-primary:hover {
-  opacity: 0.95;
-  box-shadow: 0 10px 25px -5px rgba(217, 70, 239, 0.45);
+  background-color: #1d4ed8;
+  box-shadow: 0 4px 12px -2px rgba(37, 99, 235, 0.25);
   transform: translateY(-1px);
 }
 
-/* Secondary Ghost Button */
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+/* Secondary Button: Clean slate button */
 .btn-secondary {
-  background-color: rgba(54, 61, 102, 0.45);
-  border: 1px solid #363d66;
-  color: #f1f3ff;
+  background-color: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  color: #1e293b;
+  font-weight: 600;
   border-radius: 12px;
-  transition: all 0.2s ease;
+  transition: all 0.15s ease;
   cursor: pointer;
 }
 
 .btn-secondary:hover {
-  background-color: rgba(109, 93, 252, 0.15);
-  border-color: #6d5dfc;
-  color: #ffffff;
+  background-color: #e2e8f0;
+  border-color: #94a3b8;
+  color: #0f172a;
 }
 
-/* Custom Scrollbar */
+/* Custom Scrollbar for Light Theme */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 7px;
+  height: 7px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #1c2036;
+  background: #f1f5f9;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #363d66;
+  background: #cbd5e1;
   border-radius: 9999px;
-  border: 2px solid #1c2036;
+  border: 2px solid #f1f5f9;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #6d5dfc;
+  background: #94a3b8;
 }
-/* Clean Dark Map Tiles (No Watermark, No API Key Required) */
+
+/* Crisp Map Tiles for Light Theme */
 .map-dark-tiles .leaflet-tile {
-  filter: brightness(0.65) invert(1) contrast(2.5) hue-rotate(205deg) saturate(0.35);
+  filter: contrast(1.02) brightness(1.0);
 }

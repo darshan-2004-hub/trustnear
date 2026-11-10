@@ -3,13 +3,17 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { AuthProvider, useAuth } from './context/AuthContext';
 import Navbar from './components/Navbar';
 import Home from './pages/Home';
-import Login from './pages/Login';
-import Register from './pages/Register';
 import SearchProviders from './pages/SearchProviders';
 import Bookings from './pages/Bookings';
 import ProviderDashboard from './pages/ProviderDashboard';
 import AdminDashboard from './pages/AdminDashboard';
 import ProviderDetail from './pages/ProviderDetail';
+import AuthPortal from './pages/AuthPortal';
+import CustomerLogin from './pages/CustomerLogin';
+import CustomerRegister from './pages/CustomerRegister';
+import ProviderLogin from './pages/ProviderLogin';
+import ProviderRegister from './pages/ProviderRegister';
+import AdminLogin from './pages/AdminLogin';
 import CustomerProfile from './pages/CustomerProfile';
 import AIAssistantWidget from './components/AIAssistantWidget';
 
@@ -17,7 +21,7 @@ import AIAssistantWidget from './components/AIAssistantWidget';
 const ProtectedRoute = ({ children, adminOnly = false }) => {
   const { user, loading } = useAuth();
   if (loading) return null;
-  if (!user) return <Navigate to="/login" replace />;
+  if (!user) return <Navigate to="/auth" replace />;
   if (adminOnly && user.role !== 'admin') return <Navigate to="/" replace />;
   return children;
 };
@@ -26,7 +30,7 @@ const ProtectedRoute = ({ children, adminOnly = false }) => {
 const ProviderRoute = ({ children }) => {
   const { user, loading } = useAuth();
   if (loading) return null;
-  if (!user) return <Navigate to="/login" replace />;
+  if (!user) return <Navigate to="/auth" replace />;
   if (user.role !== 'provider') return <Navigate to="/bookings" replace />;
   return children;
 };
@@ -47,7 +51,7 @@ function App() {
   return (
     <AuthProvider>
       <Router>
-        <div className="min-h-screen flex flex-col bg-[#1c2036] text-[#f1f3ff] relative selection:bg-[#6d5dfc] selection:text-white">
+        <div className="min-h-screen flex flex-col bg-[#f8fafc] text-[#172033] relative selection:bg-[#2563eb] selection:text-white">
           <Navbar />
           <main className="flex-1">
             <Routes>
@@ -63,8 +67,23 @@ function App() {
                   </ProtectedRoute>
                 } 
               />
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
+              <Route path="/auth" element={<AuthPortal />} />
+              
+              {/* Dedicated Customer Authentication Routes */}
+              <Route path="/login/customer" element={<CustomerLogin />} />
+              <Route path="/register/customer" element={<CustomerRegister />} />
+
+              {/* Dedicated Provider Authentication Routes */}
+              <Route path="/login/provider" element={<ProviderLogin />} />
+              <Route path="/register/provider" element={<ProviderRegister />} />
+
+              {/* Dedicated Admin Staff Authentication Route */}
+              <Route path="/login/admin" element={<AdminLogin />} />
+
+              {/* Redirect legacy /login and /register to role portal */}
+              <Route path="/login" element={<Navigate to="/auth" replace />} />
+              <Route path="/register" element={<Navigate to="/auth" replace />} />
+              
               <Route 
                 path="/provider-dashboard" 
                 element={

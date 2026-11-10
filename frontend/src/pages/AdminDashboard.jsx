@@ -108,19 +108,19 @@ const AdminDashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#1c2036] text-[#f1f3ff] py-8 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-[#f8fafc] text-[#172033] py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto space-y-6">
         
         {/* Top Header */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
             <div className="flex items-center space-x-2.5">
-              <h1 className="text-2xl sm:text-3xl font-black text-white">TrustNear Administration Console</h1>
-              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#d946ef]/20 text-[#d946ef] border border-[#d946ef]/30 uppercase">
+              <h1 className="text-2xl sm:text-3xl font-black text-[#172033]">TrustNear Administration Console</h1>
+              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-purple-50 text-purple-700 border border-purple-200 uppercase">
                 Root Admin
               </span>
             </div>
-            <p className="text-xs text-[#a9b0d0] mt-1">
+            <p className="text-xs text-[#475569] mt-1">
               Platform governance, provider KYC verification, and NLP fraud review moderation.
             </p>
           </div>
@@ -128,21 +128,21 @@ const AdminDashboard = () => {
           <button
             onClick={fetchAdminData}
             disabled={loading}
-            className="btn-secondary px-4 py-2 text-xs font-bold flex items-center space-x-2"
+            className="btn-secondary px-4 py-2 text-xs font-bold flex items-center space-x-2 rounded-xl shadow-2xs cursor-pointer"
           >
-            <RefreshCw className={`w-3.5 h-3.5 text-[#2dd4bf] ${loading ? 'animate-spin' : ''}`} />
+            <RefreshCw className={`w-3.5 h-3.5 text-blue-600 ${loading ? 'animate-spin' : ''}`} />
             <span>Refresh Data</span>
           </button>
         </div>
 
         {/* Tab Switcher */}
-        <div className="flex items-center space-x-2 border-b border-[#363d66] pb-3 text-xs font-semibold">
+        <div className="flex items-center space-x-2 border-b border-[#e2e8f0] pb-3 text-xs font-semibold">
           <button
             onClick={() => setActiveTab('overview')}
             className={`px-3.5 py-1.5 rounded-xl transition-all cursor-pointer ${
               activeTab === 'overview'
-                ? 'bg-[#6d5dfc] text-white font-bold shadow-md'
-                : 'text-[#a9b0d0] hover:text-white hover:bg-[#262b47]'
+                ? 'bg-blue-600 text-white font-bold shadow-xs'
+                : 'text-[#475569] hover:text-[#172033] hover:bg-slate-100'
             }`}
           >
             Overview KPIs
@@ -152,13 +152,13 @@ const AdminDashboard = () => {
             onClick={() => setActiveTab('providers')}
             className={`px-3.5 py-1.5 rounded-xl transition-all cursor-pointer flex items-center space-x-1.5 ${
               activeTab === 'providers'
-                ? 'bg-[#6d5dfc] text-white font-bold shadow-md'
-                : 'text-[#a9b0d0] hover:text-white hover:bg-[#262b47]'
+                ? 'bg-blue-600 text-white font-bold shadow-xs'
+                : 'text-[#475569] hover:text-[#172033] hover:bg-slate-100'
             }`}
           >
             <span>Provider Verification</span>
             {pendingProviders.length > 0 && (
-              <span className="px-1.5 py-0.2 rounded-full bg-[#fbbf24] text-[#1c2036] text-[10px] font-black">
+              <span className="px-1.5 py-0.2 rounded-full bg-amber-400 text-slate-900 text-[10px] font-black">
                 {pendingProviders.length}
               </span>
             )}
@@ -168,13 +168,13 @@ const AdminDashboard = () => {
             onClick={() => setActiveTab('reviews')}
             className={`px-3.5 py-1.5 rounded-xl transition-all cursor-pointer flex items-center space-x-1.5 ${
               activeTab === 'reviews'
-                ? 'bg-[#6d5dfc] text-white font-bold shadow-md'
-                : 'text-[#a9b0d0] hover:text-white hover:bg-[#262b47]'
+                ? 'bg-blue-600 text-white font-bold shadow-xs'
+                : 'text-[#475569] hover:text-[#172033] hover:bg-slate-100'
             }`}
           >
             <span>NLP Review Moderation</span>
             {flaggedReviews.length > 0 && (
-              <span className="px-1.5 py-0.2 rounded-full bg-rose-500 text-white text-[10px] font-black">
+              <span className="px-1.5 py-0.2 rounded-full bg-rose-600 text-white text-[10px] font-black">
                 {flaggedReviews.length}
               </span>
             )}
@@ -187,62 +187,62 @@ const AdminDashboard = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               
               {/* Card 1 */}
-              <div className="theme-card p-5 flex flex-col justify-between">
-                <div className="flex items-center justify-between text-xs font-semibold text-[#a9b0d0] mb-2">
+              <div className="bg-white rounded-2xl border border-[#e2e8f0] p-5 flex flex-col justify-between shadow-sm">
+                <div className="flex items-center justify-between text-xs font-semibold text-[#475569] mb-2">
                   <span>CUSTOMERS</span>
-                  <Users className="w-4 h-4 text-[#2dd4bf]" />
+                  <Users className="w-4 h-4 text-blue-600" />
                 </div>
-                <p className="text-3xl font-black text-white">{stats.total_customers}</p>
-                <span className="text-[11px] text-[#a9b0d0] mt-1">Registered platform users</span>
+                <p className="text-3xl font-black text-[#172033]">{stats.total_customers}</p>
+                <span className="text-[11px] text-[#475569] mt-1">Registered platform users</span>
               </div>
 
               {/* Card 2 */}
-              <div className="theme-card p-5 flex flex-col justify-between">
-                <div className="flex items-center justify-between text-xs font-semibold text-[#a9b0d0] mb-2">
+              <div className="bg-white rounded-2xl border border-[#e2e8f0] p-5 flex flex-col justify-between shadow-sm">
+                <div className="flex items-center justify-between text-xs font-semibold text-[#475569] mb-2">
                   <span>SERVICE PROVIDERS</span>
-                  <Briefcase className="w-4 h-4 text-[#6d5dfc]" />
+                  <Briefcase className="w-4 h-4 text-blue-600" />
                 </div>
-                <p className="text-3xl font-black text-white">{stats.total_providers}</p>
-                <span className="text-[11px] text-[#a9b0d0] mt-1">Trade contractors onboarded</span>
+                <p className="text-3xl font-black text-[#172033]">{stats.total_providers}</p>
+                <span className="text-[11px] text-[#475569] mt-1">Trade contractors onboarded</span>
               </div>
 
               {/* Card 3 */}
-              <div className="theme-card p-5 flex flex-col justify-between">
-                <div className="flex items-center justify-between text-xs font-semibold text-[#a9b0d0] mb-2">
+              <div className="bg-white rounded-2xl border border-[#e2e8f0] p-5 flex flex-col justify-between shadow-sm">
+                <div className="flex items-center justify-between text-xs font-semibold text-[#475569] mb-2">
                   <span>COMPLETED JOBS</span>
-                  <CheckCircle2 className="w-4 h-4 text-[#2dd4bf]" />
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600" />
                 </div>
-                <p className="text-3xl font-black text-white">{stats.completed_bookings}</p>
-                <span className="text-[11px] text-[#a9b0d0] mt-1">Out of {stats.total_bookings} total bookings</span>
+                <p className="text-3xl font-black text-[#172033]">{stats.completed_bookings}</p>
+                <span className="text-[11px] text-[#475569] mt-1">Out of {stats.total_bookings} total bookings</span>
               </div>
 
               {/* Card 4 */}
-              <div className="theme-card p-5 flex flex-col justify-between border-[#fbbf24]/30">
-                <div className="flex items-center justify-between text-xs font-semibold text-[#fbbf24] mb-2">
+              <div className="bg-white rounded-2xl border border-amber-200 p-5 flex flex-col justify-between shadow-sm">
+                <div className="flex items-center justify-between text-xs font-semibold text-amber-700 mb-2">
                   <span>PENDING VERIFICATIONS</span>
-                  <AlertTriangle className="w-4 h-4 text-[#fbbf24]" />
+                  <AlertTriangle className="w-4 h-4 text-amber-600" />
                 </div>
-                <p className="text-3xl font-black text-[#fbbf24]">{stats.pending_verifications}</p>
-                <span className="text-[11px] text-[#a9b0d0] mt-1">Awaiting KYC background check</span>
+                <p className="text-3xl font-black text-amber-600">{stats.pending_verifications}</p>
+                <span className="text-[11px] text-[#475569] mt-1">Awaiting KYC background check</span>
               </div>
 
             </div>
 
             {/* Alert Banner for Flagged Reviews */}
             {stats.flagged_reviews_count > 0 && (
-              <div className="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/30 flex items-center justify-between">
+              <div className="p-4 rounded-2xl bg-rose-50 border border-rose-200 flex items-center justify-between">
                 <div className="flex items-center space-x-3 text-xs">
-                  <div className="w-9 h-9 rounded-xl bg-rose-500/20 text-rose-400 flex items-center justify-center shrink-0">
+                  <div className="w-9 h-9 rounded-xl bg-rose-100 text-rose-600 flex items-center justify-center shrink-0">
                     <ShieldAlert className="w-5 h-5" />
                   </div>
                   <div>
-                    <p className="font-bold text-white">{stats.flagged_reviews_count} review(s) currently flagged by the NLP system</p>
-                    <p className="text-[#a9b0d0]">Suspicious sentiment conflict or templated patterns require manual inspection.</p>
+                    <p className="font-bold text-[#172033]">{stats.flagged_reviews_count} review(s) currently flagged by the NLP system</p>
+                    <p className="text-[#475569]">Suspicious sentiment conflict or templated patterns require manual inspection.</p>
                   </div>
                 </div>
                 <button
                   onClick={() => setActiveTab('reviews')}
-                  className="px-4 py-2 rounded-xl bg-rose-500 text-white font-bold text-xs hover:bg-rose-600 transition"
+                  className="px-4 py-2 rounded-xl bg-rose-600 text-white font-bold text-xs hover:bg-rose-700 transition cursor-pointer shadow-sm"
                 >
                   Review Now
                 </button>
@@ -253,19 +253,19 @@ const AdminDashboard = () => {
 
         {/* TAB 2: PENDING PROVIDERS */}
         {activeTab === 'providers' && (
-          <div className="theme-card p-6">
-            <h3 className="text-base font-bold text-white mb-4">Pending Provider KYC Verifications</h3>
+          <div className="bg-white rounded-2xl border border-[#e2e8f0] p-6 shadow-sm">
+            <h3 className="text-base font-bold text-[#172033] mb-4">Pending Provider KYC Verifications</h3>
             {pendingProviders.length === 0 ? (
-              <div className="text-center py-12 text-xs text-[#a9b0d0]">
-                <ShieldCheck className="w-10 h-10 text-[#2dd4bf] mx-auto mb-2 opacity-60" />
-                <p className="font-bold text-white">All Clear!</p>
+              <div className="text-center py-12 text-xs text-[#475569]">
+                <ShieldCheck className="w-10 h-10 text-emerald-600 mx-auto mb-2 opacity-60" />
+                <p className="font-bold text-[#172033]">All Clear!</p>
                 <p>No providers are currently awaiting verification.</p>
               </div>
             ) : (
               <div className="overflow-x-auto text-xs">
                 <table className="w-full text-left">
                   <thead>
-                    <tr className="border-b border-[#363d66] text-[#a9b0d0] uppercase tracking-wider text-[10px]">
+                    <tr className="border-b border-[#e2e8f0] text-[#475569] uppercase tracking-wider text-[10px]">
                       <th className="pb-3">Provider</th>
                       <th className="pb-3">Trade</th>
                       <th className="pb-3">Experience</th>
@@ -274,26 +274,26 @@ const AdminDashboard = () => {
                       <th className="pb-3 text-right">Actions</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-[#363d66]/60">
+                  <tbody className="divide-y divide-[#e2e8f0]">
                     {pendingProviders.map((p) => (
-                      <tr key={p.user_id}>
-                        <td className="py-3 font-bold text-white">{p.full_name} ({p.email})</td>
-                        <td className="py-3 text-[#2dd4bf] font-semibold">{p.service_category}</td>
-                        <td className="py-3 text-[#a9b0d0]">{p.experience_years} years</td>
-                        <td className="py-3 text-white font-bold">₹{p.hourly_rate}/hr</td>
-                        <td className="py-3 text-[#a9b0d0]">{p.service_address}</td>
+                      <tr key={p.user_id} className="hover:bg-slate-50/70 transition-colors">
+                        <td className="py-3 font-bold text-[#172033]">{p.full_name} ({p.email})</td>
+                        <td className="py-3 text-blue-700 font-semibold">{p.service_category}</td>
+                        <td className="py-3 text-[#475569]">{p.experience_years} years</td>
+                        <td className="py-3 text-[#172033] font-bold">₹{p.hourly_rate}/hr</td>
+                        <td className="py-3 text-[#475569]">{p.service_address}</td>
                         <td className="py-3 text-right space-x-2">
                           <button
                             onClick={() => handleProviderStatus(p.user_id, 'verified')}
                             disabled={actionLoading === `provider-${p.user_id}`}
-                            className="px-3 py-1.5 rounded-xl bg-[#2dd4bf]/20 text-[#2dd4bf] hover:bg-[#2dd4bf]/30 font-bold"
+                            className="px-3 py-1.5 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100 font-bold cursor-pointer"
                           >
                             Verify ✓
                           </button>
                           <button
                             onClick={() => handleProviderStatus(p.user_id, 'rejected')}
                             disabled={actionLoading === `provider-${p.user_id}`}
-                            className="px-3 py-1.5 rounded-xl bg-rose-500/20 text-rose-400 hover:bg-rose-500/30 font-bold"
+                            className="px-3 py-1.5 rounded-xl bg-rose-50 text-rose-700 border border-rose-200 hover:bg-rose-100 font-bold cursor-pointer"
                           >
                             Reject ✕
                           </button>
@@ -309,12 +309,12 @@ const AdminDashboard = () => {
 
         {/* TAB 3: FLAGGED REVIEWS */}
         {activeTab === 'reviews' && (
-          <div className="theme-card p-6">
-            <h3 className="text-base font-bold text-white mb-4">NLP Suspicious Review Moderation Queue</h3>
+          <div className="bg-white rounded-2xl border border-[#e2e8f0] p-6 shadow-sm">
+            <h3 className="text-base font-bold text-[#172033] mb-4">NLP Suspicious Review Moderation Queue</h3>
             {flaggedReviews.length === 0 ? (
-              <div className="text-center py-12 text-xs text-[#a9b0d0]">
-                <CheckCircle2 className="w-10 h-10 text-[#2dd4bf] mx-auto mb-2 opacity-60" />
-                <p className="font-bold text-white">Zero Flagged Reviews</p>
+              <div className="text-center py-12 text-xs text-[#475569]">
+                <CheckCircle2 className="w-10 h-10 text-emerald-600 mx-auto mb-2 opacity-60" />
+                <p className="font-bold text-[#172033]">Zero Flagged Reviews</p>
                 <p>The NLP pipeline has screened all community reviews without fraud flags.</p>
               </div>
             ) : (
@@ -327,20 +327,20 @@ const AdminDashboard = () => {
                       : ['NLP Sentiment discrepancy or duplicate template pattern'];
 
                   return (
-                    <div key={r.id} className="p-4 rounded-xl bg-[#1c2036] border border-[#363d66] space-y-3">
+                    <div key={r.id} className="p-4 rounded-xl bg-slate-50 border border-[#e2e8f0] space-y-3">
                       <div className="flex items-center justify-between">
                         <div>
-                          <span className="font-bold text-white">{r.customer_name}</span>
-                          <span className="text-[#a9b0d0] mx-1.5">→</span>
-                          <span className="font-bold text-[#6d5dfc]">{r.provider_name}</span>
+                          <span className="font-bold text-[#172033]">{r.customer_name}</span>
+                          <span className="text-[#475569] mx-1.5">→</span>
+                          <span className="font-bold text-blue-700">{r.provider_name}</span>
                           {r.service_title && (
-                            <span className="text-[11px] text-[#a9b0d0] ml-2">({r.service_title})</span>
+                            <span className="text-[11px] text-[#475569] ml-2 font-medium">({r.service_title})</span>
                           )}
                         </div>
-                        <span className="text-[#fbbf24] font-bold">Rating: {r.rating} ★</span>
+                        <span className="text-amber-600 font-bold">Rating: {r.rating} ★</span>
                       </div>
 
-                      <p className="text-[#a9b0d0] italic bg-[#262b47]/40 p-2.5 rounded-lg border border-[#363d66]/50">
+                      <p className="text-[#172033] italic bg-white p-2.5 rounded-lg border border-[#e2e8f0]">
                         "{r.review_text}"
                       </p>
 
@@ -349,51 +349,51 @@ const AdminDashboard = () => {
                         {r.sentiment_score !== undefined && r.sentiment_score !== null && (
                           <span className={`px-2 py-0.5 rounded-md font-semibold text-[11px] border ${
                             r.sentiment_score < -0.05 
-                              ? 'bg-rose-500/15 text-rose-300 border-rose-500/30' 
+                              ? 'bg-rose-50 text-rose-700 border-rose-200' 
                               : r.sentiment_score > 0.05 
-                                ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30' 
-                                : 'bg-slate-500/15 text-[#a9b0d0] border-[#363d66]'
+                                ? 'bg-emerald-50 text-emerald-700 border-emerald-200' 
+                                : 'bg-slate-100 text-[#475569] border-[#e2e8f0]'
                           }`}>
                             VADER Sentiment: {Number(r.sentiment_score) > 0 ? `+${Number(r.sentiment_score).toFixed(2)}` : Number(r.sentiment_score).toFixed(2)}
                           </span>
                         )}
 
                         {r.similarity_score !== undefined && r.similarity_score !== null && (
-                          <span className="px-2 py-0.5 rounded-md font-semibold text-[11px] bg-[#fbbf24]/15 text-[#fbbf24] border border-[#fbbf24]/30">
+                          <span className="px-2 py-0.5 rounded-md font-semibold text-[11px] bg-amber-50 text-amber-700 border border-amber-200">
                             TF-IDF Similarity: {(Number(r.similarity_score) * 100).toFixed(1)}%
                           </span>
                         )}
                       </div>
 
-                      {/* Phase 4 Flag Reasons Breakdown */}
+                      {/* Flag Reasons Breakdown */}
                       <div className="space-y-1.5">
-                        <span className="text-[10px] font-bold text-[#a9b0d0] uppercase tracking-wider block">
+                        <span className="text-[10px] font-bold text-[#475569] uppercase tracking-wider block">
                           NLP Screening Reasons:
                         </span>
                         {reasons.map((reason, idx) => (
                           <div
                             key={idx}
-                            className="p-2 rounded-lg bg-rose-500/10 border border-rose-500/20 text-rose-300 font-medium text-[11px] flex items-start space-x-1.5"
+                            className="p-2 rounded-lg bg-rose-50 border border-rose-200 text-rose-700 font-medium text-[11px] flex items-start space-x-1.5"
                           >
-                            <span className="text-rose-400 font-bold shrink-0">•</span>
+                            <span className="text-rose-600 font-bold shrink-0">•</span>
                             <span>{reason}</span>
                           </div>
                         ))}
                       </div>
 
                       {/* Moderation Controls */}
-                      <div className="flex justify-end space-x-2 pt-2 border-t border-[#363d66]/50">
+                      <div className="flex justify-end space-x-2 pt-2 border-t border-[#e2e8f0]">
                         <button
                           onClick={() => handleReviewAction(r.id, 'approve')}
                           disabled={actionLoading === `review-${r.id}`}
-                          className="px-3.5 py-1.5 rounded-xl bg-[#2dd4bf]/20 text-[#2dd4bf] hover:bg-[#2dd4bf]/30 font-bold transition cursor-pointer"
+                          className="px-3.5 py-1.5 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100 font-bold transition cursor-pointer"
                         >
                           Approve (Keep)
                         </button>
                         <button
                           onClick={() => handleReviewAction(r.id, 'delete')}
                           disabled={actionLoading === `review-${r.id}`}
-                          className="px-3.5 py-1.5 rounded-xl bg-rose-500/20 text-rose-400 hover:bg-rose-500/30 font-bold transition cursor-pointer"
+                          className="px-3.5 py-1.5 rounded-xl bg-rose-50 text-rose-700 border border-rose-200 hover:bg-rose-100 font-bold transition cursor-pointer"
                         >
                           Remove Review
                         </button>

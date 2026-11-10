@@ -126,7 +126,7 @@ const Home = () => {
   const handleBook = (provider) => {
     if (!isAuthenticated) {
       const providerId = provider.user_id || provider.id;
-      navigate('/login', {
+      navigate('/login/customer', {
         state: {
           from: location.pathname,
           bookProviderId: providerId,
@@ -139,43 +139,41 @@ const Home = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#1c2036] text-[#f1f3ff] flex flex-col justify-between">
+    <div className="min-h-screen bg-[#f8fafc] text-[#172033] flex flex-col justify-between">
       
       {/* 1. HERO SECTION */}
-      <div className="relative overflow-hidden pt-12 pb-20">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[350px] bg-gradient-to-r from-[#6d5dfc]/15 via-[#d946ef]/10 to-transparent blur-3xl pointer-events-none" />
-
+      <div className="relative overflow-hidden pt-12 pb-20 bg-gradient-to-b from-blue-50/70 via-[#f8fafc] to-[#f8fafc] border-b border-[#e2e8f0]/60">
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           
-          <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-[#262b47] border border-[#363d66] text-[#2dd4bf] text-xs font-bold mb-6 shadow-sm">
-            <CheckCircle2 className="w-3.5 h-3.5 text-[#2dd4bf]" />
+          <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-blue-50 border border-blue-200 text-blue-700 text-xs font-bold mb-6 shadow-2xs">
+            <CheckCircle2 className="w-3.5 h-3.5 text-blue-600" />
             <span>Next-Gen Smart Local Discovery with Explainable AI</span>
           </div>
 
-          <h1 className="text-4xl sm:text-6xl font-black tracking-tight text-white max-w-3xl mx-auto mb-6 leading-tight">
-            Find people you can <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#6d5dfc] via-[#d946ef] to-[#2dd4bf]">trust</span>, right near you
+          <h1 className="text-4xl sm:text-6xl font-black tracking-tight text-[#172033] max-w-3xl mx-auto mb-6 leading-tight">
+            Find people you can <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700">trust</span>, right near you
           </h1>
 
-          <p className="text-base sm:lg text-[#a9b0d0] max-w-2xl mx-auto mb-10 font-normal">
+          <p className="text-base sm:text-lg text-[#475569] max-w-2xl mx-auto mb-10 font-normal">
             No more deceptive 5-star ratings. TrustNear evaluates real completed jobs, cancellation history, and fair market pricing with verifiable Machine Learning.
           </p>
 
           {/* Search Box */}
           <form 
             onSubmit={handleSearch}
-            className="max-w-2xl mx-auto relative flex items-center bg-[#262b47] border border-[#363d66] rounded-[18px] p-2.5 shadow-2xl focus-within:border-[#6d5dfc] transition-all mb-8"
+            className="max-w-2xl mx-auto relative flex items-center bg-white border border-[#e2e8f0] rounded-2xl p-2.5 shadow-md focus-within:border-blue-600 focus-within:ring-2 focus-within:ring-blue-100 transition-all mb-8"
           >
-            <Search className="w-5 h-5 text-[#a9b0d0] ml-3 mr-2" />
+            <Search className="w-5 h-5 text-[#475569] ml-3 mr-2 shrink-0" />
             <input 
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Search by trade or problem (e.g., Electrician, AC Repair, Leaking Tap)"
-              className="w-full bg-transparent text-[#f1f3ff] placeholder-[#a9b0d0] text-sm sm:text-base outline-none px-2"
+              className="w-full bg-transparent text-[#172033] placeholder-slate-400 text-sm sm:text-base outline-none px-2"
             />
             <button
               type="submit"
-              className="btn-primary px-6 py-2.5 rounded-xl text-xs sm:text-sm flex items-center space-x-1.5 whitespace-nowrap"
+              className="btn-primary px-6 py-2.5 rounded-xl text-xs sm:text-sm flex items-center space-x-1.5 whitespace-nowrap shadow-sm"
             >
               <span>Explore</span>
               <ArrowRight className="w-4 h-4" />
@@ -186,15 +184,15 @@ const Home = () => {
       </div>
 
       {/* 2. SIX SERVICE CARDS */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 w-full">
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h2 className="text-2xl font-black text-white">Popular Services</h2>
-            <p className="text-xs text-[#a9b0d0]">Explore top requested services verified by our community</p>
+            <h2 className="text-2xl font-black text-[#172033]">Popular Services</h2>
+            <p className="text-xs text-[#475569] mt-0.5">Explore top requested services verified by our community</p>
           </div>
           <button 
             onClick={() => navigate('/providers')}
-            className="text-xs font-bold text-[#6d5dfc] hover:text-[#d946ef] transition-colors flex items-center space-x-1 cursor-pointer"
+            className="text-xs font-bold text-blue-600 hover:text-blue-800 transition-colors flex items-center space-x-1 cursor-pointer"
           >
             <span>View All Trades</span>
             <ArrowRight className="w-3.5 h-3.5" />
@@ -217,7 +215,7 @@ const Home = () => {
       </div>
 
       {/* 3. GRADIENT STATS BAND (100% REAL DATABASE DATA) */}
-      <div className="my-16 relative overflow-hidden bg-gradient-to-r from-[#6d5dfc] via-[#8b5cf6] to-[#d946ef] text-white py-12 shadow-2xl">
+      <div className="my-16 relative overflow-hidden bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 text-white py-12 shadow-lg">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center divide-y md:divide-y-0 md:divide-x divide-white/20">
             
@@ -272,16 +270,16 @@ const Home = () => {
         <div className="flex items-center justify-between mb-8">
           <div>
             <div className="flex items-center space-x-2">
-              <h2 className="text-2xl font-black text-white">Top-Rated Providers</h2>
-              <span className="text-[10px] font-bold text-[#2dd4bf] bg-[#2dd4bf]/15 px-2 py-0.5 rounded-full border border-[#2dd4bf]/30">
+              <h2 className="text-2xl font-black text-[#172033]">Top-Rated Providers</h2>
+              <span className="text-[10px] font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-full border border-blue-200">
                 AI Verified
               </span>
             </div>
-            <p className="text-xs text-[#a9b0d0]">Highest ML Trust Scores in Mangaluru (Click Trust Badge for SHAP)</p>
+            <p className="text-xs text-[#475569] mt-0.5">Highest ML Trust Scores in Mangaluru (Click Trust Badge for SHAP)</p>
           </div>
           <button 
             onClick={() => navigate('/providers')}
-            className="text-xs font-bold text-[#6d5dfc] hover:text-[#d946ef] transition-colors flex items-center space-x-1 cursor-pointer"
+            className="text-xs font-bold text-blue-600 hover:text-blue-800 transition-colors flex items-center space-x-1 cursor-pointer"
           >
             <span>View All Providers</span>
             <ArrowRight className="w-3.5 h-3.5" />
@@ -291,11 +289,11 @@ const Home = () => {
         {loading ? (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[1, 2, 3].map((n) => (
-              <div key={n} className="theme-card p-6 h-64 animate-pulse" />
+              <div key={n} className="bg-white rounded-2xl border border-[#e2e8f0] p-6 h-64 animate-pulse shadow-sm" />
             ))}
           </div>
         ) : topProviders.length === 0 ? (
-          <div className="theme-card p-8 text-center text-xs text-[#a9b0d0]">
+          <div className="bg-white rounded-2xl border border-[#e2e8f0] p-8 text-center text-xs text-[#475569] shadow-sm">
             No verified providers currently listed in the database.
           </div>
         ) : (
@@ -313,11 +311,11 @@ const Home = () => {
       </div>
 
       {/* FOOTER */}
-      <footer className="border-t border-[#363d66] bg-[#1c2036] py-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between text-xs text-[#a9b0d0]">
+      <footer className="border-t border-[#e2e8f0] bg-white py-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between text-xs text-[#475569]">
           <div className="flex items-center space-x-2 mb-4 sm:mb-0">
-            <ShieldCheck className="w-4 h-4 text-[#2dd4bf]" />
-            <span className="font-bold text-white">TrustNear Platform</span>
+            <ShieldCheck className="w-4 h-4 text-blue-600" />
+            <span className="font-bold text-[#172033]">TrustNear Platform</span>
             <span>— Smart Local Discovery</span>
           </div>
           <p>© TrustNear Autonomous Local Discovery</p>

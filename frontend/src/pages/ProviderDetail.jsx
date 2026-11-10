@@ -62,7 +62,7 @@ const ProviderDetail = () => {
 
   const handleBookClick = () => {
     if (!isAuthenticated) {
-      navigate('/login', {
+      navigate('/login/customer', {
         state: {
           from: location.pathname,
           bookProviderId: provider?.user_id || provider?.id,
@@ -76,17 +76,17 @@ const ProviderDetail = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#1c2036] text-[#f1f3ff] py-12 px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen bg-[#f8fafc] text-[#172033] py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto space-y-6 animate-pulse">
-          <div className="h-6 w-32 bg-[#262b47] rounded-lg" />
-          <div className="theme-card p-8 h-64" />
+          <div className="h-6 w-32 bg-slate-200 rounded-lg" />
+          <div className="bg-white rounded-2xl border border-[#e2e8f0] p-8 h-64 shadow-sm" />
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
             <div className="lg:col-span-7 space-y-6">
-              <div className="theme-card p-6 h-48" />
-              <div className="theme-card p-6 h-64" />
+              <div className="bg-white rounded-2xl border border-[#e2e8f0] p-6 h-48 shadow-sm" />
+              <div className="bg-white rounded-2xl border border-[#e2e8f0] p-6 h-64 shadow-sm" />
             </div>
             <div className="lg:col-span-5">
-              <div className="theme-card p-6 h-96" />
+              <div className="bg-white rounded-2xl border border-[#e2e8f0] p-6 h-96 shadow-sm" />
             </div>
           </div>
         </div>
@@ -96,17 +96,17 @@ const ProviderDetail = () => {
 
   if (error || !provider) {
     return (
-      <div className="min-h-screen bg-[#1c2036] text-[#f1f3ff] py-16 px-4 flex items-center justify-center">
-        <div className="theme-card max-w-md w-full p-8 text-center space-y-4">
-          <div className="w-12 h-12 rounded-full bg-rose-500/20 text-rose-400 flex items-center justify-center mx-auto">
+      <div className="min-h-screen bg-[#f8fafc] text-[#172033] py-16 px-4 flex items-center justify-center">
+        <div className="bg-white rounded-2xl border border-[#e2e8f0] max-w-md w-full p-8 text-center space-y-4 shadow-sm">
+          <div className="w-12 h-12 rounded-full bg-rose-50 text-rose-600 border border-rose-200 flex items-center justify-center mx-auto">
             <AlertCircle className="w-6 h-6" />
           </div>
-          <h2 className="text-xl font-bold text-white">Provider Not Found</h2>
-          <p className="text-xs text-[#a9b0d0]">
+          <h2 className="text-xl font-bold text-[#172033]">Provider Not Found</h2>
+          <p className="text-xs text-[#475569]">
             {error || 'The provider you are looking for does not exist or has been deactivated.'}
           </p>
           <div className="pt-2">
-            <Link to="/providers" className="btn-primary px-6 py-2.5 text-xs font-bold inline-flex items-center space-x-2">
+            <Link to="/providers" className="btn-primary px-6 py-2.5 text-xs font-bold inline-flex items-center space-x-2 rounded-xl shadow-sm">
               <ArrowLeft className="w-4 h-4" />
               <span>Back to Providers</span>
             </Link>
@@ -126,14 +126,14 @@ const ProviderDetail = () => {
   const trustScore = provider.trust_score;
 
   return (
-    <div className="min-h-screen bg-[#1c2036] text-[#f1f3ff] py-8 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-[#f8fafc] text-[#172033] py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-6xl mx-auto space-y-6">
         
         {/* Breadcrumb / Back Link */}
         <div>
           <Link
             to="/providers"
-            className="inline-flex items-center space-x-2 text-xs font-semibold text-[#a9b0d0] hover:text-[#2dd4bf] transition-colors"
+            className="inline-flex items-center space-x-2 text-xs font-semibold text-[#475569] hover:text-blue-600 transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
             <span>Back to All Providers</span>
@@ -141,49 +141,47 @@ const ProviderDetail = () => {
         </div>
 
         {/* Hero Profile Header Card */}
-        <div className="theme-card p-6 sm:p-8 relative overflow-hidden">
+        <div className="bg-white rounded-2xl border border-[#e2e8f0] p-6 sm:p-8 relative overflow-hidden shadow-sm">
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
             
             {/* Avatar & Core Bio */}
             <div className="flex items-start sm:items-center space-x-4 sm:space-x-6">
-              <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl p-0.5 bg-gradient-to-tr from-[#6d5dfc] via-[#d946ef] to-[#2dd4bf] shrink-0">
-                <div className="w-full h-full rounded-2xl bg-[#1c2036] flex items-center justify-center text-3xl font-black text-white">
-                  {name.charAt(0)}
-                </div>
+              <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-blue-600 text-white flex items-center justify-center text-3xl font-black shadow-md shrink-0">
+                {name.charAt(0)}
               </div>
 
               <div className="space-y-1.5">
                 <div className="flex flex-wrap items-center gap-2">
-                  <h1 className="text-2xl sm:text-3xl font-black text-white">{name}</h1>
+                  <h1 className="text-2xl sm:text-3xl font-black text-[#172033]">{name}</h1>
                   {isVerified && (
-                    <span className="inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full bg-[#2dd4bf]/15 text-[#2dd4bf] text-xs font-bold border border-[#2dd4bf]/30">
-                      <CheckCircle2 className="w-3.5 h-3.5" />
+                    <span className="inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-700 text-xs font-bold border border-blue-200">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-blue-600" />
                       <span>Verified Pro</span>
                     </span>
                   )}
                   <span className={`inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full text-xs font-semibold border ${
                     isAvailable
-                      ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30'
-                      : 'bg-amber-500/15 text-amber-400 border-amber-500/30'
+                      ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                      : 'bg-amber-50 text-amber-700 border-amber-200'
                   }`}>
-                    <span className={`w-1.5 h-1.5 rounded-full ${isAvailable ? 'bg-emerald-400' : 'bg-amber-400'}`} />
+                    <span className={`w-1.5 h-1.5 rounded-full ${isAvailable ? 'bg-emerald-500' : 'bg-amber-500'}`} />
                     <span>{isAvailable ? 'Available Now' : 'Currently Busy'}</span>
                   </span>
                 </div>
 
-                <div className="flex flex-wrap items-center gap-3 text-xs text-[#a9b0d0]">
-                  <span className="font-semibold text-[#6d5dfc] bg-[#6d5dfc]/10 px-2.5 py-0.5 rounded-full border border-[#6d5dfc]/20">
+                <div className="flex flex-wrap items-center gap-3 text-xs text-[#475569]">
+                  <span className="font-semibold text-blue-700 bg-blue-50 px-2.5 py-0.5 rounded-full border border-blue-200">
                     {category}
                   </span>
                   {provider.experience_years && (
                     <span className="flex items-center space-x-1">
-                      <Briefcase className="w-3.5 h-3.5 text-[#2dd4bf]" />
+                      <Briefcase className="w-3.5 h-3.5 text-blue-600" />
                       <span>{provider.experience_years} Years Experience</span>
                     </span>
                   )}
                   {provider.service_address && (
                     <span className="flex items-center space-x-1">
-                      <MapPin className="w-3.5 h-3.5 text-[#2dd4bf]" />
+                      <MapPin className="w-3.5 h-3.5 text-blue-600" />
                       <span>{provider.service_address}</span>
                     </span>
                   )}
@@ -192,13 +190,13 @@ const ProviderDetail = () => {
                 {/* Rating Preview */}
                 <div className="flex items-center space-x-2 pt-1 text-xs">
                   {rating ? (
-                    <div className="flex items-center space-x-1 text-[#fbbf24]">
-                      <Star className="w-4 h-4 fill-[#fbbf24]" />
-                      <span className="font-black text-white">{rating}</span>
-                      <span className="text-[#a9b0d0]">({reviewsCount} approved reviews)</span>
+                    <div className="flex items-center space-x-1 text-amber-500">
+                      <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
+                      <span className="font-black text-[#172033]">{rating}</span>
+                      <span className="text-[#475569]">({reviewsCount} approved reviews)</span>
                     </div>
                   ) : (
-                    <span className="text-xs text-[#a9b0d0] font-medium">
+                    <span className="text-xs text-[#475569] font-medium">
                       {provider.completed_jobs > 0 ? `${provider.completed_jobs} verified completed jobs` : 'New Provider on TrustNear'}
                     </span>
                   )}
@@ -207,20 +205,20 @@ const ProviderDetail = () => {
             </div>
 
             {/* Pricing & CTA */}
-            <div className="flex flex-col sm:flex-row md:flex-col items-start md:items-end justify-between gap-4 w-full md:w-auto pt-4 md:pt-0 border-t md:border-t-0 border-[#363d66]">
+            <div className="flex flex-col sm:flex-row md:flex-col items-start md:items-end justify-between gap-4 w-full md:w-auto pt-4 md:pt-0 border-t md:border-t-0 border-[#e2e8f0]">
               <div className="text-left md:text-right">
-                <span className="text-xs text-[#a9b0d0] block">Standard Rate</span>
+                <span className="text-xs text-[#475569] block">Standard Rate</span>
                 <div className="flex items-baseline space-x-1">
                   {hourlyRate ? (
                     <>
-                      <span className="text-2xl sm:text-3xl font-black text-white flex items-center">
-                        <IndianRupee className="w-6 h-6 text-[#2dd4bf]" />
+                      <span className="text-2xl sm:text-3xl font-black text-[#172033] flex items-center">
+                        <IndianRupee className="w-6 h-6 text-blue-600" />
                         {hourlyRate}
                       </span>
-                      <span className="text-xs text-[#a9b0d0]">/ hour</span>
+                      <span className="text-xs text-[#475569]">/ hour</span>
                     </>
                   ) : (
-                    <span className="text-sm font-bold text-white">Custom Quote</span>
+                    <span className="text-sm font-bold text-[#172033]">Custom Quote</span>
                   )}
                 </div>
               </div>
@@ -228,7 +226,7 @@ const ProviderDetail = () => {
               <button
                 onClick={handleBookClick}
                 disabled={!isAvailable}
-                className="btn-primary w-full sm:w-auto px-8 py-3 text-sm font-bold flex items-center justify-center space-x-2 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                className="btn-primary w-full sm:w-auto px-8 py-3 text-sm font-bold flex items-center justify-center space-x-2 shadow-sm rounded-xl disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
               >
                 <Calendar className="w-4 h-4" />
                 <span>{isAvailable ? 'Book Appointment' : 'Currently Unavailable'}</span>
@@ -245,28 +243,28 @@ const ProviderDetail = () => {
           <div className="lg:col-span-7 space-y-6">
 
             {/* About / Bio Card */}
-            <div className="theme-card p-6 space-y-3">
-              <h3 className="text-base font-bold text-white flex items-center space-x-2">
-                <UserCheck className="w-4 h-4 text-[#2dd4bf]" />
+            <div className="bg-white rounded-2xl border border-[#e2e8f0] p-6 space-y-3 shadow-sm">
+              <h3 className="text-base font-bold text-[#172033] flex items-center space-x-2">
+                <UserCheck className="w-4 h-4 text-blue-600" />
                 <span>About the Professional</span>
               </h3>
-              <p className="text-xs sm:text-sm text-[#a9b0d0] leading-relaxed whitespace-pre-line">
+              <p className="text-xs sm:text-sm text-[#475569] leading-relaxed whitespace-pre-line">
                 {provider.bio || `${name} is a certified ${category} specialist serving residents in Mangaluru with professional, on-demand maintenance and home services.`}
               </p>
             </div>
 
             {/* Genuine Community Reviews Section */}
-            <div className="theme-card p-6 space-y-4">
-              <div className="flex items-center justify-between pb-3 border-b border-[#363d66]">
+            <div className="bg-white rounded-2xl border border-[#e2e8f0] p-6 space-y-4 shadow-sm">
+              <div className="flex items-center justify-between pb-3 border-b border-[#e2e8f0]">
                 <div className="flex items-center space-x-2">
-                  <MessageSquare className="w-4 h-4 text-[#6d5dfc]" />
-                  <h3 className="text-base font-bold text-white">Genuine Customer Reviews</h3>
+                  <MessageSquare className="w-4 h-4 text-blue-600" />
+                  <h3 className="text-base font-bold text-[#172033]">Genuine Customer Reviews</h3>
                 </div>
                 {rating && (
                   <div className="flex items-center space-x-1.5 text-xs">
-                    <Star className="w-4 h-4 fill-[#fbbf24] text-[#fbbf24]" />
-                    <span className="font-bold text-white">{rating}</span>
-                    <span className="text-[#a9b0d0]">/ 5.0</span>
+                    <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
+                    <span className="font-bold text-[#172033]">{rating}</span>
+                    <span className="text-[#475569]">/ 5.0</span>
                   </div>
                 )}
               </div>
@@ -276,19 +274,19 @@ const ProviderDetail = () => {
                   {provider.reviews.map((r) => (
                     <div
                       key={r.id}
-                      className="p-4 rounded-xl bg-[#1c2036]/80 border border-[#363d66]/60 space-y-2 hover:border-[#6d5dfc]/40 transition-colors"
+                      className="p-4 rounded-xl bg-slate-50 border border-[#e2e8f0] space-y-2 hover:border-blue-300 transition-colors"
                     >
                       <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-2">
-                          <div className="w-7 h-7 rounded-full bg-[#6d5dfc]/20 text-[#6d5dfc] flex items-center justify-center text-xs font-bold">
+                          <div className="w-7 h-7 rounded-full bg-blue-600 text-white flex items-center justify-center text-xs font-bold shadow-2xs">
                             {r.customer_name ? r.customer_name.charAt(0) : 'C'}
                           </div>
                           <div>
-                            <span className="text-xs font-bold text-white block">
+                            <span className="text-xs font-bold text-[#172033] block">
                               {r.customer_name || 'Verified Customer'}
                             </span>
                             {r.service_title && (
-                              <span className="text-[10px] text-[#2dd4bf] font-medium block">
+                              <span className="text-[10px] text-blue-600 font-medium block">
                                 Service: {r.service_title}
                               </span>
                             )}
@@ -297,12 +295,12 @@ const ProviderDetail = () => {
 
                         <div className="flex items-center space-x-2">
                           {/* Rating Stars */}
-                          <div className="flex items-center text-[#fbbf24]">
+                          <div className="flex items-center text-amber-500">
                             {[...Array(5)].map((_, i) => (
                               <Star
                                 key={i}
                                 className={`w-3.5 h-3.5 ${
-                                  i < r.rating ? 'fill-[#fbbf24] text-[#fbbf24]' : 'text-[#363d66]'
+                                  i < r.rating ? 'fill-amber-400 text-amber-400' : 'text-slate-300'
                                 }`}
                               />
                             ))}
@@ -310,19 +308,19 @@ const ProviderDetail = () => {
                         </div>
                       </div>
 
-                      <p className="text-xs text-[#f1f3ff] leading-relaxed">
+                      <p className="text-xs text-[#172033] leading-relaxed">
                         "{r.review_text}"
                       </p>
 
-                      <div className="flex items-center justify-between pt-1 text-[11px] text-[#a9b0d0]">
+                      <div className="flex items-center justify-between pt-1 text-[11px] text-[#475569]">
                         <span>{r.created_at ? new Date(r.created_at).toLocaleDateString() : 'Recent'}</span>
                         {r.sentiment_score !== null && r.sentiment_score !== undefined && (
                           <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${
                             r.sentiment_score >= 0.05
-                              ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
+                              ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
                               : r.sentiment_score <= -0.05
-                              ? 'bg-rose-500/10 text-rose-400 border border-rose-500/20'
-                              : 'bg-slate-500/10 text-slate-400 border border-slate-500/20'
+                              ? 'bg-rose-50 text-rose-700 border border-rose-200'
+                              : 'bg-slate-100 text-slate-700 border border-slate-200'
                           }`}>
                             Sentiment {r.sentiment_score > 0 ? `+${r.sentiment_score}` : r.sentiment_score}
                           </span>
@@ -332,9 +330,9 @@ const ProviderDetail = () => {
                   ))}
                 </div>
               ) : (
-                <div className="py-8 text-center text-xs text-[#a9b0d0] space-y-2">
-                  <MessageSquare className="w-8 h-8 text-[#6d5dfc] mx-auto opacity-50" />
-                  <p className="font-semibold text-white">No reviews published yet</p>
+                <div className="py-8 text-center text-xs text-[#475569] space-y-2">
+                  <MessageSquare className="w-8 h-8 text-blue-600 mx-auto opacity-50" />
+                  <p className="font-semibold text-[#172033]">No reviews published yet</p>
                   <p>Book this provider to experience their work and become the first to leave verified feedback!</p>
                 </div>
               )}
@@ -346,19 +344,19 @@ const ProviderDetail = () => {
           <div className="lg:col-span-5 space-y-6">
 
             {/* Trust Intelligence Card */}
-            <div className="theme-card p-6 space-y-4 border border-[#6d5dfc]/30">
+            <div className="bg-white rounded-2xl border border-[#e2e8f0] p-6 space-y-4 shadow-sm">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-2">
-                  <ShieldCheck className="w-5 h-5 text-[#2dd4bf]" />
-                  <h3 className="text-base font-bold text-white">Trust Intelligence</h3>
+                  <ShieldCheck className="w-5 h-5 text-blue-600" />
+                  <h3 className="text-base font-bold text-[#172033]">Trust Intelligence</h3>
                 </div>
                 {provider.data_source && (
                   <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full border ${
                     provider.data_source === 'real'
-                      ? 'bg-[#2dd4bf]/15 text-[#2dd4bf] border-[#2dd4bf]/30'
+                      ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
                       : provider.data_source === 'hybrid'
-                      ? 'bg-[#6d5dfc]/15 text-[#6d5dfc] border-[#6d5dfc]/30'
-                      : 'bg-amber-500/15 text-amber-400 border-amber-500/30'
+                      ? 'bg-blue-50 text-blue-700 border-blue-200'
+                      : 'bg-amber-50 text-amber-700 border-amber-200'
                   }`}>
                     {provider.data_source === 'real' ? 'Community Verified' : provider.data_source === 'hybrid' ? 'Hybrid Benchmark' : 'Platform Baseline'}
                   </span>
@@ -366,17 +364,17 @@ const ProviderDetail = () => {
               </div>
 
               {/* Big Trust Gauge */}
-              <div className="p-4 rounded-xl bg-[#1c2036]/90 border border-[#363d66] flex items-center justify-between">
+              <div className="p-4 rounded-xl bg-slate-50 border border-[#e2e8f0] flex items-center justify-between">
                 <div>
-                  <span className="text-[11px] text-[#a9b0d0] font-semibold uppercase block">Verified Trust Score</span>
+                  <span className="text-[11px] text-[#475569] font-semibold uppercase block">Verified Trust Score</span>
                   <div className="flex items-baseline space-x-1.5 mt-0.5">
                     {trustScore !== null && trustScore !== undefined ? (
                       <>
-                        <span className="text-3xl font-black text-white">{Number(trustScore).toFixed(1)}</span>
-                        <span className="text-xs text-[#a9b0d0]">/ 100</span>
+                        <span className="text-3xl font-black text-[#172033]">{Number(trustScore).toFixed(1)}</span>
+                        <span className="text-xs text-[#475569]">/ 100</span>
                       </>
                     ) : (
-                      <span className="text-sm font-bold text-[#a9b0d0]">New Provider Baseline</span>
+                      <span className="text-sm font-bold text-[#475569]">New Provider Baseline</span>
                     )}
                   </div>
                 </div>
@@ -385,7 +383,7 @@ const ProviderDetail = () => {
                   {trustScore !== null && trustScore !== undefined ? (
                     <TrustBadge score={trustScore} providerName={name} shapFactors={provider.shap_factors} />
                   ) : (
-                    <span className="px-2.5 py-1 rounded-full bg-[#363d66]/50 text-xs text-[#a9b0d0] font-semibold">
+                    <span className="px-2.5 py-1 rounded-full bg-slate-200 text-xs text-[#475569] font-semibold">
                       New Pro
                     </span>
                   )}
@@ -394,23 +392,23 @@ const ProviderDetail = () => {
 
               {/* Evidence Note */}
               {provider.evidence_note && (
-                <div className="p-3 rounded-xl bg-[#2dd4bf]/10 border border-[#2dd4bf]/20 text-xs text-[#2dd4bf] flex items-start space-x-2">
-                  <Info className="w-4 h-4 shrink-0 mt-0.5" />
+                <div className="p-3 rounded-xl bg-blue-50 border border-blue-200 text-xs text-blue-800 flex items-start space-x-2">
+                  <Info className="w-4 h-4 shrink-0 mt-0.5 text-blue-600" />
                   <p className="leading-relaxed">{provider.evidence_note}</p>
                 </div>
               )}
 
               {/* Operational Signals */}
               <div className="grid grid-cols-2 gap-2 text-xs">
-                <div className="p-3 rounded-xl bg-[#1c2036] border border-[#363d66]">
-                  <span className="text-[10px] text-[#a9b0d0] uppercase block">Completed Jobs</span>
-                  <span className="text-sm font-bold text-white mt-1 block">
+                <div className="p-3 rounded-xl bg-slate-50 border border-[#e2e8f0]">
+                  <span className="text-[10px] text-[#475569] uppercase block font-semibold">Completed Jobs</span>
+                  <span className="text-sm font-bold text-[#172033] mt-1 block">
                     {provider.completed_jobs || 0} verified
                   </span>
                 </div>
-                <div className="p-3 rounded-xl bg-[#1c2036] border border-[#363d66]">
-                  <span className="text-[10px] text-[#a9b0d0] uppercase block">Cancellation Rate</span>
-                  <span className="text-sm font-bold text-white mt-1 block">
+                <div className="p-3 rounded-xl bg-slate-50 border border-[#e2e8f0]">
+                  <span className="text-[10px] text-[#475569] uppercase block font-semibold">Cancellation Rate</span>
+                  <span className="text-sm font-bold text-[#172033] mt-1 block">
                     {provider.cancellation_rate ? `${Number(provider.cancellation_rate).toFixed(1)}%` : '0.0%'}
                   </span>
                 </div>
@@ -418,21 +416,21 @@ const ProviderDetail = () => {
 
               {/* SHAP Explainable Factors if available */}
               {provider.shap_factors && Array.isArray(provider.shap_factors) && provider.shap_factors.length > 0 && (
-                <div className="space-y-2 pt-2 border-t border-[#363d66]">
-                  <span className="text-xs font-bold text-white flex items-center space-x-1.5">
-                    <Sparkles className="w-3.5 h-3.5 text-[#6d5dfc]" />
+                <div className="space-y-2 pt-2 border-t border-[#e2e8f0]">
+                  <span className="text-xs font-bold text-[#172033] flex items-center space-x-1.5">
+                    <Sparkles className="w-3.5 h-3.5 text-blue-600" />
                     <span>ML Trust Score Drivers</span>
                   </span>
                   <div className="space-y-1.5">
                     {provider.shap_factors.slice(0, 4).map((factor, idx) => (
                       <div
                         key={idx}
-                        className="flex items-center justify-between text-[11px] p-2 rounded-lg bg-[#1c2036]/60 border border-[#363d66]/40"
+                        className="flex items-center justify-between text-[11px] p-2 rounded-lg bg-slate-50 border border-[#e2e8f0]"
                       >
-                        <span className="text-[#f1f3ff] truncate mr-2">{factor.label || factor.feature}</span>
+                        <span className="text-[#172033] truncate mr-2 font-medium">{factor.label || factor.feature}</span>
                         <span
                           className={`font-bold shrink-0 ${
-                            factor.impact > 0 ? 'text-[#2dd4bf]' : 'text-rose-400'
+                            factor.impact > 0 ? 'text-emerald-700' : 'text-rose-600'
                           }`}
                         >
                           {factor.impact > 0 ? `+${Number(factor.impact).toFixed(1)}` : Number(factor.impact).toFixed(1)}
@@ -445,19 +443,19 @@ const ProviderDetail = () => {
             </div>
 
             {/* Platform Guarantees Card */}
-            <div className="theme-card p-5 space-y-3">
-              <h4 className="text-xs font-bold uppercase tracking-wider text-white">TrustNear Assurance</h4>
-              <ul className="space-y-2 text-xs text-[#a9b0d0]">
+            <div className="bg-white rounded-2xl border border-[#e2e8f0] p-5 space-y-3 shadow-sm">
+              <h4 className="text-xs font-bold uppercase tracking-wider text-[#172033]">TrustNear Assurance</h4>
+              <ul className="space-y-2 text-xs text-[#475569]">
                 <li className="flex items-center space-x-2">
-                  <CheckCircle2 className="w-4 h-4 text-[#2dd4bf] shrink-0" />
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
                   <span>Verified government ID & criminal background checked</span>
                 </li>
                 <li className="flex items-center space-x-2">
-                  <CheckCircle2 className="w-4 h-4 text-[#2dd4bf] shrink-0" />
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
                   <span>Fair market price estimations to prevent overcharging</span>
                 </li>
                 <li className="flex items-center space-x-2">
-                  <CheckCircle2 className="w-4 h-4 text-[#2dd4bf] shrink-0" />
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
                   <span>Zero upfront payment — pay only after service completion</span>
                 </li>
               </ul>

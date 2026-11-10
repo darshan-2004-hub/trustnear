@@ -30,11 +30,11 @@ import {
 } from 'lucide-react';
 
 const STATUS_PILLS = {
-  pending: { bg: 'bg-[#fbbf24]/15 text-[#fbbf24] border-[#fbbf24]/30', label: 'Pending Approval' },
-  accepted: { bg: 'bg-[#2dd4bf]/15 text-[#2dd4bf] border-[#2dd4bf]/30', label: 'Accepted' },
-  in_progress: { bg: 'bg-[#6d5dfc]/15 text-[#6d5dfc] border-[#6d5dfc]/30', label: 'In Progress' },
-  completed: { bg: 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30', label: 'Completed' },
-  cancelled: { bg: 'bg-rose-500/15 text-rose-400 border-rose-500/30', label: 'Cancelled' },
+  pending: { bg: 'bg-amber-50 text-amber-700 border-amber-200', label: 'Pending Approval' },
+  accepted: { bg: 'bg-blue-50 text-blue-700 border-blue-200', label: 'Accepted' },
+  in_progress: { bg: 'bg-purple-50 text-purple-700 border-purple-200', label: 'In Progress' },
+  completed: { bg: 'bg-emerald-50 text-emerald-700 border-emerald-200', label: 'Completed' },
+  cancelled: { bg: 'bg-rose-50 text-rose-700 border-rose-200', label: 'Cancelled' },
 };
 
 const Bookings = () => {
@@ -98,12 +98,9 @@ const Bookings = () => {
           shap_factors: shap,
           evidence_note: note,
         });
-      } else {
-        setProviderTrustData(null);
       }
     } catch (err) {
-      console.warn('Could not fetch real-time provider trust metrics:', err.message);
-      setProviderTrustData(null);
+      console.warn('Could not fetch live provider trust data:', err.message);
     } finally {
       setTrustLoading(false);
     }
@@ -113,11 +110,11 @@ const Bookings = () => {
     setLoading(true);
     try {
       const res = await api.get('/bookings');
-      if (res.data?.success) {
-        setBookings(res.data.bookings || []);
+      if (res.data?.success && Array.isArray(res.data.bookings)) {
+        setBookings(res.data.bookings);
       }
     } catch (err) {
-      console.error('Failed to load bookings:', err);
+      console.error('Failed to load appointments:', err);
     } finally {
       setLoading(false);
     }
@@ -125,98 +122,107 @@ const Bookings = () => {
 
   useEffect(() => {
     fetchBookings();
-    if (user?.role === 'provider') {
+    if (isProvider) {
       fetchProviderMetrics();
     }
 
+    // Connect to Flask-SocketIO for real-time booking status notifications
     const socket = io('http://localhost:5000', {
       transports: ['websocket', 'polling'],
     });
     socketRef.current = socket;
 
-    socket.on('connect', () => {
-      socket.emit('join_user_notifications', { token });
+    socket.on('booking_status_changed', (data) => {
+      fetchBookings();
+      if (isProvider) fetchProviderMetrics();
+      setToastNotification({
+        title: 'Booking Updated',
+        message: `Booking #${data.booking_id} status changed to ${data.new_status}`,
+        type: 'info',
+      });
+      setTimeout(() => setToastNotification(null), 5000);
     });
 
-    socket.on('new_message_notification', (data) => {
-      setToastNotification(data);
+    socket.on('new_chat_message', (msg) => {
       setBookings((prev) =>
-        prev.map((b) =>
-          b.id === data.booking_id ? { ...b, unread_count: (b.unread_count || 0) + 1 } : b
-        )
+        prev.map((b) => (b.id === msg.booking_id ? { ...b, unread_count: (b.unread_count || 0) + 1 } : b))
       );
-
-      setTimeout(() => {
-        setToastNotification((curr) => (curr === data ? null : curr));
-      }, 6000);
+      setToastNotification({
+        title: 'New Message',
+        message: `${msg.sender_name}: ${msg.content}`,
+        booking_id: msg.booking_id,
+        type: 'message',
+      });
+      setTimeout(() => setToastNotification(null), 6000);
     });
 
     return () => {
       socket.disconnect();
     };
-  }, [token, user?.role, user?.id]);
+  }, []);
 
-  const handleStatusUpdate = async (bookingId, newStatus, reason = null) => {
+  const handleStatusUpdate = async (bookingId, nextStatus, optionalReason = null) => {
     setActionLoading(bookingId);
     try {
-      const payload = { status: newStatus };
-      if (reason) {
-        payload.cancellation_reason = reason;
+      const payload = { status: nextStatus };
+      if (optionalReason) {
+        payload.cancellation_reason = optionalReason;
       }
       const res = await api.patch(`/bookings/${bookingId}/status`, payload);
       if (res.data?.success) {
         setBookings((prev) =>
-          prev.map((b) => (b.id === bookingId ? { ...b, status: newStatus, cancellation_reason: reason || b.cancellation_reason } : b))
+          prev.map((b) =>
+            b.id === bookingId
+              ? {
+                  ...b,
+                  status: nextStatus,
+                  cancellation_reason: optionalReason || b.cancellation_reason,
+                }
+              : b
+          )
         );
-        // Refresh provider trust metrics on job completion or cancellation
-        if (isProvider && (newStatus === 'completed' || newStatus === 'cancelled')) {
-          fetchProviderMetrics();
-        }
-        setCancellationBooking(null);
+        if (isProvider) fetchProviderMetrics();
       }
     } catch (err) {
-      alert(err.response?.data?.message || 'Failed to update appointment status.');
+      console.error('Failed to update status:', err);
     } finally {
       setActionLoading(null);
+      setCancellationBooking(null);
     }
   };
 
-  // Metrics Calculations
-  const totalCount = bookings.length;
-  const activeCount = bookings.filter((b) => ['pending', 'accepted', 'in_progress'].includes(b.status)).length;
-  const completedCount = bookings.filter((b) => b.status === 'completed').length;
-
-  const totalSpent = bookings
-    .filter((b) => b.status === 'completed')
-    .reduce((sum, b) => sum + (parseFloat(b.agreed_price) || 0), 0);
-
-  // Real provider trust score — never defaults to misleading 50.0
-  const providerTrustScore = providerTrustData?.trust_score !== undefined && providerTrustData?.trust_score !== null
-    ? Number(providerTrustData.trust_score)
-    : user?.trust_metrics?.trust_score !== undefined && user?.trust_metrics?.trust_score !== null
-      ? Number(user.trust_metrics.trust_score)
-      : null;
-
-  // Filter list
+  // Filter Bookings by Tab
   const filteredBookings = bookings.filter((b) => {
+    if (activeTab === 'all') return true;
     if (activeTab === 'active') return ['pending', 'accepted', 'in_progress'].includes(b.status);
     if (activeTab === 'completed') return b.status === 'completed';
     if (activeTab === 'cancelled') return b.status === 'cancelled';
     return true;
   });
 
+  const totalCount = bookings.length;
+  const activeCount = bookings.filter((b) => ['pending', 'accepted', 'in_progress'].includes(b.status)).length;
+  const completedCount = bookings.filter((b) => b.status === 'completed').length;
+  
+  // Real Financial Calculation (Uses ONLY completed bookings with real agreed prices)
+  const totalSpent = bookings
+    .filter((b) => b.status === 'completed')
+    .reduce((sum, b) => sum + (parseFloat(b.agreed_price) || 0), 0);
+
+  const providerTrustScore = providerTrustData?.trust_score ?? user?.trust_metrics?.trust_score ?? null;
+
   return (
-    <div className="min-h-screen bg-[#1c2036] text-[#f1f3ff] py-8 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-[#f8fafc] text-[#172033] py-8 px-4 sm:px-6 lg:px-8">
       
-      {/* Toast Alert Banner */}
+      {/* Real-time Toast Banner */}
       {toastNotification && (
-        <div className="fixed top-20 right-6 z-50 bg-[#262b47] border border-[#6d5dfc] p-4 rounded-2xl shadow-2xl flex items-center space-x-3 text-xs animate-in slide-in-from-top-4">
-          <div className="w-8 h-8 rounded-full bg-[#6d5dfc]/20 flex items-center justify-center text-[#6d5dfc]">
-            <Bell className="w-4 h-4" />
+        <div className="fixed bottom-6 left-6 z-50 bg-white border border-blue-200 rounded-2xl p-4 shadow-xl flex items-center space-x-3 animate-in slide-in-from-bottom-5">
+          <div className="p-2 bg-blue-50 text-blue-600 rounded-xl">
+            <Bell className="w-5 h-5" />
           </div>
           <div>
-            <p className="font-bold text-white">New Message from {toastNotification.sender_name}</p>
-            <p className="text-[#a9b0d0]">{toastNotification.message_preview}</p>
+            <h4 className="text-xs font-bold text-[#172033]">{toastNotification.title}</h4>
+            <p className="text-xs text-[#475569]">{toastNotification.message}</p>
           </div>
           <button
             onClick={() => {
@@ -224,7 +230,7 @@ const Bookings = () => {
               if (b) setSelectedChatBooking(b);
               setToastNotification(null);
             }}
-            className="btn-primary px-3 py-1 text-[11px]"
+            className="btn-primary px-3 py-1 text-[11px] rounded-lg shadow-2xs"
           >
             Open
           </button>
@@ -237,14 +243,14 @@ const Bookings = () => {
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
             <div className="flex items-center space-x-2.5">
-              <h1 className="text-2xl sm:text-3xl font-black text-white">
+              <h1 className="text-2xl sm:text-3xl font-black text-[#172033]">
                 {isCustomer ? 'My Bookings & Appointments' : 'Provider Job Queue & Work Orders'}
               </h1>
-              <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded-full bg-[#2dd4bf]/15 text-[#2dd4bf] border border-[#2dd4bf]/30">
+              <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200">
                 {user?.role}
               </span>
             </div>
-            <p className="text-xs text-[#a9b0d0] mt-1">
+            <p className="text-xs text-[#475569] mt-1">
               {isCustomer
                 ? 'Track your home service requests, coordinate live with assigned pros, and view official invoices.'
                 : 'Manage active customer jobs, accept or decline incoming requests, update work progress, and coordinate with clients.'}
@@ -255,11 +261,11 @@ const Bookings = () => {
           {isProvider && (
             <Link
               to="/provider-dashboard"
-              className="btn-secondary px-3.5 py-2 text-xs font-bold flex items-center space-x-1.5 shadow-sm hover:border-[#6d5dfc] transition-colors"
+              className="btn-secondary px-3.5 py-2 text-xs font-bold flex items-center space-x-1.5 shadow-2xs hover:border-blue-300 transition-colors rounded-xl"
             >
-              <TrendingUp className="w-3.5 h-3.5 text-[#2dd4bf]" />
+              <TrendingUp className="w-3.5 h-3.5 text-blue-600" />
               <span>Provider Analytics</span>
-              <ChevronRight className="w-3.5 h-3.5 text-[#a9b0d0]" />
+              <ChevronRight className="w-3.5 h-3.5 text-[#475569]" />
             </Link>
           )}
         </div>
@@ -292,41 +298,41 @@ const Bookings = () => {
           />
 
           {isCustomer ? (
-            <div className="theme-card p-5 relative overflow-hidden flex flex-col justify-between border-[#2dd4bf]/40 bg-gradient-to-br from-[#262b47] to-[#1e2a47]">
+            <div className="bg-white rounded-2xl border border-[#e2e8f0] p-5 relative overflow-hidden flex flex-col justify-between shadow-sm">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-[10px] font-extrabold text-[#2dd4bf] tracking-wider uppercase">
+                <span className="text-[10px] font-extrabold text-blue-700 tracking-wider uppercase">
                   TOTAL COMPLETED SPENT
                 </span>
-                <IndianRupee className="w-4 h-4 text-[#2dd4bf]" />
+                <IndianRupee className="w-4 h-4 text-blue-600" />
               </div>
               <div>
-                <p className="text-2xl sm:text-3xl font-black text-white flex items-center">
-                  <IndianRupee className="w-5 h-5 text-[#2dd4bf]" />
+                <p className="text-2xl sm:text-3xl font-black text-[#172033] flex items-center">
+                  <IndianRupee className="w-5 h-5 text-blue-600" />
                   {totalSpent.toFixed(0)}
                 </p>
-                <span className="text-xs text-[#a9b0d0] mt-1 block">
+                <span className="text-xs text-[#475569] mt-1 block">
                   Across {completedCount} completed services
                 </span>
               </div>
             </div>
           ) : (
-            <div className="theme-card p-5 relative overflow-hidden flex flex-col justify-between border-[#2dd4bf]/40 bg-gradient-to-br from-[#262b47] to-[#1e2a47]">
+            <div className="bg-white rounded-2xl border border-[#e2e8f0] p-5 relative overflow-hidden flex flex-col justify-between shadow-sm">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-[10px] font-extrabold text-[#2dd4bf] tracking-wider uppercase">
+                <span className="text-[10px] font-extrabold text-blue-700 tracking-wider uppercase">
                   ML TRUST SCORE
                 </span>
-                <span className="text-xs text-[#2dd4bf]">★</span>
+                <span className="text-xs text-amber-500">★</span>
               </div>
               <div>
                 {trustLoading ? (
                   <div className="py-2">
-                    <div className="h-8 w-24 bg-[#1c2036] rounded-lg animate-pulse mb-2" />
-                    <span className="text-[11px] text-[#a9b0d0]">Fetching verified metrics...</span>
+                    <div className="h-8 w-24 bg-slate-100 rounded-lg animate-pulse mb-2" />
+                    <span className="text-[11px] text-[#475569]">Fetching verified metrics...</span>
                   </div>
                 ) : providerTrustScore !== null && providerTrustScore !== undefined ? (
                   <>
-                    <p className="text-2xl sm:text-3xl font-black text-[#2dd4bf]">
-                      {Number(providerTrustScore).toFixed(1)} <span className="text-xs font-normal text-[#a9b0d0]">/ 100</span>
+                    <p className="text-2xl sm:text-3xl font-black text-blue-600">
+                      {Number(providerTrustScore).toFixed(1)} <span className="text-xs font-normal text-[#475569]">/ 100</span>
                     </p>
                     <div className="mt-2">
                       <TrustBadge 
@@ -336,15 +342,15 @@ const Bookings = () => {
                       />
                     </div>
                     {providerTrustData?.evidence_note && (
-                      <p className="text-[10px] text-[#a9b0d0] mt-1.5 truncate" title={providerTrustData.evidence_note}>
+                      <p className="text-[10px] text-[#475569] mt-1.5 truncate" title={providerTrustData.evidence_note}>
                         {providerTrustData.evidence_note}
                       </p>
                     )}
                   </>
                 ) : (
                   <div className="py-1">
-                    <p className="text-lg font-bold text-[#fbbf24]">Unavailable</p>
-                    <span className="text-[11px] text-[#a9b0d0] block mt-0.5">
+                    <p className="text-lg font-bold text-amber-600">Unavailable</p>
+                    <span className="text-[11px] text-[#475569] block mt-0.5">
                       Pending verified jobs & reviews
                     </span>
                   </div>
@@ -356,7 +362,7 @@ const Bookings = () => {
         </div>
 
         {/* Filter Tabs */}
-        <div className="flex items-center space-x-2 border-b border-[#363d66] pb-3 text-xs font-semibold">
+        <div className="flex items-center space-x-2 border-b border-[#e2e8f0] pb-3 text-xs font-semibold">
           {[
             { id: 'all', label: `All (${bookings.length})` },
             { id: 'active', label: `Active (${activeCount})` },
@@ -368,8 +374,8 @@ const Bookings = () => {
               onClick={() => setActiveTab(tab.id)}
               className={`px-3.5 py-1.5 rounded-xl transition-all cursor-pointer ${
                 activeTab === tab.id
-                  ? 'bg-[#6d5dfc] text-white font-bold shadow-md'
-                  : 'text-[#a9b0d0] hover:text-white hover:bg-[#262b47]'
+                  ? 'bg-blue-600 text-white font-bold shadow-xs'
+                  : 'text-[#475569] hover:text-[#172033] hover:bg-slate-100'
               }`}
             >
               {tab.label}
@@ -381,19 +387,19 @@ const Bookings = () => {
         {loading ? (
           <div className="space-y-3">
             {[1, 2, 3].map((n) => (
-              <div key={n} className="theme-card p-6 h-24 animate-pulse" />
+              <div key={n} className="bg-white rounded-2xl border border-[#e2e8f0] p-6 h-24 animate-pulse shadow-sm" />
             ))}
           </div>
         ) : filteredBookings.length === 0 ? (
-          <div className="theme-card p-12 text-center text-xs text-[#a9b0d0] space-y-3">
-            <Calendar className="w-10 h-10 text-[#6d5dfc] mx-auto opacity-60" />
+          <div className="bg-white rounded-2xl border border-[#e2e8f0] p-12 text-center text-xs text-[#475569] space-y-3 shadow-sm">
+            <Calendar className="w-10 h-10 text-blue-600 mx-auto opacity-60" />
             <div>
-              <p className="text-base font-bold text-white mb-1">No appointments found</p>
+              <p className="text-base font-bold text-[#172033] mb-1">No appointments found</p>
               <p>You don't have any bookings matching this filter category.</p>
             </div>
             {isCustomer && (
               <div className="pt-2">
-                <Link to="/providers" className="btn-primary px-5 py-2.5 text-xs font-bold inline-flex items-center space-x-2">
+                <Link to="/providers" className="btn-primary px-5 py-2.5 text-xs font-bold inline-flex items-center space-x-2 rounded-xl shadow-sm">
                   <ShoppingBag className="w-4 h-4" />
                   <span>Explore Local Services</span>
                 </Link>
@@ -401,11 +407,11 @@ const Bookings = () => {
             )}
           </div>
         ) : (
-          <div className="theme-card p-4 sm:p-6 overflow-hidden">
+          <div className="bg-white rounded-2xl border border-[#e2e8f0] p-4 sm:p-6 overflow-hidden shadow-sm">
             <div className="overflow-x-auto text-xs">
               <table className="w-full text-left">
                 <thead>
-                  <tr className="border-b border-[#363d66] text-[#a9b0d0] uppercase tracking-wider text-[10px]">
+                  <tr className="border-b border-[#e2e8f0] text-[#475569] uppercase tracking-wider text-[10px]">
                     <th className="pb-3">{isCustomer ? 'Assigned Service Provider' : 'Customer Name'}</th>
                     <th className="pb-3">Service Details</th>
                     <th className="pb-3">Scheduled Date & Time</th>
@@ -414,7 +420,7 @@ const Bookings = () => {
                     <th className="pb-3 text-right">Actions</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#363d66]/60">
+                <tbody className="divide-y divide-[#e2e8f0]">
                   {filteredBookings.map((b) => {
                     const counterpartName = isCustomer
                       ? b.counterpart?.full_name || b.provider_name || 'Verified Pro'
@@ -423,28 +429,28 @@ const Bookings = () => {
                     const pill = STATUS_PILLS[b.status] || STATUS_PILLS.pending;
 
                     return (
-                      <tr key={b.id} className="hover:bg-[#1c2036]/50 transition-colors">
+                      <tr key={b.id} className="hover:bg-slate-50/80 transition-colors">
                         {/* Name Column with Contact Privacy Policy */}
                         <td className="py-3.5 pr-2">
-                          <p className="font-bold text-white">{counterpartName}</p>
-                          <p className="text-[11px] text-[#a9b0d0]">{b.customer_address || b.service_address}</p>
+                          <p className="font-bold text-[#172033]">{counterpartName}</p>
+                          <p className="text-[11px] text-[#475569]">{b.customer_address || b.service_address}</p>
 
                           {/* Contact detail reveal logic: only when confirmed/in-progress/completed */}
                           {isCustomer && (
                             b.counterpart?.contact_permitted && (b.counterpart?.phone || b.counterpart?.email) ? (
-                              <div className="flex items-center space-x-1.5 text-[11px] text-[#2dd4bf] mt-0.5">
+                              <div className="flex items-center space-x-1.5 text-[11px] text-emerald-700 mt-0.5">
                                 <Phone className="w-3 h-3 shrink-0" />
                                 <span>{b.counterpart.phone || b.counterpart.email}</span>
                               </div>
                             ) : b.status === 'pending' ? (
-                              <span className="text-[10px] text-[#a9b0d0]/70 italic mt-0.5 block">
+                              <span className="text-[10px] text-[#475569] italic mt-0.5 block">
                                 Contact revealed upon confirmation
                               </span>
                             ) : null
                           )}
 
                           {b.status === 'cancelled' && b.cancellation_reason && (
-                            <span className="text-[10px] text-rose-300/80 italic mt-0.5 block">
+                            <span className="text-[10px] text-rose-600 italic mt-0.5 block">
                               Reason: {b.cancellation_reason}
                             </span>
                           )}
@@ -452,21 +458,21 @@ const Bookings = () => {
 
                         {/* Title & Category */}
                         <td className="py-3.5 pr-2">
-                          <p className="font-semibold text-white">{b.service_title}</p>
-                          <span className="text-[10px] text-[#6d5dfc] font-semibold">{b.service_category}</span>
+                          <p className="font-semibold text-[#172033]">{b.service_title}</p>
+                          <span className="text-[10px] text-blue-600 font-semibold">{b.service_category}</span>
                         </td>
 
                         {/* Date & Time */}
-                        <td className="py-3.5 pr-2 text-[#a9b0d0] whitespace-nowrap">
+                        <td className="py-3.5 pr-2 text-[#475569] whitespace-nowrap">
                           {b.booking_date} • {b.booking_time}
                         </td>
 
                         {/* Fee — Actual booking price or TBD (never fabricated fallback) */}
-                        <td className="py-3.5 pr-2 font-bold text-white whitespace-nowrap">
+                        <td className="py-3.5 pr-2 font-bold text-[#172033] whitespace-nowrap">
                           {b.agreed_price ? (
                             `₹${parseFloat(b.agreed_price).toFixed(0)}`
                           ) : (
-                            <span className="text-[#a9b0d0] italic text-[11px]">TBD</span>
+                            <span className="text-[#475569] italic text-[11px]">TBD</span>
                           )}
                         </td>
 
@@ -482,12 +488,12 @@ const Bookings = () => {
                           {/* Live Chat Button */}
                           <button
                             onClick={() => setSelectedChatBooking(b)}
-                            className="btn-secondary px-3 py-1.5 text-xs font-semibold inline-flex items-center space-x-1 relative cursor-pointer"
+                            className="btn-secondary px-3 py-1.5 text-xs font-semibold inline-flex items-center space-x-1 relative cursor-pointer rounded-xl shadow-2xs"
                           >
-                            <MessageSquare className="w-3.5 h-3.5 text-[#6d5dfc]" />
+                            <MessageSquare className="w-3.5 h-3.5 text-blue-600" />
                             <span>Chat</span>
                             {b.unread_count > 0 && (
-                              <span className="absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full bg-[#d946ef] text-white text-[9px] font-bold flex items-center justify-center animate-pulse">
+                              <span className="absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full bg-blue-600 text-white text-[9px] font-bold flex items-center justify-center animate-pulse">
                                 {b.unread_count}
                               </span>
                             )}
@@ -497,7 +503,7 @@ const Bookings = () => {
                           {b.status === 'completed' && (
                             <button
                               onClick={() => setSelectedInvoiceBooking(b)}
-                              className="btn-secondary px-3 py-1.5 text-xs font-bold inline-flex items-center space-x-1 hover:border-[#2dd4bf] text-[#2dd4bf] cursor-pointer"
+                              className="btn-secondary px-3 py-1.5 text-xs font-bold inline-flex items-center space-x-1 text-emerald-700 border-emerald-200 hover:bg-emerald-50 cursor-pointer rounded-xl"
                               title="Print / Save Official Invoice"
                             >
                               <FileText className="w-3.5 h-3.5" />
@@ -511,14 +517,14 @@ const Bookings = () => {
                               <button
                                 onClick={() => handleStatusUpdate(b.id, 'accepted')}
                                 disabled={actionLoading === b.id}
-                                className="px-3 py-1.5 rounded-xl bg-[#2dd4bf]/20 text-[#2dd4bf] hover:bg-[#2dd4bf]/30 font-bold text-xs cursor-pointer"
+                                className="px-3 py-1.5 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100 font-bold text-xs cursor-pointer"
                               >
                                 Accept
                               </button>
                               <button
                                 onClick={() => setCancellationBooking(b)}
                                 disabled={actionLoading === b.id}
-                                className="px-2.5 py-1.5 text-rose-400 hover:bg-rose-500/10 rounded-xl font-medium text-xs cursor-pointer"
+                                className="px-2.5 py-1.5 text-rose-600 hover:bg-rose-50 rounded-xl font-medium text-xs cursor-pointer"
                               >
                                 Decline
                               </button>
@@ -529,7 +535,7 @@ const Bookings = () => {
                             <button
                               onClick={() => handleStatusUpdate(b.id, 'in_progress')}
                               disabled={actionLoading === b.id}
-                              className="px-3 py-1.5 rounded-xl bg-[#6d5dfc]/20 text-[#6d5dfc] hover:bg-[#6d5dfc]/30 font-bold text-xs cursor-pointer"
+                              className="px-3 py-1.5 rounded-xl bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-100 font-bold text-xs cursor-pointer"
                             >
                               Start Job
                             </button>
@@ -539,7 +545,7 @@ const Bookings = () => {
                             <button
                               onClick={() => handleStatusUpdate(b.id, 'completed')}
                               disabled={actionLoading === b.id}
-                              className="px-3 py-1.5 rounded-xl bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30 font-bold text-xs cursor-pointer"
+                              className="px-3 py-1.5 rounded-xl bg-emerald-600 text-white hover:bg-emerald-700 font-bold text-xs cursor-pointer shadow-sm"
                             >
                               Complete
                             </button>
@@ -549,9 +555,9 @@ const Bookings = () => {
                           {isCustomer && b.status === 'completed' && (
                             <button
                               onClick={() => setSelectedReviewBooking(b)}
-                              className="px-3 py-1.5 rounded-xl bg-[#fbbf24]/20 text-[#fbbf24] hover:bg-[#fbbf24]/30 font-bold text-xs inline-flex items-center space-x-1 cursor-pointer"
+                              className="px-3 py-1.5 rounded-xl bg-amber-50 text-amber-700 border border-amber-200 hover:bg-amber-100 font-bold text-xs inline-flex items-center space-x-1 cursor-pointer"
                             >
-                              <Star className="w-3.5 h-3.5 fill-[#fbbf24]" />
+                              <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
                               <span>Rate Service</span>
                             </button>
                           )}
@@ -560,7 +566,7 @@ const Bookings = () => {
                             <button
                               onClick={() => setCancellationBooking(b)}
                               disabled={actionLoading === b.id}
-                              className="px-2.5 py-1.5 text-rose-400 hover:bg-rose-500/10 rounded-xl font-medium text-xs cursor-pointer"
+                              className="px-2.5 py-1.5 text-rose-600 hover:bg-rose-50 rounded-xl font-medium text-xs cursor-pointer"
                             >
                               Cancel
                             </button>
@@ -579,25 +585,25 @@ const Bookings = () => {
 
       {/* Cancellation Reason Modal */}
       {cancellationBooking && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm">
-          <div className="theme-card max-w-md w-full p-6 shadow-2xl border border-rose-500/40 animate-in fade-in duration-150">
-            <div className="flex items-start justify-between pb-3 border-b border-[#363d66]">
-              <div className="flex items-center space-x-2 text-rose-400">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs">
+          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-xl border border-rose-200 animate-in fade-in duration-150">
+            <div className="flex items-start justify-between pb-3 border-b border-[#e2e8f0]">
+              <div className="flex items-center space-x-2 text-rose-600">
                 <AlertCircle className="w-5 h-5" />
-                <h3 className="text-base font-bold text-white">Cancel Appointment</h3>
+                <h3 className="text-base font-bold text-[#172033]">Cancel Appointment</h3>
               </div>
               <button
                 onClick={() => setCancellationBooking(null)}
-                className="text-[#a9b0d0] hover:text-white p-1 rounded-lg"
+                className="text-[#475569] hover:text-[#172033] p-1.5 rounded-lg hover:bg-slate-100 transition-colors cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             <div className="space-y-4 mt-4 text-xs">
-              <p className="text-[#a9b0d0]">
+              <p className="text-[#475569]">
                 Please let us know why you are cancelling this appointment with{' '}
-                <strong className="text-white">
+                <strong className="text-[#172033]">
                   {cancellationBooking.counterpart?.full_name || 'the service pro'}
                 </strong>:
               </p>
@@ -614,8 +620,8 @@ const Bookings = () => {
                     key={reasonOption}
                     className={`flex items-center space-x-2.5 p-2.5 rounded-xl border cursor-pointer transition ${
                       cancellationReason === reasonOption
-                        ? 'bg-[#6d5dfc]/15 border-[#6d5dfc] text-white'
-                        : 'bg-[#1c2036] border-[#363d66] text-[#a9b0d0] hover:border-[#6d5dfc]/40'
+                        ? 'bg-blue-50 border-blue-300 text-blue-900 font-medium'
+                        : 'bg-slate-50 border-[#e2e8f0] text-[#475569] hover:border-blue-200'
                     }`}
                   >
                     <input
@@ -624,7 +630,7 @@ const Bookings = () => {
                       value={reasonOption}
                       checked={cancellationReason === reasonOption}
                       onChange={(e) => setCancellationReason(e.target.value)}
-                      className="accent-[#6d5dfc]"
+                      className="accent-blue-600"
                     />
                     <span>{reasonOption}</span>
                   </label>
@@ -638,7 +644,7 @@ const Bookings = () => {
                     value={customReason}
                     onChange={(e) => setCustomReason(e.target.value)}
                     placeholder="Briefly describe the reason for cancellation..."
-                    className="w-full p-2.5 bg-[#1c2036] border border-[#363d66] rounded-xl text-xs text-white placeholder-[#a9b0d0]/50 focus:outline-none focus:border-[#6d5dfc]"
+                    className="w-full p-2.5 bg-white border border-[#e2e8f0] rounded-xl text-xs text-[#172033] placeholder-slate-400 focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600"
                   />
                 </div>
               )}
@@ -647,7 +653,7 @@ const Bookings = () => {
                 <button
                   type="button"
                   onClick={() => setCancellationBooking(null)}
-                  className="flex-1 py-2.5 btn-secondary rounded-xl text-xs font-bold"
+                  className="flex-1 py-2.5 btn-secondary rounded-xl text-xs font-bold cursor-pointer"
                 >
                   Keep Booking
                 </button>
@@ -660,7 +666,7 @@ const Bookings = () => {
                       : cancellationReason;
                     handleStatusUpdate(cancellationBooking.id, 'cancelled', finalReason);
                   }}
-                  className="flex-1 py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl text-xs transition disabled:opacity-50 cursor-pointer"
+                  className="flex-1 py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl text-xs transition disabled:opacity-50 cursor-pointer shadow-sm"
                 >
                   {actionLoading === cancellationBooking.id ? 'Cancelling...' : 'Confirm Cancellation'}
                 </button>

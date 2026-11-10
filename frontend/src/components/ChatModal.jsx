@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { io } from 'socket.io-client';
 import api from '../services/api';
 import { useAuth } from '../context/AuthContext';
-import { MessageSquare, Send, X, ShieldCheck } from 'lucide-react';
+import { MessageSquare, Send, X } from 'lucide-react';
 
 const ChatModal = ({ booking, onClose }) => {
   const { user, token } = useAuth();
@@ -99,45 +99,43 @@ const ChatModal = ({ booking, onClose }) => {
 
   return (
     <div 
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-4"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-xs p-4"
       onClick={onClose}
     >
       <div 
-        className="theme-card max-w-lg w-full h-[580px] flex flex-col relative shadow-2xl overflow-hidden animate-in fade-in zoom-in-95"
+        className="bg-white rounded-2xl border border-[#e2e8f0] max-w-lg w-full h-[580px] flex flex-col relative shadow-xl overflow-hidden animate-in fade-in zoom-in-95"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="p-4 bg-[#1c2036] border-b border-[#363d66] flex items-center justify-between">
+        <div className="p-4 bg-white border-b border-[#e2e8f0] flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#6d5dfc] to-[#d946ef] p-0.5">
-              <div className="w-full h-full bg-[#1c2036] rounded-[10px] flex items-center justify-center font-bold text-white text-sm">
-                {recipientName.charAt(0)}
-              </div>
+            <div className="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center font-bold text-sm shadow-xs">
+              {recipientName.charAt(0)}
             </div>
             <div>
               <div className="flex items-center space-x-2">
-                <h3 className="font-bold text-white text-sm">{recipientName}</h3>
-                <span className="flex items-center space-x-1 text-[10px] font-bold text-[#2dd4bf]">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#2dd4bf] animate-ping" />
+                <h3 className="font-bold text-[#172033] text-sm">{recipientName}</h3>
+                <span className="flex items-center space-x-1 text-[10px] font-bold text-emerald-600">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping" />
                   <span>{connected ? 'Live' : 'Connecting'}</span>
                 </span>
               </div>
-              <p className="text-[11px] text-[#a9b0d0]">{booking.service_title}</p>
+              <p className="text-[11px] text-[#475569]">{booking.service_title}</p>
             </div>
           </div>
           <button 
             onClick={onClose} 
-            className="text-[#a9b0d0] hover:text-white p-1 rounded-lg hover:bg-[#262b47]"
+            className="text-[#475569] hover:text-[#172033] p-1.5 rounded-lg hover:bg-slate-100 transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Messages Stream */}
-        <div className="flex-1 p-4 overflow-y-auto space-y-3 bg-[#1c2036]/60">
+        <div className="flex-1 p-4 overflow-y-auto space-y-3 bg-slate-50">
           {messages.length === 0 ? (
-            <div className="text-center py-16 text-xs text-[#a9b0d0]">
-              <MessageSquare className="w-8 h-8 text-[#6d5dfc] mx-auto mb-2 opacity-60" />
+            <div className="text-center py-16 text-xs text-[#475569]">
+              <MessageSquare className="w-8 h-8 text-blue-600 mx-auto mb-2 opacity-60" />
               <p>No messages yet. Send a message to coordinate your booking!</p>
             </div>
           ) : (
@@ -148,13 +146,13 @@ const ChatModal = ({ booking, onClose }) => {
                   <div
                     className={`max-w-[78%] px-4 py-2.5 rounded-2xl text-xs leading-relaxed ${
                       isMine
-                        ? 'bg-gradient-to-r from-[#6d5dfc] to-[#d946ef] text-white rounded-br-xs shadow-md'
-                        : 'bg-[#262b47] border border-[#363d66] text-white rounded-bl-xs'
+                        ? 'bg-blue-600 text-white rounded-br-xs shadow-xs'
+                        : 'bg-white border border-[#e2e8f0] text-[#172033] rounded-bl-xs shadow-xs'
                     }`}
                   >
                     {m.content || m.message_text}
                   </div>
-                  <span className="text-[10px] text-[#a9b0d0] mt-1 px-1 font-medium">
+                  <span className="text-[10px] text-[#475569] mt-1 px-1 font-medium">
                     {formatMessageTime(m)}
                   </span>
                 </div>
@@ -165,13 +163,13 @@ const ChatModal = ({ booking, onClose }) => {
         </div>
 
         {/* Input Bar */}
-        <form onSubmit={handleSend} className="p-3 bg-[#262b47] border-t border-[#363d66] flex items-center space-x-2">
+        <form onSubmit={handleSend} className="p-3 bg-white border-t border-[#e2e8f0] flex items-center space-x-2">
           <input
             type="text"
             value={newText}
             onChange={(e) => setNewText(e.target.value)}
             placeholder="Type your message..."
-            className="flex-1 bg-[#1c2036] border border-[#363d66] rounded-xl px-4 py-2.5 text-xs text-white outline-none focus:border-[#6d5dfc]"
+            className="flex-1 bg-slate-50 border border-[#e2e8f0] rounded-xl px-4 py-2.5 text-xs text-[#172033] placeholder-slate-400 outline-none focus:bg-white focus:border-blue-600 focus:ring-1 focus:ring-blue-600 transition"
           />
           <button
             type="submit"
