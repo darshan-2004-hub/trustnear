@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import api from '../services/api';
 import { 
   Search, 
@@ -34,6 +34,7 @@ const DEFAULT_SERVICES = [
 
 const Home = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { isAuthenticated } = useAuth();
   
   const [searchTerm, setSearchTerm] = useState('');
@@ -124,7 +125,14 @@ const Home = () => {
 
   const handleBook = (provider) => {
     if (!isAuthenticated) {
-      navigate('/login');
+      const providerId = provider.user_id || provider.id;
+      navigate('/login', {
+        state: {
+          from: location.pathname,
+          bookProviderId: providerId,
+          returnToBooking: true,
+        },
+      });
       return;
     }
     setBookingProvider(provider);

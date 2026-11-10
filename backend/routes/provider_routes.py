@@ -333,16 +333,25 @@ def get_provider_details(provider_id):
     user = User.query.get(profile.user_id)
     trust = TrustMetric.query.filter_by(provider_id=profile.user_id).first()
     
-    reviews = Review.query.filter_by(provider_id=profile.user_id, is_approved_by_admin=True)\
-        .order_by(Review.created_at.desc()).limit(10).all()
+    reviews = Review.query.filter_by(
+        provider_id=profile.user_id,
+        is_approved_by_admin=True,
+        is_suspicious=False
+    ).order_by(Review.created_at.desc()).limit(15).all()
 
-    reviews_data = [{
-        'id': r.id,
-        'rating': r.rating,
-        'review_text': r.review_text,
-        'sentiment_score': float(r.sentiment_score) if r.sentiment_score is not None else None,
-        'created_at': r.created_at.isoformat()
-    } for r in reviews]
+    reviews_data = []
+    for r in reviews:
+        cust = User.query.get(r.customer_id)
+        b_item = Booking.query.get(r.booking_id) if r.booking_id else None
+        reviews_data.append({
+            'id': r.id,
+            'rating': r.rating,
+            'review_text': r.review_text,
+            'sentiment_score': float(r.sentiment_score) if r.sentiment_score is not None else None,
+            'customer_name': cust.full_name if cust else 'Verified Customer',
+            'service_title': b_item.service_title if b_item else None,
+            'created_at': r.created_at.isoformat() if r.created_at else None
+        })
 
     avg_rating = db.session.query(func.avg(Review.rating)).filter(
         Review.provider_id == profile.user_id,
@@ -355,6 +364,25 @@ def get_provider_details(provider_id):
         Review.is_approved_by_admin == True,
         Review.is_suspicious == False
     ).scalar()
+
+    completed_count = Booking.query.filter_by(
+        provider_id=profile.user_id,
+        status='completed'
+    ).count()
+
+    # Evidence note & data source determination
+    real_reviews_count = int(review_count) if review_count else 0
+    if completed_count > 0 and real_reviews_count > 0:
+        data_source = 'real'
+        evidence_note = f"Score computed from {completed_count} verified booking(s) and {real_reviews_count} genuine community review(s)."
+    elif completed_count > 0 or real_reviews_count > 0:
+        data_source = 'hybrid'
+        evidence_note = f"Score based on {completed_count} completed job(s) and {real_reviews_count} review(s), augmented with platform benchmark data."
+    else:
+        data_source = 'synthetic'
+        evidence_note = "Baseline score — provider has no completed jobs or community reviews yet."
+
+    trust_score_val = float(trust.trust_score) if trust and trust.trust_score is not None else None
 
     return jsonify({
         'success': True,
@@ -371,13 +399,17 @@ def get_provider_details(provider_id):
             'service_address': profile.service_address,
             'latitude': float(profile.latitude) if profile.latitude else None,
             'longitude': float(profile.longitude) if profile.longitude else None,
-            'trust_score': float(trust.trust_score) if trust and trust.trust_score else 50.0,
-            'completed_jobs': trust.completed_jobs if trust else 0,
-            'cancellation_rate': float(trust.cancellation_rate) if trust else 0.0,
+            'verification_status': profile.verification_status,
+            'is_available': profile.is_available,
+            'trust_score': trust_score_val,
+            'evidence_note': evidence_note,
+            'data_source': data_source,
+            'completed_jobs': completed_count if completed_count > 0 else (trust.completed_jobs if trust else 0),
+            'cancellation_rate': float(trust.cancellation_rate) if trust and trust.cancellation_rate is not None else 0.0,
             'avg_response_minutes': trust.avg_response_minutes if trust else 25,
             'shap_factors': trust.shap_factors if trust else None,
             'rating': round(float(avg_rating), 1) if avg_rating else None,
-            'reviews_count': int(review_count) if review_count else 0,
+            'reviews_count': real_reviews_count,
             'reviews': reviews_data
         }
     }), 200

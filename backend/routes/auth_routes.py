@@ -216,3 +216,58 @@ def get_current_user(current_user):
         'success': True,
         'user': user_info
     }), 200
+
+
+@auth_bp.route('/profile', methods=['PATCH', 'PUT'])
+@token_required
+def update_profile(current_user):
+    """
+    Updates the authenticated customer or provider profile (supported fields only).
+    """
+    data = request.get_json() or {}
+    full_name = data.get('full_name')
+    phone = data.get('phone')
+    current_password = data.get('current_password')
+    new_password = data.get('new_password')
+
+    if full_name is not None:
+        full_name = full_name.strip()
+        if not full_name:
+            return jsonify({'success': False, 'message': 'Full name cannot be empty.'}), 400
+        current_user.full_name = full_name
+
+    if phone is not None:
+        phone = phone.strip()
+        if phone:
+            clean_phone = re.sub(r'[\s\-\+]', '', phone)
+            if len(clean_phone) < 10:
+                return jsonify({'success': False, 'message': 'Please provide a valid 10-digit mobile number.'}), 400
+            current_user.phone = phone
+        else:
+            current_user.phone = None
+
+    if new_password:
+        if not current_password:
+            return jsonify({'success': False, 'message': 'Current password is required to set a new password.'}), 400
+        if not check_password_hash(current_user.password_hash, current_password):
+            return jsonify({'success': False, 'message': 'Current password does not match.'}), 400
+        if len(new_password) < 6:
+            return jsonify({'success': False, 'message': 'New password must be at least 6 characters long.'}), 400
+        current_user.password_hash = generate_password_hash(new_password, method='scrypt')
+
+    try:
+        db.session.commit()
+        user_info = current_user.to_dict()
+        if current_user.role == 'provider' and current_user.provider_profile:
+            user_info['provider_profile'] = current_user.provider_profile.to_dict()
+            if current_user.trust_metric:
+                user_info['trust_metrics'] = current_user.trust_metric.to_dict()
+
+        return jsonify({
+            'success': True,
+            'message': 'Profile updated successfully.',
+            'user': user_info
+        }), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'success': False, 'message': f'Server error: {str(e)}'}), 500

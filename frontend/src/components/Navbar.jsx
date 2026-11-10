@@ -11,7 +11,8 @@ import {
   X, 
   Sparkles,
   TrendingUp,
-  Briefcase
+  Briefcase,
+  User
 } from 'lucide-react';
 
 const Navbar = () => {
@@ -111,6 +112,20 @@ const Navbar = () => {
               <span>Find Services</span>
             </Link>
 
+            {isUserLoggedIn && !isProvider && !isAdmin && (
+              <Link
+                to="/profile"
+                className={`flex items-center space-x-1.5 px-3.5 py-2 rounded-xl text-sm font-medium transition-all ${
+                  isActive('/profile') 
+                    ? 'bg-[#6d5dfc]/15 text-[#6d5dfc] border border-[#6d5dfc]/30' 
+                    : 'text-[#a9b0d0] hover:text-white hover:bg-[#262b47]'
+                }`}
+              >
+                <User className="w-4 h-4 text-[#2dd4bf]" />
+                <span>Profile</span>
+              </Link>
+            )}
+
             {isUserLoggedIn && isAdmin && (
               <Link
                 to="/admin"
@@ -131,7 +146,7 @@ const Navbar = () => {
             {isUserLoggedIn ? (
               <div className="flex items-center space-x-3">
                 <Link
-                  to={isProvider ? "/provider-dashboard" : isAdmin ? "/admin" : "/bookings"}
+                  to={isProvider ? "/provider-dashboard" : isAdmin ? "/admin" : "/profile"}
                   className="flex items-center space-x-2 px-3 py-1.5 rounded-xl bg-[#262b47] border border-[#363d66] hover:border-[#6d5dfc] transition-colors"
                 >
                   <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-[#6d5dfc] to-[#d946ef] text-white flex items-center justify-center font-bold text-xs">
@@ -211,6 +226,15 @@ const Navbar = () => {
               className="block px-3 py-2 rounded-xl text-sm font-medium text-white hover:bg-[#1c2036]"
             >
               {isProvider ? 'Job Queue' : 'My Bookings'}
+            </Link>
+          )}
+          {isUserLoggedIn && !isProvider && !isAdmin && (
+            <Link
+              to="/profile"
+              onClick={() => setMobileMenuOpen(false)}
+              className="block px-3 py-2 rounded-xl text-sm font-medium text-white hover:bg-[#1c2036]"
+            >
+              My Profile
             </Link>
           )}
           <Link

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
+import { useAuth } from '../context/AuthContext';
 import { Sparkles, MessageSquare, Send, X, Bot, User, ArrowRight, ShieldCheck } from 'lucide-react';
 
 const SUGGESTIONS = [
@@ -10,6 +11,7 @@ const SUGGESTIONS = [
 ];
 
 const AIAssistantWidget = () => {
+  const { user } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([
     {
@@ -22,6 +24,11 @@ const AIAssistantWidget = () => {
   const [loading, setLoading] = useState(false);
   const messagesEndRef = useRef(null);
   const navigate = useNavigate();
+
+  // Hide AI Assistant from provider and admin accounts
+  if (user && user.role !== 'customer') {
+    return null;
+  }
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });

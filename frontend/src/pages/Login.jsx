@@ -43,8 +43,13 @@ const Login = () => {
     try {
       const res = await login(email.trim().toLowerCase(), password);
       if (res.success) {
-        const fromPath = location.state?.from?.pathname;
-        if (fromPath && fromPath !== '/login') {
+        const returnToBooking = location.state?.returnToBooking;
+        const bookProviderId = location.state?.bookProviderId;
+        const fromPath = location.state?.from?.pathname || (typeof location.state?.from === 'string' ? location.state.from : null);
+
+        if (returnToBooking && bookProviderId && res.user?.role === 'customer') {
+          navigate(`/provider/${bookProviderId}?book=true`, { replace: true });
+        } else if (fromPath && fromPath !== '/login') {
           navigate(fromPath, { replace: true });
         } else if (res.user?.role === 'provider') {
           navigate('/provider-dashboard', { replace: true });

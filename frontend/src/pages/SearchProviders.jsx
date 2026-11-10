@@ -80,7 +80,14 @@ const SearchProviders = () => {
 
   const handleBook = (provider) => {
     if (!isAuthenticated) {
-      navigate('/login');
+      const providerId = provider.user_id || provider.id;
+      navigate('/login', {
+        state: {
+          from: location.pathname,
+          bookProviderId: providerId,
+          returnToBooking: true,
+        },
+      });
       return;
     }
     setBookingProvider(provider);

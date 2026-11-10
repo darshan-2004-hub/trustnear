@@ -9,6 +9,8 @@ import SearchProviders from './pages/SearchProviders';
 import Bookings from './pages/Bookings';
 import ProviderDashboard from './pages/ProviderDashboard';
 import AdminDashboard from './pages/AdminDashboard';
+import ProviderDetail from './pages/ProviderDetail';
+import CustomerProfile from './pages/CustomerProfile';
 import AIAssistantWidget from './components/AIAssistantWidget';
 
 // Route guard for protected pages
@@ -52,6 +54,15 @@ function App() {
               <Route path="/" element={<Home />} />
               <Route path="/providers" element={<SearchProviders />} />
               <Route path="/search" element={<SearchProviders />} />
+              <Route path="/provider/:id" element={<ProviderDetail />} />
+              <Route 
+                path="/profile" 
+                element={
+                  <ProtectedRoute>
+                    <CustomerProfile />
+                  </ProtectedRoute>
+                } 
+              />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
               <Route 

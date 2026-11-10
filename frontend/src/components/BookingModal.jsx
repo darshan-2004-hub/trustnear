@@ -68,8 +68,15 @@ const BookingModal = ({ provider, onClose, onSuccess }) => {
             </button>
             <button
               onClick={() => {
+                const providerId = provider?.user_id || provider?.id;
                 onClose();
-                navigate('/login');
+                navigate('/login', {
+                  state: {
+                    from: window.location.pathname,
+                    bookProviderId: providerId,
+                    returnToBooking: true,
+                  },
+                });
               }}
               className="flex-1 py-2 btn-primary rounded-xl text-xs font-semibold transition cursor-pointer"
             >

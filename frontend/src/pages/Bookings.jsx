@@ -25,7 +25,8 @@ import {
   ShoppingBag,
   FileText,
   TrendingUp,
-  ChevronRight
+  ChevronRight,
+  Phone
 } from 'lucide-react';
 
 const STATUS_PILLS = {
@@ -45,6 +46,9 @@ const Bookings = () => {
   const [selectedChatBooking, setSelectedChatBooking] = useState(null);
   const [selectedReviewBooking, setSelectedReviewBooking] = useState(null);
   const [selectedInvoiceBooking, setSelectedInvoiceBooking] = useState(null);
+  const [cancellationBooking, setCancellationBooking] = useState(null);
+  const [cancellationReason, setCancellationReason] = useState('Schedule conflict / Change of plans');
+  const [customReason, setCustomReason] = useState('');
   const [actionLoading, setActionLoading] = useState(null);
   const [toastNotification, setToastNotification] = useState(null);
   const socketRef = useRef(null);
@@ -152,18 +156,23 @@ const Bookings = () => {
     };
   }, [token, user?.role, user?.id]);
 
-  const handleStatusUpdate = async (bookingId, newStatus) => {
+  const handleStatusUpdate = async (bookingId, newStatus, reason = null) => {
     setActionLoading(bookingId);
     try {
-      const res = await api.patch(`/bookings/${bookingId}/status`, { status: newStatus });
+      const payload = { status: newStatus };
+      if (reason) {
+        payload.cancellation_reason = reason;
+      }
+      const res = await api.patch(`/bookings/${bookingId}/status`, payload);
       if (res.data?.success) {
         setBookings((prev) =>
-          prev.map((b) => (b.id === bookingId ? { ...b, status: newStatus } : b))
+          prev.map((b) => (b.id === bookingId ? { ...b, status: newStatus, cancellation_reason: reason || b.cancellation_reason } : b))
         );
         // Refresh provider trust metrics on job completion or cancellation
         if (isProvider && (newStatus === 'completed' || newStatus === 'cancelled')) {
           fetchProviderMetrics();
         }
+        setCancellationBooking(null);
       }
     } catch (err) {
       alert(err.response?.data?.message || 'Failed to update appointment status.');
@@ -376,10 +385,20 @@ const Bookings = () => {
             ))}
           </div>
         ) : filteredBookings.length === 0 ? (
-          <div className="theme-card p-12 text-center text-xs text-[#a9b0d0]">
-            <Calendar className="w-10 h-10 text-[#6d5dfc] mx-auto mb-3 opacity-60" />
-            <p className="text-sm font-bold text-white mb-1">No appointments found</p>
-            <p>You don't have any bookings in this filter category.</p>
+          <div className="theme-card p-12 text-center text-xs text-[#a9b0d0] space-y-3">
+            <Calendar className="w-10 h-10 text-[#6d5dfc] mx-auto opacity-60" />
+            <div>
+              <p className="text-base font-bold text-white mb-1">No appointments found</p>
+              <p>You don't have any bookings matching this filter category.</p>
+            </div>
+            {isCustomer && (
+              <div className="pt-2">
+                <Link to="/providers" className="btn-primary px-5 py-2.5 text-xs font-bold inline-flex items-center space-x-2">
+                  <ShoppingBag className="w-4 h-4" />
+                  <span>Explore Local Services</span>
+                </Link>
+              </div>
+            )}
           </div>
         ) : (
           <div className="theme-card p-4 sm:p-6 overflow-hidden">
@@ -405,10 +424,30 @@ const Bookings = () => {
 
                     return (
                       <tr key={b.id} className="hover:bg-[#1c2036]/50 transition-colors">
-                        {/* Name Column */}
+                        {/* Name Column with Contact Privacy Policy */}
                         <td className="py-3.5 pr-2">
                           <p className="font-bold text-white">{counterpartName}</p>
                           <p className="text-[11px] text-[#a9b0d0]">{b.customer_address || b.service_address}</p>
+
+                          {/* Contact detail reveal logic: only when confirmed/in-progress/completed */}
+                          {isCustomer && (
+                            b.counterpart?.contact_permitted && (b.counterpart?.phone || b.counterpart?.email) ? (
+                              <div className="flex items-center space-x-1.5 text-[11px] text-[#2dd4bf] mt-0.5">
+                                <Phone className="w-3 h-3 shrink-0" />
+                                <span>{b.counterpart.phone || b.counterpart.email}</span>
+                              </div>
+                            ) : b.status === 'pending' ? (
+                              <span className="text-[10px] text-[#a9b0d0]/70 italic mt-0.5 block">
+                                Contact revealed upon confirmation
+                              </span>
+                            ) : null
+                          )}
+
+                          {b.status === 'cancelled' && b.cancellation_reason && (
+                            <span className="text-[10px] text-rose-300/80 italic mt-0.5 block">
+                              Reason: {b.cancellation_reason}
+                            </span>
+                          )}
                         </td>
 
                         {/* Title & Category */}
@@ -477,7 +516,7 @@ const Bookings = () => {
                                 Accept
                               </button>
                               <button
-                                onClick={() => handleStatusUpdate(b.id, 'cancelled')}
+                                onClick={() => setCancellationBooking(b)}
                                 disabled={actionLoading === b.id}
                                 className="px-2.5 py-1.5 text-rose-400 hover:bg-rose-500/10 rounded-xl font-medium text-xs cursor-pointer"
                               >
@@ -519,7 +558,7 @@ const Bookings = () => {
 
                           {isCustomer && b.status === 'pending' && (
                             <button
-                              onClick={() => handleStatusUpdate(b.id, 'cancelled')}
+                              onClick={() => setCancellationBooking(b)}
                               disabled={actionLoading === b.id}
                               className="px-2.5 py-1.5 text-rose-400 hover:bg-rose-500/10 rounded-xl font-medium text-xs cursor-pointer"
                             >
@@ -537,6 +576,99 @@ const Bookings = () => {
         )}
 
       </div>
+
+      {/* Cancellation Reason Modal */}
+      {cancellationBooking && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm">
+          <div className="theme-card max-w-md w-full p-6 shadow-2xl border border-rose-500/40 animate-in fade-in duration-150">
+            <div className="flex items-start justify-between pb-3 border-b border-[#363d66]">
+              <div className="flex items-center space-x-2 text-rose-400">
+                <AlertCircle className="w-5 h-5" />
+                <h3 className="text-base font-bold text-white">Cancel Appointment</h3>
+              </div>
+              <button
+                onClick={() => setCancellationBooking(null)}
+                className="text-[#a9b0d0] hover:text-white p-1 rounded-lg"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="space-y-4 mt-4 text-xs">
+              <p className="text-[#a9b0d0]">
+                Please let us know why you are cancelling this appointment with{' '}
+                <strong className="text-white">
+                  {cancellationBooking.counterpart?.full_name || 'the service pro'}
+                </strong>:
+              </p>
+
+              <div className="space-y-2">
+                {[
+                  'Schedule conflict / Change of plans',
+                  'Found alternative service provider',
+                  'Issue resolved on my own',
+                  'Price disagreement / Negotiating',
+                  'Other reason',
+                ].map((reasonOption) => (
+                  <label
+                    key={reasonOption}
+                    className={`flex items-center space-x-2.5 p-2.5 rounded-xl border cursor-pointer transition ${
+                      cancellationReason === reasonOption
+                        ? 'bg-[#6d5dfc]/15 border-[#6d5dfc] text-white'
+                        : 'bg-[#1c2036] border-[#363d66] text-[#a9b0d0] hover:border-[#6d5dfc]/40'
+                    }`}
+                  >
+                    <input
+                      type="radio"
+                      name="cancel_reason"
+                      value={reasonOption}
+                      checked={cancellationReason === reasonOption}
+                      onChange={(e) => setCancellationReason(e.target.value)}
+                      className="accent-[#6d5dfc]"
+                    />
+                    <span>{reasonOption}</span>
+                  </label>
+                ))}
+              </div>
+
+              {cancellationReason === 'Other reason' && (
+                <div>
+                  <textarea
+                    rows={2}
+                    value={customReason}
+                    onChange={(e) => setCustomReason(e.target.value)}
+                    placeholder="Briefly describe the reason for cancellation..."
+                    className="w-full p-2.5 bg-[#1c2036] border border-[#363d66] rounded-xl text-xs text-white placeholder-[#a9b0d0]/50 focus:outline-none focus:border-[#6d5dfc]"
+                  />
+                </div>
+              )}
+
+              <div className="flex items-center space-x-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setCancellationBooking(null)}
+                  className="flex-1 py-2.5 btn-secondary rounded-xl text-xs font-bold"
+                >
+                  Keep Booking
+                </button>
+                <button
+                  type="button"
+                  disabled={actionLoading === cancellationBooking.id}
+                  onClick={() => {
+                    const finalReason = cancellationReason === 'Other reason' && customReason.trim()
+                      ? customReason.trim()
+                      : cancellationReason;
+                    handleStatusUpdate(cancellationBooking.id, 'cancelled', finalReason);
+                  }}
+                  className="flex-1 py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl text-xs transition disabled:opacity-50 cursor-pointer"
+                >
+                  {actionLoading === cancellationBooking.id ? 'Cancelling...' : 'Confirm Cancellation'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Real-Time Chat Modal */}
       {selectedChatBooking && (
