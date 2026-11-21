@@ -1,16 +1,24 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import api from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import { Calendar, Clock, MapPin, IndianRupee, X, CheckCircle, AlertCircle, Wrench, Sparkles, Lock } from 'lucide-react';
+import { Calendar, Clock, MapPin, IndianRupee, X, CheckCircle, AlertCircle, Wrench, Sparkles, Lock, AlertTriangle } from 'lucide-react';
 
 const BookingModal = ({ provider, onClose, onSuccess }) => {
   const { user } = useAuth();
   const navigate = useNavigate();
 
   const [serviceTitle, setServiceTitle] = useState('');
-  const [bookingDate, setBookingDate] = useState('');
-  const [bookingTime, setBookingTime] = useState('');
+  
+  // Format today / tomorrow in local ISO
+  const todayDate = new Date().toISOString().split('T')[0];
+  const [bookingDate, setBookingDate] = useState(todayDate);
+  const [selectedSlot, setSelectedSlot] = useState(null);
+  
+  const [slotsData, setSlotsData] = useState({ slots: [], is_working_day: true, is_accepting_bookings: true, message: '' });
+  const [slotsLoading, setSlotsLoading] = useState(false);
+  const [slotsError, setSlotsError] = useState('');
+
   const [customerAddress, setCustomerAddress] = useState('');
   const [agreedPrice, setAgreedPrice] = useState(
     provider?.hourly_rate ? Number(provider.hourly_rate) : ''
@@ -21,9 +29,42 @@ const BookingModal = ({ provider, onClose, onSuccess }) => {
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
 
-  const tomorrow = new Date();
-  tomorrow.setDate(tomorrow.getDate() + 1);
-  const minDateString = tomorrow.toISOString().split('T')[0];
+  const minDateString = todayDate;
+
+  // Fetch Slots for Selected Date
+  const fetchSlots = useCallback(async (dateToFetch) => {
+    if (!dateToFetch) return;
+    const providerId = provider?.user_id || provider?.id;
+    if (!providerId) return;
+
+    setSlotsLoading(true);
+    setSlotsError('');
+    setSelectedSlot(null);
+
+    try {
+      const res = await api.get(`/providers/${providerId}/slots?date=${dateToFetch}`);
+      if (res.data?.success) {
+        setSlotsData({
+          slots: res.data.slots || [],
+          is_working_day: res.data.is_working_day !== false,
+          is_accepting_bookings: res.data.is_accepting_bookings !== false,
+          is_unavailable_date: Boolean(res.data.is_unavailable_date),
+          slot_duration_minutes: res.data.slot_duration_minutes || 60,
+          message: res.data.message || ''
+        });
+      } else {
+        setSlotsError(res.data?.message || 'Could not fetch time slots.');
+      }
+    } catch (err) {
+      setSlotsError(err.response?.data?.message || 'Failed to retrieve available slots for this date.');
+    } finally {
+      setSlotsLoading(false);
+    }
+  }, [provider]);
+
+  useEffect(() => {
+    fetchSlots(bookingDate);
+  }, [bookingDate, fetchSlots]);
 
   useEffect(() => {
     const fetchFairBenchmark = async () => {
@@ -35,7 +76,6 @@ const BookingModal = ({ provider, onClose, onSuccess }) => {
         });
         if (res.data?.success && res.data?.estimation) {
           setFairRange(res.data.estimation);
-          // If price wasn't set, default to predicted fair benchmark
           if (!agreedPrice && res.data.estimation.predicted_fair_price) {
             setAgreedPrice(res.data.estimation.predicted_fair_price);
           }
@@ -112,8 +152,23 @@ const BookingModal = ({ provider, onClose, onSuccess }) => {
       return;
     }
 
-    if (!serviceTitle.trim() || !bookingDate || !bookingTime || !customerAddress.trim()) {
-      setError('Please fill in all required fields.');
+    if (!serviceTitle.trim()) {
+      setError('Please provide a description of the issue or service required.');
+      return;
+    }
+
+    if (!bookingDate) {
+      setError('Please choose an appointment date.');
+      return;
+    }
+
+    if (!selectedSlot) {
+      setError('Please select an available appointment time slot.');
+      return;
+    }
+
+    if (!customerAddress.trim()) {
+      setError('Please enter your service location address.');
       return;
     }
 
@@ -125,14 +180,15 @@ const BookingModal = ({ provider, onClose, onSuccess }) => {
         service_title: serviceTitle.trim(),
         service_category: provider.service_category,
         booking_date: bookingDate,
-        booking_time: bookingTime,
+        booking_time: selectedSlot.start_time,
+        end_time: selectedSlot.end_time,
         customer_address: customerAddress.trim(),
         agreed_price: agreedPrice ? Number(agreedPrice) : null,
       };
 
       const res = await api.post('/bookings', payload);
       if (res.data?.success) {
-        setSuccessMessage('Your appointment request has been scheduled with the provider.');
+        setSuccessMessage(`Appointment scheduled for ${bookingDate} at ${selectedSlot.start_time} - ${selectedSlot.end_time}.`);
         setTimeout(() => {
           if (onSuccess) onSuccess(res.data.booking_id);
           onClose();
@@ -142,7 +198,13 @@ const BookingModal = ({ provider, onClose, onSuccess }) => {
         setError(res.data?.message || 'Failed to place booking.');
       }
     } catch (err) {
-      setError(err.response?.data?.message || 'Server error while creating booking.');
+      if (err.response?.status === 409) {
+        setError(err.response?.data?.message || 'This appointment slot was just taken by another customer. Please pick a different slot.');
+        // Refresh slot list to show updated availability
+        fetchSlots(bookingDate);
+      } else {
+        setError(err.response?.data?.message || 'Server error while creating booking.');
+      }
     } finally {
       setLoading(false);
     }
@@ -195,39 +257,116 @@ const BookingModal = ({ provider, onClose, onSuccess }) => {
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="block text-xs font-semibold text-[#475569] uppercase mb-1">
+          <div>
+            <div className="flex items-center justify-between mb-1">
+              <label className="block text-xs font-semibold text-[#475569] uppercase">
                 Preferred Date <span className="text-rose-500">*</span>
               </label>
-              <div className="relative">
-                <Calendar className="h-4 w-4 text-[#475569] absolute left-3 top-3 pointer-events-none" />
-                <input
-                  type="date"
-                  required
-                  min={minDateString}
-                  value={bookingDate}
-                  onChange={(e) => setBookingDate(e.target.value)}
-                  className="w-full pl-9 pr-3 py-2.5 bg-white border border-[#e2e8f0] rounded-xl text-sm text-[#172033] focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 transition"
-                />
-              </div>
+              {slotsData.slot_duration_minutes && (
+                <span className="text-[11px] text-blue-600 font-semibold">
+                  {slotsData.slot_duration_minutes}-min appointment slots
+                </span>
+              )}
+            </div>
+            <div className="relative">
+              <Calendar className="h-4 w-4 text-[#475569] absolute left-3 top-3 pointer-events-none" />
+              <input
+                type="date"
+                required
+                min={minDateString}
+                value={bookingDate}
+                onChange={(e) => setBookingDate(e.target.value)}
+                className="w-full pl-9 pr-3 py-2.5 bg-white border border-[#e2e8f0] rounded-xl text-sm text-[#172033] focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 transition"
+              />
+            </div>
+          </div>
+
+          {/* Time Slot Selection Grid */}
+          <div>
+            <div className="flex items-center justify-between mb-1.5">
+              <label className="block text-xs font-semibold text-[#475569] uppercase">
+                Available Appointment Slot <span className="text-rose-500">*</span>
+              </label>
+              {selectedSlot && (
+                <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                  Selected: {selectedSlot.start_time} - {selectedSlot.end_time}
+                </span>
+              )}
             </div>
 
-            <div>
-              <label className="block text-xs font-semibold text-[#475569] uppercase mb-1">
-                Preferred Time <span className="text-rose-500">*</span>
-              </label>
-              <div className="relative">
-                <Clock className="h-4 w-4 text-[#475569] absolute left-3 top-3 pointer-events-none" />
-                <input
-                  type="time"
-                  required
-                  value={bookingTime}
-                  onChange={(e) => setBookingTime(e.target.value)}
-                  className="w-full pl-9 pr-3 py-2.5 bg-white border border-[#e2e8f0] rounded-xl text-sm text-[#172033] focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 transition"
-                />
+            {slotsLoading ? (
+              <div className="p-4 bg-slate-50 rounded-xl border border-[#e2e8f0] text-center text-xs text-[#475569] flex items-center justify-center space-x-2">
+                <Clock className="w-4 h-4 animate-spin text-blue-600" />
+                <span>Checking provider availability...</span>
               </div>
-            </div>
+            ) : slotsError ? (
+              <div className="p-3 bg-rose-50 rounded-xl border border-rose-200 text-xs text-rose-700 flex items-center space-x-2">
+                <AlertCircle className="w-4 h-4 shrink-0" />
+                <span>{slotsError}</span>
+              </div>
+            ) : !slotsData.is_accepting_bookings ? (
+              <div className="p-3 bg-amber-50 rounded-xl border border-amber-200 text-xs text-amber-800 flex items-center space-x-2">
+                <AlertTriangle className="w-4 h-4 shrink-0 text-amber-600" />
+                <span>This provider is currently not accepting new booking requests.</span>
+              </div>
+            ) : !slotsData.is_working_day ? (
+              <div className="p-3 bg-amber-50 rounded-xl border border-amber-200 text-xs text-amber-800 flex items-center space-x-2">
+                <AlertCircle className="w-4 h-4 shrink-0 text-amber-600" />
+                <span>{slotsData.message || 'The provider does not work on this day of the week. Please choose another date.'}</span>
+              </div>
+            ) : slotsData.is_unavailable_date ? (
+              <div className="p-3 bg-amber-50 rounded-xl border border-amber-200 text-xs text-amber-800 flex items-center space-x-2">
+                <AlertCircle className="w-4 h-4 shrink-0 text-amber-600" />
+                <span>Provider has marked this specific date as unavailable.</span>
+              </div>
+            ) : slotsData.slots.length === 0 ? (
+              <div className="p-3 bg-slate-50 rounded-xl border border-[#e2e8f0] text-xs text-[#475569] text-center">
+                No slots configured for this date.
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 max-h-48 overflow-y-auto pr-1">
+                {slotsData.slots.map((slot) => {
+                  const isSelected = selectedSlot?.start_time === slot.start_time;
+                  if (!slot.available) {
+                    return (
+                      <button
+                        key={slot.start_time}
+                        type="button"
+                        disabled
+                        className="py-2 px-2.5 rounded-xl border border-slate-200 bg-slate-100 text-slate-400 text-xs flex flex-col items-center justify-center cursor-not-allowed line-through opacity-70"
+                        title={slot.reason === 'past' ? 'Slot has passed' : 'Already booked'}
+                      >
+                        <span className="font-medium">{slot.start_time} - {slot.end_time}</span>
+                        <span className="text-[9px] uppercase tracking-wider font-bold text-slate-500 mt-0.5 no-underline">
+                          {slot.reason === 'past' ? 'Passed' : 'Reserved'}
+                        </span>
+                      </button>
+                    );
+                  }
+
+                  return (
+                    <button
+                      key={slot.start_time}
+                      type="button"
+                      onClick={() => {
+                        setSelectedSlot(slot);
+                        setError('');
+                      }}
+                      className={`py-2 px-2.5 rounded-xl text-xs font-semibold transition border cursor-pointer flex flex-col items-center justify-center ${
+                        isSelected
+                          ? 'bg-blue-600 text-white border-blue-600 shadow-sm ring-2 ring-blue-300'
+                          : 'bg-white hover:bg-blue-50 text-[#172033] border-[#e2e8f0] hover:border-blue-300'
+                      }`}
+                    >
+                      <span>{slot.start_time} - {slot.end_time}</span>
+                      <span className={`text-[9px] font-bold uppercase tracking-wider mt-0.5 ${isSelected ? 'text-blue-100' : 'text-emerald-600'}`}>
+                        Available
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
           </div>
 
           <div>

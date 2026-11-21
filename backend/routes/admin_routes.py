@@ -1,7 +1,7 @@
 import re
 from functools import wraps
 from flask import Blueprint, request, jsonify
-from models.schema_models import db, User, ProviderProfile, Booking, Review, TrustMetric
+from models.schema_models import db, User, ProviderProfile, Booking, Review, TrustMetric, ProviderNoShow
 from routes.auth_routes import token_required
 from ml.recalculator import recalculate_provider_trust
 
@@ -199,6 +199,88 @@ def moderate_review(current_user, review_id):
             recalculate_provider_trust(provider_id)
             return jsonify({'success': True, 'message': 'Suspicious review permanently removed.'}), 200
 
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'success': False, 'message': f'Server error: {str(e)}'}), 500
+
+
+# ---------------------------------------------------------------------------
+# NO-SHOW MANAGEMENT (Admin only)
+# ---------------------------------------------------------------------------
+
+@admin_bp.route('/no-shows', methods=['GET'])
+@admin_required
+def list_no_shows(current_user):
+    """
+    Returns all no-show reports with status 'reported' (pending admin review),
+    ordered newest first.
+    """
+    try:
+        reports = (
+            ProviderNoShow.query
+            .order_by(ProviderNoShow.reported_at.desc())
+            .all()
+        )
+        return jsonify({
+            'success': True,
+            'no_shows': [r.to_dict() for r in reports]
+        }), 200
+    except Exception as e:
+        return jsonify({'success': False, 'message': f'Server error: {str(e)}'}), 500
+
+
+@admin_bp.route('/no-shows/<int:report_id>/confirm', methods=['PATCH'])
+@admin_required
+def confirm_no_show(current_user, report_id):
+    """
+    Admin confirms a provider no-show. The status transitions from
+    'reported' → 'confirmed'. This feeds into provider reliability scoring.
+    """
+    report = ProviderNoShow.query.get(report_id)
+    if not report:
+        return jsonify({'success': False, 'message': 'No-show report not found.'}), 404
+
+    if report.status == 'confirmed':
+        return jsonify({'success': False, 'message': 'Report already confirmed.'}), 409
+
+    try:
+        report.status = 'confirmed'
+        db.session.commit()
+        # Note: ML Trust Score is intentionally NOT modified by no-shows.
+        # No-shows feed strictly into the separate, transparent Provider Reliability metric.
+        return jsonify({
+            'success': True,
+            'message': 'No-show confirmed. Provider reliability metric updated.',
+            'report': report.to_dict()
+        }), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'success': False, 'message': f'Server error: {str(e)}'}), 500
+
+
+@admin_bp.route('/no-shows/<int:report_id>/dismiss', methods=['PATCH'])
+@admin_required
+def dismiss_no_show(current_user, report_id):
+    """
+    Admin dismisses a no-show report (e.g. provider has evidence of arrival).
+    Status transitions from 'reported' → 'dismissed'.
+    Provider reliability is NOT penalised.
+    """
+    report = ProviderNoShow.query.get(report_id)
+    if not report:
+        return jsonify({'success': False, 'message': 'No-show report not found.'}), 404
+
+    if report.status == 'dismissed':
+        return jsonify({'success': False, 'message': 'Report already dismissed.'}), 409
+
+    try:
+        report.status = 'dismissed'
+        db.session.commit()
+        return jsonify({
+            'success': True,
+            'message': 'No-show report dismissed. No penalty applied to provider.',
+            'report': report.to_dict()
+        }), 200
     except Exception as e:
         db.session.rollback()
         return jsonify({'success': False, 'message': f'Server error: {str(e)}'}), 500

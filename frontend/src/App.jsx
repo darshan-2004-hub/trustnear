@@ -21,7 +21,7 @@ import AIAssistantWidget from './components/AIAssistantWidget';
 const ProtectedRoute = ({ children, adminOnly = false }) => {
   const { user, loading } = useAuth();
   if (loading) return null;
-  if (!user) return <Navigate to="/auth" replace />;
+  if (!user) return <Navigate to={adminOnly ? "/login/admin" : "/auth"} replace />;
   if (adminOnly && user.role !== 'admin') return <Navigate to="/" replace />;
   return children;
 };
@@ -79,6 +79,7 @@ function App() {
 
               {/* Dedicated Admin Staff Authentication Route */}
               <Route path="/login/admin" element={<AdminLogin />} />
+              <Route path="/admin/login" element={<Navigate to="/login/admin" replace />} />
 
               {/* Redirect legacy /login and /register to role portal */}
               <Route path="/login" element={<Navigate to="/auth" replace />} />

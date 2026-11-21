@@ -1,13 +1,109 @@
+import os
+import uuid
 import math
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta, time
 from flask import Blueprint, request, jsonify
 from sqlalchemy import func
-from models.schema_models import db, User, ProviderProfile, TrustMetric, Review, Booking
+from werkzeug.utils import secure_filename
+from models.schema_models import (
+    db, User, ProviderProfile, TrustMetric, Review, Booking,
+    ProviderPortfolio, ProviderAvailability, ProviderNoShow
+)
 from routes.auth_routes import token_required
 from ml.price_estimator import price_estimator
 from ml.ranker import personalize_ranking
 
 provider_bp = Blueprint('provider_bp', __name__)
+
+IST = timezone(timedelta(hours=5, minutes=30))
+ALLOWED_IMAGE_EXTENSIONS = {'jpg', 'jpeg', 'png', 'webp'}
+ALLOWED_MIMETYPES = {'image/jpeg', 'image/png', 'image/webp'}
+MAX_UPLOAD_SIZE = 5 * 1024 * 1024  # 5MB
+PORTFOLIO_UPLOAD_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'uploads', 'portfolio')
+
+DEFAULT_AVAILABILITY = {
+    'working_days': ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+    'daily_start_time': '09:00',
+    'daily_end_time': '18:00',
+    'slot_duration_minutes': 60,
+    'unavailable_dates': [],
+    'is_accepting_bookings': True
+}
+
+def resolve_provider_user_id(provider_id):
+    """Resolves whether the ID is a ProviderProfile.id or User.id, returning User.id."""
+    profile = ProviderProfile.query.filter(
+        (ProviderProfile.id == provider_id) | (ProviderProfile.user_id == provider_id)
+    ).first()
+    if profile:
+        return profile.user_id
+    user = User.query.filter_by(id=provider_id, role='provider').first()
+    if user:
+        return user.id
+    return None
+
+def calculate_provider_reliability(provider_user_id):
+    """
+    Transparent reliability indicator derived strictly from genuine records:
+    - completed bookings
+    - provider-initiated cancellations
+    - confirmed no-shows (from provider_no_shows table)
+    Customer-initiated cancellations do NOT penalize the provider.
+    Providers with fewer than 3 trackable events display 'Not enough booking history'.
+    """
+    completed = Booking.query.filter_by(provider_id=provider_user_id, status='completed').count()
+    provider_cancellations = Booking.query.filter(
+        Booking.provider_id == provider_user_id,
+        Booking.status == 'cancelled',
+        Booking.cancelled_by == provider_user_id
+    ).count()
+    customer_cancellations = Booking.query.filter(
+        Booking.provider_id == provider_user_id,
+        Booking.status == 'cancelled',
+        (Booking.cancelled_by != provider_user_id) | (Booking.cancelled_by.is_(None))
+    ).count()
+    confirmed_no_shows = ProviderNoShow.query.filter_by(
+        provider_id=provider_user_id,
+        status='confirmed'
+    ).count()
+    reported_no_shows = ProviderNoShow.query.filter_by(
+        provider_id=provider_user_id,
+        status='reported'
+    ).count()
+
+    total_trackable = completed + provider_cancellations + confirmed_no_shows
+    MIN_TRACKABLE_EVENTS = 3
+
+    if total_trackable < MIN_TRACKABLE_EVENTS:
+        reliability_rate = None
+        status_label = "Not enough booking history"
+        explanation = "Provider needs at least 3 completed bookings or attendance events to calculate an official reliability rating."
+    else:
+        reliability_rate = round((completed / total_trackable) * 100, 1)
+        if reliability_rate >= 90.0:
+            status_label = "High Reliability"
+        elif reliability_rate >= 75.0:
+            status_label = "Moderate Reliability"
+        else:
+            status_label = "Needs Improvement"
+        explanation = f"Calculated strictly from {completed} completed booking(s), {provider_cancellations} provider cancellation(s), and {confirmed_no_shows} confirmed no-show(s). Customer-initiated cancellations do not affect this score."
+
+    return {
+        'provider_id': provider_user_id,
+        'reliability_rate': reliability_rate,
+        'status_label': status_label,
+        'explanation': explanation,
+        'breakdown': {
+            'completed_bookings': completed,
+            'provider_cancellations': provider_cancellations,
+            'customer_cancellations': customer_cancellations,
+            'confirmed_no_shows': confirmed_no_shows,
+            'reported_no_shows': reported_no_shows,
+            'total_trackable_events': total_trackable,
+            'min_events_required': MIN_TRACKABLE_EVENTS
+        }
+    }
+
 
 def haversine_distance(lat1, lon1, lat2, lon2):
     if lat1 is None or lon1 is None or lat2 is None or lon2 is None:
@@ -311,6 +407,7 @@ def get_provider_dashboard_analytics(current_user):
             'reviews_count': review_count,
             'avg_response_minutes': avg_response_minutes,
             'cancellation_rate': cancellation_rate,
+            'reliability': calculate_provider_reliability(current_user.id),
         },
         'analytics': {
             'monthly_series': monthly_series,
@@ -383,6 +480,7 @@ def get_provider_details(provider_id):
         evidence_note = "Baseline score — provider has no completed jobs or community reviews yet."
 
     trust_score_val = float(trust.trust_score) if trust and trust.trust_score is not None else None
+    reliability_data = calculate_provider_reliability(profile.user_id)
 
     return jsonify({
         'success': True,
@@ -410,6 +508,501 @@ def get_provider_details(provider_id):
             'shap_factors': trust.shap_factors if trust else None,
             'rating': round(float(avg_rating), 1) if avg_rating else None,
             'reviews_count': real_reviews_count,
-            'reviews': reviews_data
+            'reviews': reviews_data,
+            'reliability': reliability_data
         }
     }), 200
+
+
+# ==========================================
+# STAGE 5: PROVIDER PORTFOLIO ENDPOINTS
+# ==========================================
+
+@provider_bp.route('/portfolio/upload', methods=['POST'])
+@token_required
+def upload_portfolio_image(current_user):
+    """
+    Handles secure image upload for provider past work portfolio.
+    Validates file extension, MIME type, and size (<= 5MB).
+    """
+    if current_user.role != 'provider':
+        return jsonify({'success': False, 'message': 'Forbidden: Only providers can upload portfolio images.'}), 403
+
+    if 'file' not in request.files and 'image' not in request.files:
+        return jsonify({'success': False, 'message': 'No image file provided in request.'}), 400
+
+    file = request.files.get('file') or request.files.get('image')
+    if not file or file.filename == '':
+        return jsonify({'success': False, 'message': 'Selected file is empty.'}), 400
+
+    # Validate extension
+    ext = file.filename.rsplit('.', 1)[-1].lower() if '.' in file.filename else ''
+    if ext not in ALLOWED_IMAGE_EXTENSIONS:
+        return jsonify({
+            'success': False,
+            'message': f'Unsupported file type. Allowed formats: {", ".join(ALLOWED_IMAGE_EXTENSIONS)}.'
+        }), 400
+
+    # Read bytes to validate MIME type and size
+    file_bytes = file.read()
+    if len(file_bytes) > MAX_UPLOAD_SIZE:
+        return jsonify({'success': False, 'message': 'File size exceeds maximum limit of 5MB.'}), 400
+
+    # Validate MIME type if provided
+    content_type = file.content_type or ''
+    if content_type and content_type.lower() not in ALLOWED_MIMETYPES:
+        return jsonify({'success': False, 'message': f'Invalid image format {content_type}.'}), 400
+
+    # Verify actual file content via binary magic signatures (deep content inspection)
+    is_valid_signature = False
+    if len(file_bytes) >= 12:
+        if ext in ['jpg', 'jpeg'] and file_bytes[:3] == b'\xff\xd8\xff':
+            is_valid_signature = True
+        elif ext == 'png' and file_bytes[:8] == b'\x89PNG\r\n\x1a\n':
+            is_valid_signature = True
+        elif ext == 'webp' and file_bytes[:4] == b'RIFF' and file_bytes[8:12] == b'WEBP':
+            is_valid_signature = True
+
+    if not is_valid_signature:
+        return jsonify({
+            'success': False,
+            'message': 'Invalid file content: Binary signature does not match a valid JPEG, PNG, or WEBP image.'
+        }), 400
+
+    # Ensure upload directory exists
+    os.makedirs(PORTFOLIO_UPLOAD_DIR, exist_ok=True)
+
+    # Generate secure filename (hex UUID + validated ext prevents any path traversal)
+    filename = f"{uuid.uuid4().hex}.{ext}"
+    dest_path = os.path.abspath(os.path.join(PORTFOLIO_UPLOAD_DIR, filename))
+    if not dest_path.startswith(os.path.abspath(PORTFOLIO_UPLOAD_DIR)):
+        return jsonify({'success': False, 'message': 'Invalid upload path destination.'}), 400
+
+    with open(dest_path, 'wb') as f:
+        f.write(file_bytes)
+
+    image_url = f"/api/uploads/portfolio/{filename}"
+    return jsonify({
+        'success': True,
+        'message': 'Image uploaded successfully.',
+        'image_url': image_url,
+        'filename': filename
+    }), 201
+
+
+@provider_bp.route('/<int:provider_id>/portfolio', methods=['GET'])
+def get_provider_portfolio(provider_id):
+    """
+    Publicly exposes verified past work portfolio for the requested provider.
+    """
+    user_id = resolve_provider_user_id(provider_id)
+    if not user_id:
+        return jsonify({'success': False, 'message': 'Provider not found.'}), 404
+
+    items = ProviderPortfolio.query.filter_by(
+        provider_id=user_id,
+        authorized_for_display=True
+    ).order_by(ProviderPortfolio.completion_date.desc(), ProviderPortfolio.created_at.desc()).all()
+
+    return jsonify({
+        'success': True,
+        'provider_id': user_id,
+        'count': len(items),
+        'portfolio': [item.to_dict() for item in items]
+    }), 200
+
+
+@provider_bp.route('/portfolio', methods=['POST'])
+@token_required
+def create_portfolio_item(current_user):
+    """
+    Allows a verified provider to add a new previous work showcase entry.
+    Requires title, category, description, completion date, and authorization confirmation.
+    """
+    if current_user.role != 'provider':
+        return jsonify({'success': False, 'message': 'Forbidden: Only providers can create portfolio entries.'}), 403
+
+    data = request.get_json() or {}
+    title = data.get('title', '').strip()
+    service_category = data.get('service_category', '').strip()
+    description = data.get('description', '').strip()
+    completion_date_str = data.get('completion_date', '').strip()
+    before_image_url = data.get('before_image_url', '').strip() or None
+    after_image_url = data.get('after_image_url', '').strip() or None
+    authorized = data.get('authorized_for_display', data.get('is_authorized', False))
+
+    if not title:
+        return jsonify({'success': False, 'message': 'Project title is required.'}), 400
+    if not service_category:
+        return jsonify({'success': False, 'message': 'Service category is required.'}), 400
+    if not description:
+        return jsonify({'success': False, 'message': 'Project description is required.'}), 400
+    if not completion_date_str:
+        return jsonify({'success': False, 'message': 'Completion date is required.'}), 400
+    if not authorized:
+        return jsonify({'success': False, 'message': 'You must confirm authorization to showcase this client work.'}), 400
+
+    try:
+        comp_date = datetime.strptime(completion_date_str, '%Y-%m-%d').date()
+    except ValueError:
+        return jsonify({'success': False, 'message': 'Invalid completion date format. Use YYYY-MM-DD.'}), 400
+
+    try:
+        new_entry = ProviderPortfolio(
+            provider_id=current_user.id,
+            title=title,
+            service_category=service_category,
+            description=description,
+            before_image_url=before_image_url,
+            after_image_url=after_image_url,
+            completion_date=comp_date,
+            authorized_for_display=True
+        )
+        db.session.add(new_entry)
+        db.session.commit()
+
+        return jsonify({
+            'success': True,
+            'message': 'Portfolio work added successfully.',
+            'portfolio_item': new_entry.to_dict()
+        }), 201
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'success': False, 'message': f'Server error: {str(e)}'}), 500
+
+
+@provider_bp.route('/portfolio/<int:item_id>', methods=['PUT'])
+@token_required
+def update_portfolio_item(current_user, item_id):
+    """
+    Updates an existing portfolio entry. Enforces provider ownership.
+    """
+    if current_user.role != 'provider':
+        return jsonify({'success': False, 'message': 'Forbidden: Only providers can update portfolio entries.'}), 403
+
+    item = ProviderPortfolio.query.get(item_id)
+    if not item:
+        return jsonify({'success': False, 'message': 'Portfolio item not found.'}), 404
+
+    if item.provider_id != current_user.id:
+        return jsonify({'success': False, 'message': 'Forbidden: You do not own this portfolio item.'}), 403
+
+    data = request.get_json() or {}
+    if 'title' in data:
+        t = data['title'].strip()
+        if not t:
+            return jsonify({'success': False, 'message': 'Title cannot be empty.'}), 400
+        item.title = t
+
+    if 'service_category' in data:
+        cat = data['service_category'].strip()
+        if not cat:
+            return jsonify({'success': False, 'message': 'Service category cannot be empty.'}), 400
+        item.service_category = cat
+
+    if 'description' in data:
+        desc = data['description'].strip()
+        if not desc:
+            return jsonify({'success': False, 'message': 'Description cannot be empty.'}), 400
+        item.description = desc
+
+    if 'completion_date' in data and data['completion_date']:
+        try:
+            item.completion_date = datetime.strptime(data['completion_date'].strip(), '%Y-%m-%d').date()
+        except ValueError:
+            return jsonify({'success': False, 'message': 'Invalid completion date format. Use YYYY-MM-DD.'}), 400
+
+    if 'before_image_url' in data:
+        item.before_image_url = data['before_image_url'].strip() or None
+    if 'after_image_url' in data:
+        item.after_image_url = data['after_image_url'].strip() or None
+    if 'authorized_for_display' in data:
+        item.authorized_for_display = bool(data['authorized_for_display'])
+
+    try:
+        db.session.commit()
+        return jsonify({
+            'success': True,
+            'message': 'Portfolio item updated successfully.',
+            'portfolio_item': item.to_dict()
+        }), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'success': False, 'message': f'Server error: {str(e)}'}), 500
+
+
+@provider_bp.route('/portfolio/<int:item_id>', methods=['DELETE'])
+@token_required
+def delete_portfolio_item(current_user, item_id):
+    """
+    Deletes a portfolio entry. Enforces provider ownership.
+    """
+    if current_user.role != 'provider':
+        return jsonify({'success': False, 'message': 'Forbidden: Only providers can delete portfolio entries.'}), 403
+
+    item = ProviderPortfolio.query.get(item_id)
+    if not item:
+        return jsonify({'success': False, 'message': 'Portfolio item not found.'}), 404
+
+    if item.provider_id != current_user.id:
+        return jsonify({'success': False, 'message': 'Forbidden: You do not own this portfolio item.'}), 403
+
+    try:
+        db.session.delete(item)
+        db.session.commit()
+        return jsonify({'success': True, 'message': 'Portfolio item deleted successfully.'}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'success': False, 'message': f'Server error: {str(e)}'}), 500
+
+
+# ==========================================
+# STAGE 5: PROVIDER AVAILABILITY & SLOTS
+# ==========================================
+
+@provider_bp.route('/<int:provider_id>/availability', methods=['GET'])
+def get_provider_availability(provider_id):
+    """
+    Returns working schedule and slot configuration for the provider.
+    """
+    user_id = resolve_provider_user_id(provider_id)
+    if not user_id:
+        return jsonify({'success': False, 'message': 'Provider not found.'}), 404
+
+    avail = ProviderAvailability.query.filter_by(provider_id=user_id).first()
+    if avail:
+        return jsonify({'success': True, 'availability': avail.to_dict()}), 200
+
+    # Default fallback
+    default_data = dict(DEFAULT_AVAILABILITY)
+    default_data['provider_id'] = user_id
+    default_data['id'] = None
+    return jsonify({'success': True, 'availability': default_data}), 200
+
+
+@provider_bp.route('/availability', methods=['PUT'])
+@token_required
+def update_provider_availability(current_user):
+    """
+    Allows a provider to configure their working days, hours, slot duration, and unavailable dates.
+    """
+    if current_user.role != 'provider':
+        return jsonify({'success': False, 'message': 'Forbidden: Only providers can update availability.'}), 403
+
+    data = request.get_json() or {}
+    working_days = data.get('working_days')
+    daily_start_time_str = data.get('daily_start_time', '').strip()
+    daily_end_time_str = data.get('daily_end_time', '').strip()
+    slot_duration = data.get('slot_duration_minutes', 60)
+    unavailable_dates = data.get('unavailable_dates', [])
+    is_accepting_bookings = data.get('is_accepting_bookings', True)
+
+    VALID_DAYS = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"}
+    if working_days is not None:
+        if not isinstance(working_days, list) or not all(d in VALID_DAYS for d in working_days):
+            return jsonify({'success': False, 'message': 'Invalid working days specified.'}), 400
+
+    try:
+        start_t = datetime.strptime(daily_start_time_str, '%H:%M').time() if daily_start_time_str else time(9, 0)
+        end_t = datetime.strptime(daily_end_time_str, '%H:%M').time() if daily_end_time_str else time(18, 0)
+    except ValueError:
+        return jsonify({'success': False, 'message': 'Invalid time format. Use HH:MM.'}), 400
+
+    if start_t >= end_t:
+        return jsonify({'success': False, 'message': 'Daily start time must be earlier than daily end time.'}), 400
+
+    try:
+        slot_duration = int(slot_duration)
+    except (ValueError, TypeError):
+        slot_duration = 60
+
+    if slot_duration not in [30, 45, 60, 90, 120]:
+        return jsonify({'success': False, 'message': 'Slot duration must be 30, 45, 60, 90, or 120 minutes.'}), 400
+
+    # Clean unavailable dates
+    cleaned_unavailable = []
+    if isinstance(unavailable_dates, list):
+        for ud in unavailable_dates:
+            try:
+                datetime.strptime(str(ud).strip(), '%Y-%m-%d')
+                cleaned_unavailable.append(str(ud).strip())
+            except ValueError:
+                pass
+
+    try:
+        avail = ProviderAvailability.query.filter_by(provider_id=current_user.id).first()
+        if not avail:
+            avail = ProviderAvailability(provider_id=current_user.id)
+            db.session.add(avail)
+
+        if working_days is not None:
+            avail.working_days = working_days
+        else:
+            avail.working_days = DEFAULT_AVAILABILITY['working_days']
+        avail.daily_start_time = start_t
+        avail.daily_end_time = end_t
+        avail.slot_duration_minutes = slot_duration
+        avail.unavailable_dates = cleaned_unavailable
+        avail.is_accepting_bookings = bool(is_accepting_bookings)
+
+        db.session.commit()
+        return jsonify({
+            'success': True,
+            'message': 'Availability settings saved successfully.',
+            'availability': avail.to_dict()
+        }), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'success': False, 'message': f'Server error: {str(e)}'}), 500
+
+
+@provider_bp.route('/<int:provider_id>/slots', methods=['GET'])
+def get_provider_available_slots(provider_id):
+    """
+    Returns generated slots for a given date, respecting provider's working days,
+    hours, unavailable dates, past time filtering, and active booking conflicts.
+    """
+    user_id = resolve_provider_user_id(provider_id)
+    if not user_id:
+        return jsonify({'success': False, 'message': 'Provider not found.'}), 404
+
+    date_str = request.args.get('date', '').strip()
+    if not date_str:
+        return jsonify({'success': False, 'message': 'Query parameter "date" (YYYY-MM-DD) is required.'}), 400
+
+    try:
+        target_date = datetime.strptime(date_str, '%Y-%m-%d').date()
+    except ValueError:
+        return jsonify({'success': False, 'message': 'Invalid date format. Use YYYY-MM-DD.'}), 400
+
+    now_ist = datetime.now(IST)
+    today_ist = now_ist.date()
+
+    avail = ProviderAvailability.query.filter_by(provider_id=user_id).first()
+    working_days = avail.working_days if avail else DEFAULT_AVAILABILITY['working_days']
+    start_time = avail.daily_start_time if avail else time(9, 0)
+    end_time = avail.daily_end_time if avail else time(18, 0)
+    duration_mins = avail.slot_duration_minutes if avail else 60
+    unavailable_dates = avail.unavailable_dates or [] if avail else []
+    is_accepting = avail.is_accepting_bookings if avail else True
+
+    # 1. Past Date check
+    if target_date < today_ist:
+        return jsonify({
+            'success': True,
+            'date': date_str,
+            'slots': [],
+            'slot_duration_minutes': duration_mins,
+            'is_working_day': False,
+            'message': 'Date is in the past.'
+        }), 200
+
+    # 2. Provider accepting bookings check
+    if not is_accepting:
+        return jsonify({
+            'success': True,
+            'date': date_str,
+            'slots': [],
+            'slot_duration_minutes': duration_mins,
+            'is_accepting_bookings': False,
+            'message': 'Provider is currently not accepting new bookings.'
+        }), 200
+
+    # 3. Working day check
+    day_name = target_date.strftime('%A')
+    if day_name not in working_days:
+        return jsonify({
+            'success': True,
+            'date': date_str,
+            'slots': [],
+            'slot_duration_minutes': duration_mins,
+            'is_working_day': False,
+            'message': f'{day_name} is not a working day for this provider.'
+        }), 200
+
+    # 4. Unavailable specific date check
+    if date_str in unavailable_dates:
+        return jsonify({
+            'success': True,
+            'date': date_str,
+            'slots': [],
+            'slot_duration_minutes': duration_mins,
+            'is_unavailable_date': True,
+            'message': 'Provider has marked this specific date as unavailable.'
+        }), 200
+
+    # 5. Fetch existing active bookings for this provider on this date
+    active_bookings = Booking.query.filter(
+        Booking.provider_id == user_id,
+        Booking.booking_date == target_date,
+        Booking.status.in_(['pending', 'accepted', 'in_progress'])
+    ).all()
+
+    # Generate time slots
+    slots = []
+    slot_dt = datetime.combine(target_date, start_time)
+    end_dt = datetime.combine(target_date, end_time)
+    step = timedelta(minutes=duration_mins)
+
+    while slot_dt + step <= end_dt:
+        slot_start_time = slot_dt.time()
+        slot_end_time = (slot_dt + step).time()
+
+        is_available = True
+        unavailable_reason = None
+
+        # Check past slot for today
+        if target_date == today_ist and slot_start_time <= now_ist.time():
+            is_available = False
+            unavailable_reason = 'past'
+        else:
+            # Check overlap with any active booking
+            for b in active_bookings:
+                b_start = b.booking_time
+                if b.end_time:
+                    b_end = b.end_time
+                else:
+                    # Backward compatibility for bookings without end_time
+                    b_end = (datetime.combine(target_date, b.booking_time) + step).time()
+
+                # Overlap condition: startA < endB and endA > startB
+                if (slot_start_time < b_end) and (slot_end_time > b_start):
+                    is_available = False
+                    unavailable_reason = 'booked'
+                    break
+
+        slots.append({
+            'start_time': slot_start_time.strftime('%H:%M'),
+            'end_time': slot_end_time.strftime('%H:%M'),
+            'available': is_available,
+            'reason': unavailable_reason
+        })
+
+        slot_dt += step
+
+    return jsonify({
+        'success': True,
+        'date': date_str,
+        'day_of_week': day_name,
+        'slot_duration_minutes': duration_mins,
+        'is_working_day': True,
+        'is_accepting_bookings': True,
+        'slots': slots
+    }), 200
+
+
+@provider_bp.route('/<int:provider_id>/reliability', methods=['GET'])
+def get_provider_reliability_endpoint(provider_id):
+    """
+    Returns the transparent reliability metrics breakdown for a provider.
+    """
+    user_id = resolve_provider_user_id(provider_id)
+    if not user_id:
+        return jsonify({'success': False, 'message': 'Provider not found.'}), 404
+
+    reliability = calculate_provider_reliability(user_id)
+    return jsonify({
+        'success': True,
+        'reliability': reliability
+    }), 200
+

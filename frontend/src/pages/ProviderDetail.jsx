@@ -19,7 +19,12 @@ import {
   MessageSquare,
   Sparkles,
   Info,
-  UserCheck
+  UserCheck,
+  Image as ImageIcon,
+  Eye,
+  X,
+  Activity,
+  Check
 } from 'lucide-react';
 
 const ProviderDetail = () => {
@@ -29,18 +34,33 @@ const ProviderDetail = () => {
   const { user, isAuthenticated } = useAuth();
 
   const [provider, setProvider] = useState(null);
+  const [portfolio, setPortfolio] = useState([]);
+  const [availability, setAvailability] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [showBookingModal, setShowBookingModal] = useState(false);
+  const [previewImage, setPreviewImage] = useState(null);
+  const [portfolioTabMap, setPortfolioTabMap] = useState({});
+
+  const resolveImageUrl = (url) => {
+    if (!url) return '';
+    if (url.startsWith('http://') || url.startsWith('https://')) return url;
+    return `http://localhost:5000${url.startsWith('/') ? '' : '/'}${url}`;
+  };
 
   useEffect(() => {
-    const fetchProvider = async () => {
+    const fetchAllData = async () => {
       setLoading(true);
       setError('');
       try {
-        const res = await api.get(`/providers/${id}`);
-        if (res.data?.success && res.data.provider) {
-          setProvider(res.data.provider);
+        const [provRes, portRes, availRes] = await Promise.allSettled([
+          api.get(`/providers/${id}`),
+          api.get(`/providers/${id}/portfolio`),
+          api.get(`/providers/${id}/availability`)
+        ]);
+
+        if (provRes.status === 'fulfilled' && provRes.value.data?.success && provRes.value.data.provider) {
+          setProvider(provRes.value.data.provider);
 
           // Auto-open booking modal if requested in URL query or state
           const searchParams = new URLSearchParams(location.search);
@@ -48,7 +68,15 @@ const ProviderDetail = () => {
             setShowBookingModal(true);
           }
         } else {
-          setError(res.data?.message || 'Provider profile not found.');
+          setError(provRes.status === 'fulfilled' ? provRes.value.data?.message : 'Provider profile not found.');
+        }
+
+        if (portRes.status === 'fulfilled' && portRes.value.data?.success) {
+          setPortfolio(portRes.value.data.portfolio || []);
+        }
+
+        if (availRes.status === 'fulfilled' && availRes.value.data?.success) {
+          setAvailability(availRes.value.data.availability);
         }
       } catch (err) {
         setError(err.response?.data?.message || 'Failed to load provider profile. Please try again.');
@@ -57,7 +85,7 @@ const ProviderDetail = () => {
       }
     };
 
-    fetchProvider();
+    fetchAllData();
   }, [id, location.search, location.state]);
 
   const handleBookClick = () => {
@@ -253,6 +281,160 @@ const ProviderDetail = () => {
               </p>
             </div>
 
+            {/* Work Portfolio Section */}
+            <div className="bg-white rounded-2xl border border-[#e2e8f0] p-6 space-y-4 shadow-sm">
+              <div className="flex items-center justify-between pb-3 border-b border-[#e2e8f0]">
+                <div className="flex items-center space-x-2">
+                  <ImageIcon className="w-4 h-4 text-blue-600" />
+                  <h3 className="text-base font-bold text-[#172033]">Work Portfolio & Past Projects</h3>
+                </div>
+                {portfolio.length > 0 && (
+                  <span className="text-xs font-bold text-blue-600 bg-blue-50 px-2.5 py-0.5 rounded-full border border-blue-200">
+                    {portfolio.length} Showcase{portfolio.length > 1 ? 's' : ''}
+                  </span>
+                )}
+              </div>
+
+              {portfolio.length > 0 ? (
+                <div className="space-y-4">
+                  {portfolio.map((item) => {
+                    const activeView = portfolioTabMap[item.id] || (item.after_image_url ? 'after' : (item.before_image_url ? 'before' : null));
+                    const hasBoth = Boolean(item.before_image_url && item.after_image_url);
+
+                    return (
+                      <div key={item.id} className="p-4 rounded-xl bg-slate-50 border border-[#e2e8f0] space-y-3">
+                        <div className="flex items-start justify-between">
+                          <div>
+                            <h4 className="text-sm font-bold text-[#172033]">{item.title}</h4>
+                            <div className="flex items-center space-x-2 mt-0.5 text-[11px] text-[#475569]">
+                              <span className="text-blue-600 font-semibold">{item.service_category}</span>
+                              {item.completion_date && (
+                                <>
+                                  <span>•</span>
+                                  <span>Completed: {item.completion_date}</span>
+                                </>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+
+                        <p className="text-xs text-[#475569] leading-relaxed">
+                          {item.description}
+                        </p>
+
+                        {/* Image Showcase & Comparison */}
+                        {(item.before_image_url || item.after_image_url) && (
+                          <div className="space-y-2 pt-1">
+                            {hasBoth && (
+                              <div className="flex items-center space-x-2">
+                                <span className="text-[11px] font-semibold text-[#475569]">Compare View:</span>
+                                <div className="inline-flex rounded-lg border border-[#e2e8f0] bg-white p-0.5 text-xs">
+                                  <button
+                                    type="button"
+                                    onClick={() => setPortfolioTabMap({ ...portfolioTabMap, [item.id]: 'before' })}
+                                    className={`px-2.5 py-1 rounded-md font-semibold transition cursor-pointer text-xs ${
+                                      activeView === 'before' ? 'bg-amber-100 text-amber-800' : 'text-[#475569] hover:text-[#172033]'
+                                    }`}
+                                  >
+                                    Before
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() => setPortfolioTabMap({ ...portfolioTabMap, [item.id]: 'after' })}
+                                    className={`px-2.5 py-1 rounded-md font-semibold transition cursor-pointer text-xs ${
+                                      activeView === 'after' ? 'bg-emerald-100 text-emerald-800' : 'text-[#475569] hover:text-[#172033]'
+                                    }`}
+                                  >
+                                    After Work
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() => setPortfolioTabMap({ ...portfolioTabMap, [item.id]: 'both' })}
+                                    className={`px-2.5 py-1 rounded-md font-semibold transition cursor-pointer text-xs ${
+                                      activeView === 'both' ? 'bg-blue-100 text-blue-800' : 'text-[#475569] hover:text-[#172033]'
+                                    }`}
+                                  >
+                                    Side-by-Side
+                                  </button>
+                                </div>
+                              </div>
+                            )}
+
+                            {activeView === 'both' && hasBoth ? (
+                              <div className="grid grid-cols-2 gap-2">
+                                <div
+                                  className="relative group rounded-xl overflow-hidden border border-[#e2e8f0] bg-white aspect-4/3 cursor-pointer"
+                                  onClick={() => setPreviewImage({ url: resolveImageUrl(item.before_image_url), label: `${item.title} - Before` })}
+                                >
+                                  <img
+                                    src={resolveImageUrl(item.before_image_url)}
+                                    alt="Before work"
+                                    className="w-full h-full object-cover group-hover:scale-105 transition duration-200"
+                                  />
+                                  <span className="absolute top-2 left-2 bg-amber-600/90 text-white text-[10px] font-bold px-2 py-0.5 rounded shadow">
+                                    BEFORE
+                                  </span>
+                                  <div className="absolute inset-0 bg-slate-900/20 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
+                                    <Eye className="w-5 h-5 text-white" />
+                                  </div>
+                                </div>
+                                <div
+                                  className="relative group rounded-xl overflow-hidden border border-[#e2e8f0] bg-white aspect-4/3 cursor-pointer"
+                                  onClick={() => setPreviewImage({ url: resolveImageUrl(item.after_image_url), label: `${item.title} - After Completion` })}
+                                >
+                                  <img
+                                    src={resolveImageUrl(item.after_image_url)}
+                                    alt="After work"
+                                    className="w-full h-full object-cover group-hover:scale-105 transition duration-200"
+                                  />
+                                  <span className="absolute top-2 left-2 bg-emerald-600/90 text-white text-[10px] font-bold px-2 py-0.5 rounded shadow">
+                                    AFTER WORK
+                                  </span>
+                                  <div className="absolute inset-0 bg-slate-900/20 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
+                                    <Eye className="w-5 h-5 text-white" />
+                                  </div>
+                                </div>
+                              </div>
+                            ) : (
+                              <div
+                                className="relative group rounded-xl overflow-hidden border border-[#e2e8f0] bg-white aspect-16/9 max-h-60 cursor-pointer"
+                                onClick={() => {
+                                  const url = activeView === 'before' ? item.before_image_url : (item.after_image_url || item.before_image_url);
+                                  setPreviewImage({ url: resolveImageUrl(url), label: `${item.title} (${activeView === 'before' ? 'Before' : 'After'})` });
+                                }}
+                              >
+                                <img
+                                  src={resolveImageUrl(activeView === 'before' ? item.before_image_url : (item.after_image_url || item.before_image_url))}
+                                  alt="Portfolio sample"
+                                  className="w-full h-full object-cover group-hover:scale-105 transition duration-200"
+                                />
+                                {hasBoth && (
+                                  <span className={`absolute top-2 left-2 text-white text-[10px] font-bold px-2 py-0.5 rounded shadow ${
+                                    activeView === 'before' ? 'bg-amber-600/90' : 'bg-emerald-600/90'
+                                  }`}>
+                                    {activeView === 'before' ? 'BEFORE' : 'AFTER WORK'}
+                                  </span>
+                                )}
+                                <div className="absolute inset-0 bg-slate-900/20 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
+                                  <Eye className="w-6 h-6 text-white" />
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <div className="py-6 text-center text-xs text-[#475569] space-y-1">
+                  <ImageIcon className="w-7 h-7 text-blue-600 mx-auto opacity-50 mb-1" />
+                  <p className="font-semibold text-[#172033]">No portfolio items published yet</p>
+                  <p>Provider has not uploaded any past project before & after showcases yet.</p>
+                </div>
+              )}
+            </div>
+
             {/* Genuine Community Reviews Section */}
             <div className="bg-white rounded-2xl border border-[#e2e8f0] p-6 space-y-4 shadow-sm">
               <div className="flex items-center justify-between pb-3 border-b border-[#e2e8f0]">
@@ -342,6 +524,89 @@ const ProviderDetail = () => {
 
           {/* Right Column: Trust Intelligence & Platform Guarantees */}
           <div className="lg:col-span-5 space-y-6">
+
+            {/* Stage 5: Transparent Reliability Indicator Card */}
+            {provider.reliability && (
+              <div className="bg-white rounded-2xl border border-[#e2e8f0] p-6 space-y-4 shadow-sm">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2">
+                    <Activity className="w-5 h-5 text-blue-600" />
+                    <h3 className="text-base font-bold text-[#172033]">Provider Reliability</h3>
+                  </div>
+                  <span className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full border ${
+                    provider.reliability.status_label === 'High Reliability'
+                      ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                      : provider.reliability.status_label === 'Moderate Reliability'
+                      ? 'bg-blue-50 text-blue-700 border-blue-200'
+                      : provider.reliability.status_label === 'Needs Improvement'
+                      ? 'bg-rose-50 text-rose-700 border-rose-200'
+                      : 'bg-amber-50 text-amber-700 border-amber-200'
+                  }`}>
+                    {provider.reliability.status_label}
+                  </span>
+                </div>
+
+                <div className="p-4 rounded-xl bg-slate-50 border border-[#e2e8f0] flex items-center justify-between">
+                  <div>
+                    <span className="text-[11px] text-[#475569] font-semibold uppercase block">Attendance & Fulfillment</span>
+                    <div className="flex items-baseline space-x-1.5 mt-0.5">
+                      {provider.reliability.reliability_rate !== null ? (
+                        <>
+                          <span className="text-3xl font-black text-emerald-600">
+                            {provider.reliability.reliability_rate}%
+                          </span>
+                          <span className="text-xs text-[#475569]">rate</span>
+                        </>
+                      ) : (
+                        <span className="text-xs font-bold text-amber-700">Building History</span>
+                      )}
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <span className="text-[11px] text-[#475569] block font-medium">Distinct from ML Trust</span>
+                    <span className="text-[10px] text-slate-500">Pure genuine delivery records</span>
+                  </div>
+                </div>
+
+                {/* Explanation */}
+                <p className="text-xs text-[#475569] leading-relaxed">
+                  {provider.reliability.explanation}
+                </p>
+
+                {/* Breakdown Grid */}
+                {provider.reliability.breakdown && (
+                  <div className="grid grid-cols-2 gap-2 text-xs pt-1">
+                    <div className="p-2.5 rounded-xl bg-emerald-50/50 border border-emerald-100">
+                      <span className="text-[10px] text-emerald-800 font-semibold uppercase block">Completed Bookings</span>
+                      <span className="text-sm font-bold text-emerald-700 block mt-0.5">
+                        {provider.reliability.breakdown.completed_bookings}
+                      </span>
+                    </div>
+                    <div className="p-2.5 rounded-xl bg-rose-50/50 border border-rose-100">
+                      <span className="text-[10px] text-rose-800 font-semibold uppercase block">Provider Cancellations</span>
+                      <span className="text-sm font-bold text-rose-700 block mt-0.5">
+                        {provider.reliability.breakdown.provider_cancellations}
+                      </span>
+                    </div>
+                    <div className="p-2.5 rounded-xl bg-slate-50 border border-[#e2e8f0]">
+                      <span className="text-[10px] text-[#475569] font-semibold uppercase block">Confirmed No-Shows</span>
+                      <span className="text-sm font-bold text-[#172033] block mt-0.5">
+                        {provider.reliability.breakdown.confirmed_no_shows}
+                      </span>
+                    </div>
+                    <div className="p-2.5 rounded-xl bg-slate-50 border border-[#e2e8f0]">
+                      <div className="flex items-center space-x-1">
+                        <span className="text-[10px] text-[#475569] font-semibold uppercase block">Customer Cancels</span>
+                        <span className="text-[9px] text-emerald-600 font-bold">(0 penalty)</span>
+                      </div>
+                      <span className="text-sm font-bold text-[#172033] block mt-0.5">
+                        {provider.reliability.breakdown.customer_cancellations}
+                      </span>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
 
             {/* Trust Intelligence Card */}
             <div className="bg-white rounded-2xl border border-[#e2e8f0] p-6 space-y-4 shadow-sm">
@@ -442,6 +707,60 @@ const ProviderDetail = () => {
               )}
             </div>
 
+            {/* Stage 5: Working Hours & Availability Schedule Card */}
+            {availability && (
+              <div className="bg-white rounded-2xl border border-[#e2e8f0] p-6 space-y-3 shadow-sm">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2">
+                    <Clock className="w-5 h-5 text-blue-600" />
+                    <h3 className="text-base font-bold text-[#172033]">Working Hours & Slots</h3>
+                  </div>
+                  <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${
+                    availability.is_accepting_bookings
+                      ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                      : 'bg-amber-50 text-amber-700 border-amber-200'
+                  }`}>
+                    {availability.is_accepting_bookings ? 'Accepting Bookings' : 'Paused'}
+                  </span>
+                </div>
+
+                <div className="space-y-2 text-xs">
+                  <div className="flex items-center justify-between py-1.5 border-b border-[#e2e8f0]">
+                    <span className="text-[#475569]">Daily Operating Hours:</span>
+                    <span className="font-bold text-[#172033]">
+                      {availability.daily_start_time} - {availability.daily_end_time}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between py-1.5 border-b border-[#e2e8f0]">
+                    <span className="text-[#475569]">Slot Duration:</span>
+                    <span className="font-bold text-[#172033]">
+                      {availability.slot_duration_minutes} minutes
+                    </span>
+                  </div>
+                  <div className="pt-1">
+                    <span className="text-[#475569] block mb-1.5 font-medium">Working Days:</span>
+                    <div className="flex flex-wrap gap-1">
+                      {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].map((day) => {
+                        const isWorking = (availability.working_days || []).includes(day);
+                        return (
+                          <span
+                            key={day}
+                            className={`px-2 py-0.5 rounded-md text-[10px] font-semibold border ${
+                              isWorking
+                                ? 'bg-blue-50 text-blue-700 border-blue-200'
+                                : 'bg-slate-100 text-slate-400 border-slate-200 line-through'
+                            }`}
+                          >
+                            {day.slice(0, 3)}
+                          </span>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* Platform Guarantees Card */}
             <div className="bg-white rounded-2xl border border-[#e2e8f0] p-5 space-y-3 shadow-sm">
               <h4 className="text-xs font-bold uppercase tracking-wider text-[#172033]">TrustNear Assurance</h4>
@@ -466,6 +785,37 @@ const ProviderDetail = () => {
         </div>
 
       </div>
+
+      {/* Image Preview Zoom Modal */}
+      {previewImage && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/80 backdrop-blur-xs animate-in fade-in duration-150"
+          onClick={() => setPreviewImage(null)}
+        >
+          <div
+            className="relative max-w-3xl w-full bg-white rounded-2xl overflow-hidden shadow-2xl border border-white/20 p-2"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between p-3 border-b border-[#e2e8f0]">
+              <span className="text-xs font-bold text-[#172033]">{previewImage.label}</span>
+              <button
+                type="button"
+                onClick={() => setPreviewImage(null)}
+                className="text-[#475569] hover:text-[#172033] p-1 rounded-lg hover:bg-slate-100 cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="max-h-[75vh] flex items-center justify-center overflow-auto p-2 bg-slate-950/5">
+              <img
+                src={previewImage.url}
+                alt={previewImage.label}
+                className="max-h-[70vh] w-auto object-contain rounded-lg"
+              />
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Booking Modal */}
       {showBookingModal && (

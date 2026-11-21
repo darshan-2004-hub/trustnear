@@ -1,8 +1,9 @@
-from flask import Flask, jsonify
+import os
+from flask import Flask, jsonify, send_from_directory
 from flask_cors import CORS
 from flask_socketio import SocketIO
 from config import Config
-from models.schema_models import db
+from models.schema_models import db, run_db_migrations
 from routes.auth_routes import auth_bp
 from routes.provider_routes import provider_bp
 from routes.booking_routes import booking_bp
@@ -20,6 +21,9 @@ def create_app():
 
     # Initialize SQLAlchemy
     db.init_app(app)
+
+    # Safe automated backward-compatible database migrations
+    run_db_migrations(app)
 
     # Initialize Real-time SocketIO
     socketio = SocketIO(app, cors_allowed_origins="*", async_mode='threading')
@@ -43,6 +47,12 @@ def create_app():
             'service': 'TrustNear REST API',
             'database': 'Connected to MySQL trustnear_db'
         }), 200
+
+    # Serve uploaded portfolio images
+    @app.route('/api/uploads/portfolio/<path:filename>', methods=['GET'])
+    def serve_portfolio_upload(filename):
+        upload_dir = os.path.join(app.root_path, 'uploads', 'portfolio')
+        return send_from_directory(upload_dir, filename)
 
     return app, socketio
 

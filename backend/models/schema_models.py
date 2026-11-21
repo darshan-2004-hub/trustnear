@@ -99,14 +99,134 @@ class Booking(db.Model):
     service_category = db.Column(db.String(80), nullable=False)
     booking_date = db.Column(db.Date, nullable=False)
     booking_time = db.Column(db.Time, nullable=False)
+    end_time = db.Column(db.Time, nullable=True)
     customer_address = db.Column(db.String(255), nullable=False)
     customer_latitude = db.Column(db.Numeric(10, 8), nullable=True)
     customer_longitude = db.Column(db.Numeric(11, 8), nullable=True)
     agreed_price = db.Column(db.Numeric(10, 2), nullable=True)
     status = db.Column(db.Enum('pending', 'accepted', 'in_progress', 'completed', 'cancelled'), nullable=False, default='pending')
     cancellation_reason = db.Column(db.String(255), nullable=True)
+    cancelled_by = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='SET NULL'), nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "customer_id": self.customer_id,
+            "provider_id": self.provider_id,
+            "service_title": self.service_title,
+            "service_category": self.service_category,
+            "booking_date": self.booking_date.isoformat() if self.booking_date else None,
+            "booking_time": self.booking_time.strftime('%H:%M') if self.booking_time else None,
+            "end_time": self.end_time.strftime('%H:%M') if self.end_time else None,
+            "customer_address": self.customer_address,
+            "customer_latitude": float(self.customer_latitude) if self.customer_latitude else None,
+            "customer_longitude": float(self.customer_longitude) if self.customer_longitude else None,
+            "agreed_price": float(self.agreed_price) if self.agreed_price else None,
+            "status": self.status,
+            "cancellation_reason": self.cancellation_reason,
+            "cancelled_by": self.cancelled_by,
+            "created_at": self.created_at.isoformat() if self.created_at else None,
+            "updated_at": self.updated_at.isoformat() if self.updated_at else None
+        }
+
+
+class ProviderPortfolio(db.Model):
+    __tablename__ = 'provider_portfolios'
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    provider_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
+    title = db.Column(db.String(150), nullable=False)
+    service_category = db.Column(db.String(80), nullable=False)
+    description = db.Column(db.Text, nullable=False)
+    before_image_url = db.Column(db.String(255), nullable=True)
+    after_image_url = db.Column(db.String(255), nullable=True)
+    completion_date = db.Column(db.Date, nullable=False)
+    authorized_for_display = db.Column(db.Boolean, nullable=False, default=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    # Relationships
+    provider = db.relationship('User', backref=db.backref('portfolio_entries', lazy=True, cascade='all, delete-orphan'))
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "provider_id": self.provider_id,
+            "title": self.title,
+            "service_category": self.service_category,
+            "description": self.description,
+            "before_image_url": self.before_image_url,
+            "after_image_url": self.after_image_url,
+            "completion_date": self.completion_date.isoformat() if self.completion_date else None,
+            "authorized_for_display": self.authorized_for_display,
+            "created_at": self.created_at.isoformat() if self.created_at else None,
+            "updated_at": self.updated_at.isoformat() if self.updated_at else None
+        }
+
+
+class ProviderAvailability(db.Model):
+    __tablename__ = 'provider_availabilities'
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    provider_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'), unique=True, nullable=False)
+    working_days = db.Column(db.JSON, nullable=False)
+    daily_start_time = db.Column(db.Time, nullable=False, default=datetime.strptime('09:00:00', '%H:%M:%S').time())
+    daily_end_time = db.Column(db.Time, nullable=False, default=datetime.strptime('18:00:00', '%H:%M:%S').time())
+    slot_duration_minutes = db.Column(db.Integer, nullable=False, default=60)
+    unavailable_dates = db.Column(db.JSON, nullable=True)
+    is_accepting_bookings = db.Column(db.Boolean, nullable=False, default=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    # Relationship
+    provider = db.relationship('User', backref=db.backref('availability', uselist=False, cascade='all, delete-orphan'))
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "provider_id": self.provider_id,
+            "working_days": self.working_days,
+            "daily_start_time": self.daily_start_time.strftime('%H:%M') if self.daily_start_time else '09:00',
+            "daily_end_time": self.daily_end_time.strftime('%H:%M') if self.daily_end_time else '18:00',
+            "slot_duration_minutes": self.slot_duration_minutes,
+            "unavailable_dates": self.unavailable_dates or [],
+            "is_accepting_bookings": self.is_accepting_bookings,
+            "created_at": self.created_at.isoformat() if self.created_at else None,
+            "updated_at": self.updated_at.isoformat() if self.updated_at else None
+        }
+
+
+class ProviderNoShow(db.Model):
+    __tablename__ = 'provider_no_shows'
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    booking_id = db.Column(db.Integer, db.ForeignKey('bookings.id', ondelete='CASCADE'), unique=True, nullable=False)
+    customer_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
+    provider_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
+    reason = db.Column(db.Text, nullable=False)
+    status = db.Column(db.Enum('reported', 'confirmed', 'dismissed'), nullable=False, default='reported')
+    admin_notes = db.Column(db.Text, nullable=True)
+    reported_at = db.Column(db.DateTime, default=datetime.utcnow)
+    reviewed_at = db.Column(db.DateTime, nullable=True)
+
+    # Relationships
+    booking = db.relationship('Booking', backref=db.backref('no_show_report', uselist=False, cascade='all, delete-orphan'))
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "booking_id": self.booking_id,
+            "customer_id": self.customer_id,
+            "provider_id": self.provider_id,
+            "reason": self.reason,
+            "status": self.status,
+            "admin_notes": self.admin_notes,
+            "reported_at": self.reported_at.isoformat() if self.reported_at else None,
+            "reviewed_at": self.reviewed_at.isoformat() if self.reviewed_at else None
+        }
+
 
 
 class Review(db.Model):
@@ -135,3 +255,43 @@ class Message(db.Model):
     content = db.Column(db.Text, nullable=False)
     is_read = db.Column(db.Boolean, nullable=False, default=False)
     sent_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+
+def run_db_migrations(app):
+    """
+    Safe, backward-compatible, idempotent schema migration.
+    Guarantees that existing databases receive new tables and columns
+    without altering or dropping existing rows or data.
+    """
+    from sqlalchemy import inspect, text
+    with app.app_context():
+        # 1. Create any missing tables (idempotent, won't overwrite existing tables)
+        db.create_all()
+
+        # 2. Add missing columns to bookings table if running on an existing DB
+        try:
+            inspector = inspect(db.engine)
+            if 'bookings' in inspector.get_table_names():
+                existing_cols = {col['name'] for col in inspector.get_columns('bookings')}
+
+                # Add end_time if missing
+                if 'end_time' not in existing_cols:
+                    try:
+                        with db.engine.connect() as conn:
+                            conn.execute(text("ALTER TABLE bookings ADD COLUMN end_time TIME NULL"))
+                            conn.commit()
+                        print("[Migration] Added column 'end_time' to bookings table.")
+                    except Exception as e:
+                        print(f"[Migration Notice] end_time: {e}")
+
+                # Add cancelled_by if missing
+                if 'cancelled_by' not in existing_cols:
+                    try:
+                        with db.engine.connect() as conn:
+                            conn.execute(text("ALTER TABLE bookings ADD COLUMN cancelled_by INT NULL"))
+                            conn.commit()
+                        print("[Migration] Added column 'cancelled_by' to bookings table.")
+                    except Exception as e:
+                        print(f"[Migration Notice] cancelled_by: {e}")
+        except Exception as e:
+            print(f"[Migration Notice] Schema inspection: {e}")
