@@ -16,6 +16,11 @@ def submit_review(current_user):
     if current_user.role != 'customer':
         return jsonify({'success': False, 'message': 'Only customers can submit reviews.'}), 403
 
+    if getattr(current_user, 'account_status', 'active') == 'suspended':
+        return jsonify({'success': False, 'message': 'Your account is suspended. Submitting reviews is disabled.'}), 403
+    if getattr(current_user, 'account_status', 'active') == 'deleted':
+        return jsonify({'success': False, 'message': 'Account is inactive.'}), 403
+
     data = request.get_json() or {}
     booking_id  = data.get('booking_id')
     rating      = data.get('rating')
@@ -124,7 +129,8 @@ def get_provider_reviews(provider_id):
     """
     reviews = Review.query.filter_by(
         provider_id=provider_id,
-        is_approved_by_admin=True
+        is_approved_by_admin=True,
+        is_deleted=False
     ).order_by(Review.created_at.desc()).all()
 
     reviews_list = []

@@ -25,6 +25,11 @@ def create_booking(current_user):
   if current_user.role != 'customer':
     return jsonify({'success': False, 'message': 'Only registered customers can book service providers.'}), 403
 
+  if getattr(current_user, 'account_status', 'active') == 'suspended':
+    return jsonify({'success': False, 'message': 'Your account is currently suspended. You cannot create new service bookings.'}), 403
+  if getattr(current_user, 'account_status', 'active') == 'deleted':
+    return jsonify({'success': False, 'message': 'Account is inactive.'}), 403
+
   data = request.get_json() or {}
   provider_id = data.get('provider_id')
   service_title = data.get('service_title', '').strip()
@@ -43,6 +48,11 @@ def create_booking(current_user):
   provider = User.query.filter_by(id=provider_id, role='provider').first()
   if not provider:
     return jsonify({'success': False, 'message': 'Selected provider does not exist.'}), 404
+
+  if getattr(provider, 'account_status', 'active') == 'suspended':
+    return jsonify({'success': False, 'message': 'This service provider is currently suspended and cannot accept new bookings.'}), 400
+  if getattr(provider, 'account_status', 'active') == 'deleted':
+    return jsonify({'success': False, 'message': 'Selected provider is inactive.'}), 400
 
   profile = ProviderProfile.query.filter_by(user_id=provider.id).first()
   if not profile:
@@ -250,6 +260,18 @@ def update_booking_status(current_user, booking_id):
   if current_user.id not in [booking.customer_id, booking.provider_id]:
     return jsonify({'success': False, 'message': 'You are not authorized to update this booking.'}), 403
 
+  # Suspended/deleted users may not modify bookings
+  if current_user.role == 'customer':
+    if getattr(current_user, 'account_status', 'active') == 'suspended':
+      return jsonify({'success': False, 'message': 'Your account is suspended. You cannot modify bookings.'}), 403
+    if getattr(current_user, 'account_status', 'active') == 'deleted':
+      return jsonify({'success': False, 'message': 'Account is inactive.'}), 403
+  elif current_user.role == 'provider':
+    if getattr(current_user, 'account_status', 'active') == 'suspended':
+      return jsonify({'success': False, 'message': 'Your provider account is suspended. You cannot accept or modify bookings.'}), 403
+    if getattr(current_user, 'account_status', 'active') == 'deleted':
+      return jsonify({'success': False, 'message': 'Account is inactive.'}), 403
+
   data = request.get_json() or {}
   new_status = data.get('status', '').strip().lower()
   cancellation_reason = data.get('cancellation_reason', '').strip()
@@ -350,6 +372,11 @@ def report_booking_no_show(current_user, booking_id):
   """
   if current_user.role != 'customer':
     return jsonify({'success': False, 'message': 'Forbidden: Only customers can report provider no-shows.'}), 403
+
+  if getattr(current_user, 'account_status', 'active') == 'suspended':
+    return jsonify({'success': False, 'message': 'Your account is suspended. You cannot submit no-show reports.'}), 403
+  if getattr(current_user, 'account_status', 'active') == 'deleted':
+    return jsonify({'success': False, 'message': 'Account is inactive.'}), 403
 
   booking = Booking.query.get(booking_id)
   if not booking:

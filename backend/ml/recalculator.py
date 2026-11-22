@@ -74,7 +74,8 @@ def recalculate_provider_trust(provider_id: int) -> dict | None:
     approved_reviews = Review.query.filter_by(
         provider_id=provider_id,
         is_approved_by_admin=True,
-        is_suspicious=False
+        is_suspicious=False,
+        is_deleted=False
     ).all()
 
     review_count = len(approved_reviews)

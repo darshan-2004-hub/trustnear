@@ -202,7 +202,16 @@ class TestAdminAuthentication(unittest.TestCase):
             view_func = self.app.view_functions[rule.endpoint]
             # Since admin_required wraps token_required which wraps the func,
             # testing with no auth must return 401
-            no_auth_res = self.client.open(rule.rule.replace('<int:user_id>', '1').replace('<int:review_id>', '1').replace('<int:report_id>', '1'), method='GET')
+            no_auth_res = self.client.open(
+                rule.rule
+                    .replace('<int:user_id>', '1')
+                    .replace('<int:review_id>', '1')
+                    .replace('<int:report_id>', '1')
+                    .replace('<int:customer_id>', '1')
+                    .replace('<int:provider_id>', '1')
+                    .replace('<int:booking_id>', '1'),
+                method='GET'
+            )
             # Should be either 401 (blocked by auth) or 405 (if GET is not allowed for that endpoint, e.g. PATCH)
             self.assertIn(
                 no_auth_res.status_code,

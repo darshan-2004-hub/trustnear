@@ -127,6 +127,7 @@ def get_providers():
     query = db.session.query(ProviderProfile, User, TrustMetric)\
         .join(User, ProviderProfile.user_id == User.id)\
         .outerjoin(TrustMetric, ProviderProfile.user_id == TrustMetric.provider_id)\
+        .filter(User.account_status == 'active')\
         .filter(ProviderProfile.verification_status == 'verified')\
         .filter(ProviderProfile.is_available == True)
 
@@ -528,6 +529,11 @@ def upload_portfolio_image(current_user):
     if current_user.role != 'provider':
         return jsonify({'success': False, 'message': 'Forbidden: Only providers can upload portfolio images.'}), 403
 
+    if getattr(current_user, 'account_status', 'active') == 'suspended':
+        return jsonify({'success': False, 'message': 'Your provider account is suspended. You cannot upload portfolio images.'}), 403
+    if getattr(current_user, 'account_status', 'active') == 'deleted':
+        return jsonify({'success': False, 'message': 'Account is inactive.'}), 403
+
     if 'file' not in request.files and 'image' not in request.files:
         return jsonify({'success': False, 'message': 'No image file provided in request.'}), 400
 
@@ -622,6 +628,11 @@ def create_portfolio_item(current_user):
     if current_user.role != 'provider':
         return jsonify({'success': False, 'message': 'Forbidden: Only providers can create portfolio entries.'}), 403
 
+    if getattr(current_user, 'account_status', 'active') == 'suspended':
+        return jsonify({'success': False, 'message': 'Your provider account is suspended. You cannot create portfolio entries.'}), 403
+    if getattr(current_user, 'account_status', 'active') == 'deleted':
+        return jsonify({'success': False, 'message': 'Account is inactive.'}), 403
+
     data = request.get_json() or {}
     title = data.get('title', '').strip()
     service_category = data.get('service_category', '').strip()
@@ -679,6 +690,11 @@ def update_portfolio_item(current_user, item_id):
     """
     if current_user.role != 'provider':
         return jsonify({'success': False, 'message': 'Forbidden: Only providers can update portfolio entries.'}), 403
+
+    if getattr(current_user, 'account_status', 'active') == 'suspended':
+        return jsonify({'success': False, 'message': 'Your provider account is suspended. You cannot update portfolio entries.'}), 403
+    if getattr(current_user, 'account_status', 'active') == 'deleted':
+        return jsonify({'success': False, 'message': 'Account is inactive.'}), 403
 
     item = ProviderPortfolio.query.get(item_id)
     if not item:
@@ -740,6 +756,11 @@ def delete_portfolio_item(current_user, item_id):
     if current_user.role != 'provider':
         return jsonify({'success': False, 'message': 'Forbidden: Only providers can delete portfolio entries.'}), 403
 
+    if getattr(current_user, 'account_status', 'active') == 'suspended':
+        return jsonify({'success': False, 'message': 'Your provider account is suspended. You cannot delete portfolio entries.'}), 403
+    if getattr(current_user, 'account_status', 'active') == 'deleted':
+        return jsonify({'success': False, 'message': 'Account is inactive.'}), 403
+
     item = ProviderPortfolio.query.get(item_id)
     if not item:
         return jsonify({'success': False, 'message': 'Portfolio item not found.'}), 404
@@ -788,6 +809,11 @@ def update_provider_availability(current_user):
     """
     if current_user.role != 'provider':
         return jsonify({'success': False, 'message': 'Forbidden: Only providers can update availability.'}), 403
+
+    if getattr(current_user, 'account_status', 'active') == 'suspended':
+        return jsonify({'success': False, 'message': 'Your provider account is suspended. You cannot modify availability.'}), 403
+    if getattr(current_user, 'account_status', 'active') == 'deleted':
+        return jsonify({'success': False, 'message': 'Account is inactive.'}), 403
 
     data = request.get_json() or {}
     working_days = data.get('working_days')

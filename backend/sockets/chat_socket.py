@@ -62,6 +62,16 @@ def register_chat_socket(socketio):
         receiver_id = booking.provider_id if user_id == booking.customer_id else booking.customer_id
         sender = User.query.get(user_id)
 
+        # Suspended or deleted users may not send messages
+        if sender:
+            status = getattr(sender, 'account_status', 'active')
+            if status == 'suspended':
+                emit('chat_error', {'message': 'Your account is suspended. You cannot send messages.'})
+                return
+            if status == 'deleted':
+                emit('chat_error', {'message': 'Account is inactive.'})
+                return
+
         try:
             msg = Message(
                 sender_id=user_id,

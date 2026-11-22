@@ -185,6 +185,9 @@ def login():
     if not user or not check_password_hash(user.password_hash, password):
         return jsonify({'success': False, 'message': 'Invalid email or password.'}), 401
 
+    if getattr(user, 'account_status', 'active') == 'deleted':
+        return jsonify({'success': False, 'message': 'This account has been deactivated or removed.'}), 401
+
     token = generate_jwt(user.id, user.role)
 
     user_info = user.to_dict()
@@ -224,6 +227,12 @@ def update_profile(current_user):
     """
     Updates the authenticated customer or provider profile (supported fields only).
     """
+    # Suspended or deleted accounts cannot update their own profile
+    if getattr(current_user, 'account_status', 'active') == 'suspended':
+        return jsonify({'success': False, 'message': 'Your account is suspended. Profile updates are disabled.'}), 403
+    if getattr(current_user, 'account_status', 'active') == 'deleted':
+        return jsonify({'success': False, 'message': 'Account is inactive.'}), 403
+
     data = request.get_json() or {}
     full_name = data.get('full_name')
     phone = data.get('phone')

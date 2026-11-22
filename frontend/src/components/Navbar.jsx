@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { 
@@ -12,7 +12,12 @@ import {
   Sparkles,
   TrendingUp,
   Briefcase,
-  User
+  User,
+  ChevronDown,
+  LogIn,
+  UserPlus,
+  Lock,
+  Wrench
 } from 'lucide-react';
 
 const Navbar = () => {
@@ -20,6 +25,25 @@ const Navbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [signInDropdownOpen, setSignInDropdownOpen] = useState(false);
+  const [registerDropdownOpen, setRegisterDropdownOpen] = useState(false);
+
+  const signInRef = useRef(null);
+  const registerRef = useRef(null);
+
+  // Close dropdowns on outside click
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (signInRef.current && !signInRef.current.contains(e.target)) {
+        setSignInDropdownOpen(false);
+      }
+      if (registerRef.current && !registerRef.current.contains(e.target)) {
+        setRegisterDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const handleLogout = () => {
     logout();
@@ -167,20 +191,104 @@ const Navbar = () => {
                 </button>
               </div>
             ) : (
-              <div className="flex items-center space-x-2.5">
-                <Link
-                  to="/auth"
-                  className="px-4 py-2 text-sm font-semibold text-[#172033] hover:bg-slate-100 rounded-xl transition-all"
-                >
-                  Sign In
-                </Link>
-                <Link
-                  to="/auth"
-                  className="px-4 py-2 text-sm font-semibold btn-primary flex items-center space-x-1.5 shadow-sm"
-                >
-                  <Sparkles className="w-4 h-4" />
-                  <span>Get Started</span>
-                </Link>
+              <div className="flex items-center space-x-2">
+                {/* 1, 3, 5: Separate Sign In Direct Dropdown */}
+                <div className="relative" ref={signInRef}>
+                  <button
+                    onClick={() => {
+                      setSignInDropdownOpen(!signInDropdownOpen);
+                      setRegisterDropdownOpen(false);
+                    }}
+                    className="flex items-center space-x-1 px-3.5 py-2 text-xs font-bold text-[#172033] hover:bg-slate-100 rounded-xl transition-all cursor-pointer"
+                  >
+                    <span>Sign In</span>
+                    <ChevronDown className="w-3.5 h-3.5 text-[#475569]" />
+                  </button>
+
+                  {signInDropdownOpen && (
+                    <div className="absolute right-0 mt-2 w-56 bg-white rounded-2xl shadow-xl border border-[#e2e8f0] py-2 z-50 text-xs">
+                      <div className="px-3 py-1 text-[10px] uppercase font-extrabold tracking-wider text-[#475569]">
+                        Select Portal
+                      </div>
+                      <Link
+                        to="/login/customer"
+                        onClick={() => setSignInDropdownOpen(false)}
+                        className="flex items-center space-x-2.5 px-3.5 py-2 hover:bg-blue-50 text-[#172033] font-semibold"
+                      >
+                        <User className="w-4 h-4 text-blue-600 shrink-0" />
+                        <div>
+                          <div className="font-bold text-xs">Customer Login</div>
+                          <div className="text-[10px] text-[#475569]">Homeowners & Clients</div>
+                        </div>
+                      </Link>
+                      <Link
+                        to="/login/provider"
+                        onClick={() => setSignInDropdownOpen(false)}
+                        className="flex items-center space-x-2.5 px-3.5 py-2 hover:bg-slate-50 text-[#172033] font-semibold"
+                      >
+                        <Wrench className="w-4 h-4 text-slate-700 shrink-0" />
+                        <div>
+                          <div className="font-bold text-xs">Provider Login</div>
+                          <div className="text-[10px] text-[#475569]">Trades & Professionals</div>
+                        </div>
+                      </Link>
+                      <div className="border-t border-[#e2e8f0] my-1"></div>
+                      <Link
+                        to="/login/admin"
+                        onClick={() => setSignInDropdownOpen(false)}
+                        className="flex items-center space-x-2.5 px-3.5 py-1.5 hover:bg-purple-50 text-purple-700 font-bold"
+                      >
+                        <Lock className="w-3.5 h-3.5 text-purple-600 shrink-0" />
+                        <span className="text-xs">Admin Staff Login</span>
+                      </Link>
+                    </div>
+                  )}
+                </div>
+
+                {/* 2 & 4: Separate Register Direct Dropdown */}
+                <div className="relative" ref={registerRef}>
+                  <button
+                    onClick={() => {
+                      setRegisterDropdownOpen(!registerDropdownOpen);
+                      setSignInDropdownOpen(false);
+                    }}
+                    className="flex items-center space-x-1.5 px-3.5 py-2 text-xs font-bold btn-primary rounded-xl shadow-xs cursor-pointer"
+                  >
+                    <Sparkles className="w-3.5 h-3.5" />
+                    <span>Register</span>
+                    <ChevronDown className="w-3.5 h-3.5 text-white/80" />
+                  </button>
+
+                  {registerDropdownOpen && (
+                    <div className="absolute right-0 mt-2 w-56 bg-white rounded-2xl shadow-xl border border-[#e2e8f0] py-2 z-50 text-xs">
+                      <div className="px-3 py-1 text-[10px] uppercase font-extrabold tracking-wider text-[#475569]">
+                        Create Account
+                      </div>
+                      <Link
+                        to="/register/customer"
+                        onClick={() => setRegisterDropdownOpen(false)}
+                        className="flex items-center space-x-2.5 px-3.5 py-2 hover:bg-blue-50 text-[#172033] font-semibold"
+                      >
+                        <UserPlus className="w-4 h-4 text-blue-600 shrink-0" />
+                        <div>
+                          <div className="font-bold text-xs">Customer Register</div>
+                          <div className="text-[10px] text-[#475569]">New client account</div>
+                        </div>
+                      </Link>
+                      <Link
+                        to="/register/provider"
+                        onClick={() => setRegisterDropdownOpen(false)}
+                        className="flex items-center space-x-2.5 px-3.5 py-2 hover:bg-slate-50 text-[#172033] font-semibold"
+                      >
+                        <Wrench className="w-4 h-4 text-slate-700 shrink-0" />
+                        <div>
+                          <div className="font-bold text-xs">Provider Register</div>
+                          <div className="text-[10px] text-[#475569]">Register skilled trade</div>
+                        </div>
+                      </Link>
+                    </div>
+                  )}
+                </div>
               </div>
             )}
           </div>
@@ -267,21 +375,57 @@ const Navbar = () => {
                 </button>
               </div>
             ) : (
-              <div className="grid grid-cols-2 gap-2">
-                <Link
-                  to="/auth"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="text-center py-2 text-sm text-[#172033] bg-slate-100 rounded-xl font-semibold"
-                >
-                  Sign In
-                </Link>
-                <Link
-                  to="/auth"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="text-center py-2 text-sm font-semibold btn-primary"
-                >
-                  Get Started
-                </Link>
+              <div className="space-y-3 pt-2">
+                <div className="text-[10px] uppercase font-extrabold tracking-wider text-[#475569]">
+                  Sign In to Your Account
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  <Link
+                    to="/login/customer"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="text-center py-2 px-2 text-xs font-bold text-blue-700 bg-blue-50 border border-blue-200 rounded-xl"
+                  >
+                    Customer Login
+                  </Link>
+                  <Link
+                    to="/login/provider"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="text-center py-2 px-2 text-xs font-bold text-slate-800 bg-slate-100 border border-slate-200 rounded-xl"
+                  >
+                    Provider Login
+                  </Link>
+                </div>
+
+                <div className="text-[10px] uppercase font-extrabold tracking-wider text-[#475569] pt-1">
+                  New to TrustNear? Register
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  <Link
+                    to="/register/customer"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="text-center py-2 px-2 text-xs font-bold btn-secondary rounded-xl"
+                  >
+                    Customer Register
+                  </Link>
+                  <Link
+                    to="/register/provider"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="text-center py-2 px-2 text-xs font-bold btn-primary rounded-xl"
+                  >
+                    Provider Register
+                  </Link>
+                </div>
+
+                <div className="pt-2 border-t border-[#e2e8f0] flex justify-center">
+                  <Link
+                    to="/login/admin"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="text-center text-xs font-bold text-purple-700 hover:text-purple-900 flex items-center space-x-1"
+                  >
+                    <Lock className="w-3.5 h-3.5 text-purple-600" />
+                    <span>Staff / Admin Login →</span>
+                  </Link>
+                </div>
               </div>
             )}
           </div>

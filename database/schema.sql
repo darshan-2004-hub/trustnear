@@ -10,6 +10,7 @@ CREATE TABLE users (
     password_hash VARCHAR(255) NOT NULL,
     role ENUM('customer', 'provider', 'admin') NOT NULL DEFAULT 'customer',
     phone VARCHAR(25),
+    account_status ENUM('active', 'suspended', 'deleted') NOT NULL DEFAULT 'active',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     INDEX idx_user_role (role),
@@ -75,6 +76,8 @@ CREATE TABLE reviews (
     is_suspicious BOOLEAN NOT NULL DEFAULT FALSE,
     flag_reason VARCHAR(255) DEFAULT NULL,
     is_approved_by_admin BOOLEAN NOT NULL DEFAULT TRUE,
+    is_deleted BOOLEAN NOT NULL DEFAULT FALSE,
+    moderation_reason VARCHAR(255) DEFAULT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_rv_booking FOREIGN KEY (booking_id) REFERENCES bookings(id) ON DELETE CASCADE,
     CONSTRAINT fk_rv_customer FOREIGN KEY (customer_id) REFERENCES users(id) ON DELETE CASCADE,
@@ -161,4 +164,18 @@ CREATE TABLE provider_no_shows (
     CONSTRAINT fk_noshow_provider FOREIGN KEY (provider_id) REFERENCES users(id) ON DELETE CASCADE,
     INDEX idx_noshow_provider (provider_id),
     INDEX idx_noshow_status (status)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- 10. Table: admin_audit_logs (Stage 6)
+CREATE TABLE admin_audit_logs (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    admin_id INT NULL,
+    action VARCHAR(80) NOT NULL,
+    target_type VARCHAR(50) NOT NULL,
+    target_id INT NULL,
+    details JSON DEFAULT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_audit_admin FOREIGN KEY (admin_id) REFERENCES users(id) ON DELETE SET NULL,
+    INDEX idx_audit_action (action),
+    INDEX idx_audit_target (target_type, target_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

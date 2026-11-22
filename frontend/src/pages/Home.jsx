@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import api from '../services/api';
 import { 
   Search, 
@@ -14,7 +14,13 @@ import {
   Users, 
   Clock, 
   ArrowRight,
-  CheckCircle2
+  CheckCircle2,
+  User,
+  Lock,
+  LogIn,
+  UserPlus,
+  ShieldAlert,
+  ChevronRight
 } from 'lucide-react';
 
 import ServiceCard from '../components/ServiceCard';
@@ -35,7 +41,7 @@ const DEFAULT_SERVICES = [
 const Home = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { isAuthenticated } = useAuth();
+  const { user, isAuthenticated } = useAuth();
   
   const [searchTerm, setSearchTerm] = useState('');
   const [topProviders, setTopProviders] = useState([]);
@@ -180,6 +186,153 @@ const Home = () => {
             </button>
           </form>
 
+          {/* DEDICATED SEPARATE AUTHENTICATION OPTIONS */}
+          {!isAuthenticated ? (
+            <div className="max-w-4xl mx-auto mt-10">
+              <div className="text-center mb-6">
+                <span className="text-xs uppercase font-extrabold tracking-wider text-[#475569] bg-slate-100 px-3 py-1 rounded-full border border-slate-200">
+                  Direct Portal Access
+                </span>
+                <p className="text-xs text-[#475569] mt-2">
+                  Choose your dedicated entry point to sign in or register with verified credentials
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5 text-left">
+                {/* 1 & 2. CUSTOMER PORTAL */}
+                <div className="bg-white rounded-2xl border border-[#e2e8f0] p-6 shadow-sm hover:shadow-md hover:border-blue-300 transition-all flex flex-col justify-between">
+                  <div>
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold border border-blue-100">
+                        <User className="w-5 h-5" />
+                      </div>
+                      <span className="text-[11px] font-bold text-blue-700 bg-blue-50 px-2.5 py-0.5 rounded-full border border-blue-200 uppercase tracking-wider">
+                        Customer Portal
+                      </span>
+                    </div>
+                    <h3 className="text-base font-bold text-[#172033]">Homeowners & Clients</h3>
+                    <p className="text-xs text-[#475569] mt-1 leading-relaxed">
+                      Book trusted local professionals, monitor job progress, and verify authentic reviews.
+                    </p>
+                  </div>
+
+                  <div className="mt-5 pt-4 border-t border-[#e2e8f0] flex flex-col sm:flex-row gap-2.5">
+                    <button
+                      onClick={() => navigate('/login/customer')}
+                      className="flex-1 btn-primary py-2 px-3 text-xs font-bold flex items-center justify-center space-x-1.5 shadow-xs cursor-pointer"
+                    >
+                      <LogIn className="w-3.5 h-3.5" />
+                      <span>Customer Login</span>
+                    </button>
+                    <button
+                      onClick={() => navigate('/register/customer')}
+                      className="flex-1 btn-secondary py-2 px-3 text-xs font-semibold flex items-center justify-center space-x-1.5 cursor-pointer hover:border-blue-400"
+                    >
+                      <UserPlus className="w-3.5 h-3.5 text-blue-600" />
+                      <span>Customer Register</span>
+                    </button>
+                  </div>
+                </div>
+
+                {/* 3 & 4. SERVICE PROVIDER PORTAL */}
+                <div className="bg-white rounded-2xl border border-[#e2e8f0] p-6 shadow-sm hover:shadow-md hover:border-blue-300 transition-all flex flex-col justify-between">
+                  <div>
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="w-10 h-10 rounded-xl bg-slate-100 text-[#172033] flex items-center justify-center font-bold border border-slate-200">
+                        <Wrench className="w-5 h-5 text-blue-600" />
+                      </div>
+                      <span className="text-[11px] font-bold text-slate-700 bg-slate-100 px-2.5 py-0.5 rounded-full border border-slate-200 uppercase tracking-wider">
+                        Provider Portal
+                      </span>
+                    </div>
+                    <h3 className="text-base font-bold text-[#172033]">Service Providers & Trades</h3>
+                    <p className="text-xs text-[#475569] mt-1 leading-relaxed">
+                      Manage incoming job requests, build verified trust scores, and showcase work portfolios.
+                    </p>
+                  </div>
+
+                  <div className="mt-5 pt-4 border-t border-[#e2e8f0] flex flex-col sm:flex-row gap-2.5">
+                    <button
+                      onClick={() => navigate('/login/provider')}
+                      className="flex-1 btn-primary py-2 px-3 text-xs font-bold flex items-center justify-center space-x-1.5 shadow-xs cursor-pointer"
+                    >
+                      <LogIn className="w-3.5 h-3.5" />
+                      <span>Provider Login</span>
+                    </button>
+                    <button
+                      onClick={() => navigate('/register/provider')}
+                      className="flex-1 btn-secondary py-2 px-3 text-xs font-semibold flex items-center justify-center space-x-1.5 cursor-pointer hover:border-blue-400"
+                    >
+                      <UserPlus className="w-3.5 h-3.5 text-blue-600" />
+                      <span>Provider Register</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* 5. SEPARATE, SMALLER ADMIN LOGIN OPTION */}
+              <div className="mt-4 pt-3 pb-1 flex items-center justify-center">
+                <div className="inline-flex items-center space-x-2 text-xs text-[#475569] bg-white/80 backdrop-blur-xs px-3.5 py-1.5 rounded-full border border-[#e2e8f0] shadow-2xs">
+                  <Lock className="w-3.5 h-3.5 text-purple-600 shrink-0" />
+                  <span>Platform Staff & Moderators:</span>
+                  <Link
+                    to="/login/admin"
+                    className="font-bold text-purple-700 hover:text-purple-900 hover:underline flex items-center space-x-0.5"
+                  >
+                    <span>Admin Login</span>
+                    <ChevronRight className="w-3 h-3" />
+                  </Link>
+                </div>
+              </div>
+            </div>
+          ) : (
+            /* AUTHENTICATED USER QUICK ACTIONS */
+            <div className="max-w-2xl mx-auto mt-8 p-4 bg-white rounded-2xl border border-[#e2e8f0] shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4 text-left">
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-sm shadow-xs">
+                  {user?.full_name?.charAt(0) || 'U'}
+                </div>
+                <div>
+                  <div className="flex items-center space-x-2">
+                    <span className="text-sm font-bold text-[#172033]">{user?.full_name}</span>
+                    <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200">
+                      {user?.role}
+                    </span>
+                  </div>
+                  <p className="text-xs text-[#475569]">Session authenticated. Direct portal shortcuts below.</p>
+                </div>
+              </div>
+
+              <div className="flex items-center space-x-2 w-full sm:w-auto">
+                {user?.role === 'provider' ? (
+                  <button
+                    onClick={() => navigate('/provider-dashboard')}
+                    className="btn-primary py-2 px-4 text-xs font-bold w-full sm:w-auto flex items-center justify-center space-x-1"
+                  >
+                    <span>Provider Dashboard</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </button>
+                ) : user?.role === 'admin' ? (
+                  <button
+                    onClick={() => navigate('/admin')}
+                    className="btn-primary py-2 px-4 text-xs font-bold w-full sm:w-auto flex items-center justify-center space-x-1 bg-purple-600 hover:bg-purple-700"
+                  >
+                    <span>Admin Console</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => navigate('/bookings')}
+                    className="btn-primary py-2 px-4 text-xs font-bold w-full sm:w-auto flex items-center justify-center space-x-1"
+                  >
+                    <span>My Bookings</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </button>
+                )}
+              </div>
+            </div>
+          )}
+
         </div>
       </div>
 
@@ -312,13 +465,28 @@ const Home = () => {
 
       {/* FOOTER */}
       <footer className="border-t border-[#e2e8f0] bg-white py-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between text-xs text-[#475569]">
-          <div className="flex items-center space-x-2 mb-4 sm:mb-0">
-            <ShieldCheck className="w-4 h-4 text-blue-600" />
-            <span className="font-bold text-[#172033]">TrustNear Platform</span>
-            <span>— Smart Local Discovery</span>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4">
+          <div className="flex flex-col sm:flex-row items-center justify-between text-xs text-[#475569] gap-4">
+            <div className="flex items-center space-x-2">
+              <ShieldCheck className="w-4 h-4 text-blue-600" />
+              <span className="font-bold text-[#172033]">TrustNear Platform</span>
+              <span>— Smart Local Discovery</span>
+            </div>
+
+            <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-xs">
+              <Link to="/login/customer" className="hover:text-blue-600 transition-colors">Customer Login</Link>
+              <span className="text-slate-300">•</span>
+              <Link to="/register/customer" className="hover:text-blue-600 transition-colors">Customer Register</Link>
+              <span className="text-slate-300">•</span>
+              <Link to="/login/provider" className="hover:text-blue-600 transition-colors">Provider Login</Link>
+              <span className="text-slate-300">•</span>
+              <Link to="/register/provider" className="hover:text-blue-600 transition-colors">Provider Register</Link>
+              <span className="text-slate-300">•</span>
+              <Link to="/login/admin" className="text-purple-600 hover:text-purple-800 transition-colors font-medium">Admin Staff</Link>
+            </div>
+
+            <p>© TrustNear Autonomous Local Discovery</p>
           </div>
-          <p>© TrustNear Autonomous Local Discovery</p>
         </div>
       </footer>
 
