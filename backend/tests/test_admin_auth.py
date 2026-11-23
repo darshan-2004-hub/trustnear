@@ -209,7 +209,8 @@ class TestAdminAuthentication(unittest.TestCase):
                     .replace('<int:report_id>', '1')
                     .replace('<int:customer_id>', '1')
                     .replace('<int:provider_id>', '1')
-                    .replace('<int:booking_id>', '1'),
+                    .replace('<int:booking_id>', '1')
+                    .replace('<int:payment_id>', '1'),
                 method='GET'
             )
             # Should be either 401 (blocked by auth) or 405 (if GET is not allowed for that endpoint, e.g. PATCH)

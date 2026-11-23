@@ -10,6 +10,7 @@ from routes.booking_routes import booking_bp
 from routes.review_routes import review_bp
 from routes.ai_routes import ai_bp
 from routes.admin_routes import admin_bp
+from routes.payment_routes import payment_bp
 from sockets.chat_socket import register_chat_socket
 
 def create_app():
@@ -35,6 +36,7 @@ def create_app():
     app.register_blueprint(review_bp, url_prefix='/api/reviews')
     app.register_blueprint(ai_bp, url_prefix='/api/ai')
     app.register_blueprint(admin_bp, url_prefix='/api/admin')
+    app.register_blueprint(payment_bp, url_prefix='/api/payments')
 
     # Register Real-time Chat Socket Events
     register_chat_socket(socketio)

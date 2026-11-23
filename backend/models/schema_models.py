@@ -326,6 +326,52 @@ def log_admin_action(admin_id, action, target_type, target_id, details=None):
         return None
 
 
+class Payment(db.Model):
+    """
+    Single payments record per booking.
+    Tracks simulated advance (20%) and balance (80%) payments.
+    Amounts are always calculated from booking.agreed_price — never trusted from client.
+    """
+    __tablename__ = 'payments'
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    booking_id = db.Column(db.Integer, db.ForeignKey('bookings.id', ondelete='CASCADE'), unique=True, nullable=False)
+    total_amount = db.Column(db.Numeric(10, 2), nullable=False)
+    advance_amount = db.Column(db.Numeric(10, 2), nullable=False)   # 20% of total
+    balance_amount = db.Column(db.Numeric(10, 2), nullable=False)   # 80% of total
+    amount_paid = db.Column(db.Numeric(10, 2), nullable=False, default=0.00)
+    payment_status = db.Column(
+        db.Enum('unpaid', 'partially_paid', 'fully_paid', 'refunded'),
+        nullable=False, default='unpaid'
+    )
+    advance_transaction_id = db.Column(db.String(64), nullable=True)
+    balance_transaction_id = db.Column(db.String(64), nullable=True)
+    refund_reason = db.Column(db.String(255), nullable=True)
+    refund_status = db.Column(db.String(50), nullable=True)   # 'pending' | 'processed'
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    # Relationship
+    booking = db.relationship('Booking', backref=db.backref('payment', uselist=False))
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "booking_id": self.booking_id,
+            "total_amount": float(self.total_amount) if self.total_amount is not None else 0.0,
+            "advance_amount": float(self.advance_amount) if self.advance_amount is not None else 0.0,
+            "balance_amount": float(self.balance_amount) if self.balance_amount is not None else 0.0,
+            "amount_paid": float(self.amount_paid) if self.amount_paid is not None else 0.0,
+            "payment_status": self.payment_status,
+            "advance_transaction_id": self.advance_transaction_id,
+            "balance_transaction_id": self.balance_transaction_id,
+            "refund_reason": self.refund_reason,
+            "refund_status": self.refund_status,
+            "created_at": self.created_at.isoformat() if self.created_at else None,
+            "updated_at": self.updated_at.isoformat() if self.updated_at else None,
+        }
+
+
 def run_db_migrations(app):
     """
     Safe, backward-compatible, idempotent schema migration.

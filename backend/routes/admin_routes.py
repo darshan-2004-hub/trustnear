@@ -6,7 +6,7 @@ from sqlalchemy import or_, and_
 from sqlalchemy.orm import aliased
 from models.schema_models import (
     db, User, ProviderProfile, Booking, Review, TrustMetric,
-    ProviderNoShow, ProviderPortfolio, AdminAuditLog, log_admin_action
+    ProviderNoShow, ProviderPortfolio, AdminAuditLog, log_admin_action, Payment
 )
 from routes.auth_routes import token_required
 from routes.provider_routes import calculate_provider_reliability
@@ -1609,4 +1609,152 @@ def get_audit_logs(current_user):
         'limit': limit,
         'total_pages': total_pages,
         'audit_logs': log_data
+    }), 200
+
+# ==============================================================================
+# ADMIN PAYMENT MANAGEMENT ENDPOINTS
+# ==============================================================================
+
+@admin_bp.route('/payments', methods=['GET'])
+@admin_required
+def admin_list_payments(current_user):
+    """
+    GET /api/admin/payments
+    Paginated list of all payment records with summary stats.
+    Query params: page, limit, search (booking_id), status
+    """
+    from sqlalchemy import func
+
+    page  = int(request.args.get('page', 1))
+    limit = min(int(request.args.get('limit', 20)), 100)
+    search = request.args.get('search', '').strip()
+    status_filter = request.args.get('status', '').strip()
+
+    query = db.session.query(Payment).join(Booking, Payment.booking_id == Booking.id)
+
+    if search:
+        try:
+            bid = int(search)
+            query = query.filter(Payment.booking_id == bid)
+        except ValueError:
+            # search by customer/provider name via sub-queries
+            customer_ids = db.session.query(User.id).filter(
+                User.full_name.ilike(f'%{search}%')
+            ).subquery()
+            provider_ids = db.session.query(User.id).filter(
+                User.full_name.ilike(f'%{search}%')
+            ).subquery()
+            query = query.filter(
+                or_(
+                    Booking.customer_id.in_(customer_ids),
+                    Booking.provider_id.in_(provider_ids),
+                )
+            )
+
+    if status_filter:
+        query = query.filter(Payment.payment_status == status_filter)
+
+    # Aggregate stats (across all records, ignoring pagination)
+    stats_q = db.session.query(
+        func.count(Payment.id).label('total_records'),
+        func.coalesce(func.sum(Payment.amount_paid), 0).label('total_collected'),
+        func.coalesce(
+            func.sum(
+                db.case(
+                    (Payment.payment_status == 'partially_paid', Payment.balance_amount),
+                    else_=0
+                )
+            ), 0
+        ).label('pending_balances'),
+        func.sum(
+            db.case(
+                (Payment.payment_status == 'fully_paid', 1),
+                else_=0
+            )
+        ).label('fully_paid_count'),
+        func.sum(
+            db.case(
+                (Payment.payment_status == 'refunded', 1),
+                else_=0
+            )
+        ).label('refunded_count'),
+    ).one()
+
+    total_count = query.count()
+    total_pages = max(1, (total_count + limit - 1) // limit)
+    payments = query.order_by(Payment.created_at.desc()).offset((page - 1) * limit).limit(limit).all()
+
+    result = []
+    for p in payments:
+        b = p.booking
+        customer = User.query.get(b.customer_id) if b else None
+        provider = User.query.get(b.provider_id) if b else None
+        row = p.to_dict()
+        row['booking_status'] = b.status if b else None
+        row['service_title']  = b.service_title if b else None
+        row['customer_name']  = customer.full_name if customer else None
+        row['provider_name']  = provider.full_name if provider else None
+        result.append(row)
+
+    return jsonify({
+        'success': True,
+        'payments': result,
+        'page': page,
+        'limit': limit,
+        'total_count': total_count,
+        'total_pages': total_pages,
+        'stats': {
+            'total_records':    int(stats_q.total_records   or 0),
+            'total_collected':  float(stats_q.total_collected or 0),
+            'pending_balances': float(stats_q.pending_balances or 0),
+            'fully_paid_count': int(stats_q.fully_paid_count or 0),
+            'refunded_count':   int(stats_q.refunded_count  or 0),
+        }
+    }), 200
+
+
+@admin_bp.route('/payments/<int:payment_id>/refund', methods=['PATCH'])
+@admin_required
+def admin_refund_payment(current_user, payment_id):
+    """
+    PATCH /api/admin/payments/<id>/refund
+    Mark a payment as refunded (admin only).
+    Allowed only when payment_status is 'partially_paid' (advance paid, booking cancelled)
+    or 'fully_paid'. Prevents duplicate refund.
+    Body: {"reason": "...", "refund_status": "processed" (optional)}
+    """
+    payment = Payment.query.get(payment_id)
+    if not payment:
+        return jsonify({'success': False, 'message': 'Payment record not found.'}), 404
+
+    if payment.payment_status == 'unpaid':
+        return jsonify({'success': False, 'message': 'No payment has been made; nothing to refund.'}), 400
+
+    if payment.payment_status == 'refunded':
+        return jsonify({'success': False, 'message': 'This payment has already been refunded.'}), 409
+
+    data = request.get_json(silent=True) or {}
+    reason = (data.get('reason') or '').strip()
+    if not reason:
+        return jsonify({'success': False, 'message': 'A refund reason is required.'}), 400
+
+    new_refund_status = data.get('refund_status', 'processed')
+
+    payment.payment_status = 'refunded'
+    payment.refund_reason   = reason
+    payment.refund_status   = new_refund_status
+    db.session.commit()
+
+    log_admin_action(
+        admin_id=current_user.id,
+        action='payment_refund',
+        target_type='payment',
+        target_id=payment.id,
+        details=f"Admin refund for booking #{payment.booking_id}. Reason: {reason}"
+    )
+
+    return jsonify({
+        'success': True,
+        'message': 'Refund recorded successfully.',
+        'payment': payment.to_dict()
     }), 200

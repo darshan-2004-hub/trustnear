@@ -6,6 +6,7 @@ import { useAuth } from '../context/AuthContext';
 import ChatModal from '../components/ChatModal';
 import ReviewModal from '../components/ReviewModal';
 import InvoiceModal from '../components/InvoiceModal';
+import PaymentModal from '../components/PaymentModal';
 import TrustBadge from '../components/TrustBadge';
 import StatCard from '../components/StatCard';
 import { 
@@ -56,6 +57,7 @@ const Bookings = () => {
   const [noShowError, setNoShowError] = useState('');
   const [actionLoading, setActionLoading] = useState(null);
   const [toastNotification, setToastNotification] = useState(null);
+  const [selectedPaymentBooking, setSelectedPaymentBooking] = useState(null);
   const socketRef = useRef(null);
 
   const isCustomer = user?.role === 'customer';
@@ -546,6 +548,21 @@ const Bookings = () => {
                             </button>
                           )}
 
+                          {/* PAYMENT BUTTON – shown for accepted (customer pay advance) or completed (customer pay balance) or any (provider view) */}
+                          {b.agreed_price && (
+                            (isCustomer && (b.status === 'accepted' || b.status === 'completed')) ||
+                            (isProvider && (b.status === 'accepted' || b.status === 'in_progress' || b.status === 'completed'))
+                          ) && (
+                            <button
+                              onClick={() => setSelectedPaymentBooking(b)}
+                              className="btn-secondary px-3 py-1.5 text-xs font-bold inline-flex items-center space-x-1 text-blue-700 border-blue-200 hover:bg-blue-50 cursor-pointer rounded-xl"
+                              title="View / Make Payment"
+                            >
+                              <IndianRupee className="w-3.5 h-3.5" />
+                              <span>Payment</span>
+                            </button>
+                          )}
+
                           {/* PROVIDER ACTIONS */}
                           {isProvider && b.status === 'pending' && (
                             <>
@@ -834,6 +851,16 @@ const Bookings = () => {
         <InvoiceModal
           booking={selectedInvoiceBooking}
           onClose={() => setSelectedInvoiceBooking(null)}
+        />
+      )}
+
+      {/* DEMO PAYMENT MODAL */}
+      {selectedPaymentBooking && (
+        <PaymentModal
+          booking={selectedPaymentBooking}
+          role={user?.role}
+          onClose={() => setSelectedPaymentBooking(null)}
+          onPaid={fetchBookings}
         />
       )}
 

@@ -6,6 +6,7 @@ import AdminBookings from '../components/AdminBookings';
 import AdminReviews from '../components/AdminReviews';
 import AdminNoShows from '../components/AdminNoShows';
 import AdminAuditLogs from '../components/AdminAuditLogs';
+import AdminPayments from '../components/AdminPayments';
 import { 
   Users, 
   Briefcase, 
@@ -242,6 +243,17 @@ const AdminDashboard = () => {
             }`}
           >
             Audit Log
+          </button>
+
+          <button
+            onClick={() => setActiveTab('payments')}
+            className={`px-3.5 py-1.5 rounded-xl transition-all cursor-pointer whitespace-nowrap ${
+              activeTab === 'payments'
+                ? 'bg-blue-600 text-white font-bold shadow-xs'
+                : 'text-[#475569] hover:text-[#172033] hover:bg-slate-100'
+            }`}
+          >
+            Payments
           </button>
         </div>
 
@@ -552,6 +564,11 @@ const AdminDashboard = () => {
         {/* TAB 8: AUDIT LOGS */}
         {activeTab === 'audit-logs' && (
           <AdminAuditLogs />
+        )}
+
+        {/* TAB 9: PAYMENT MANAGEMENT */}
+        {activeTab === 'payments' && (
+          <AdminPayments />
         )}
 
       </div>
