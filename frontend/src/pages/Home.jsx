@@ -145,14 +145,22 @@ const Home = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#f8fafc] text-[#172033] flex flex-col justify-between">
+    <div className="min-h-screen bg-slate-100/70 text-[#172033] flex flex-col justify-between bg-tech-grid relative overflow-x-hidden">
       
+      {/* Ambient Vivid Background Auroras */}
+      <div className="aurora-glow-1 -top-24 left-1/4 pointer-events-none" />
+      <div className="aurora-glow-2 top-[550px] -right-20 pointer-events-none" />
+      <div className="aurora-glow-3 top-[1200px] -left-20 pointer-events-none" />
+      <div className="aurora-glow-1 bottom-40 right-1/4 pointer-events-none" />
+
       {/* 1. HERO SECTION */}
-      <div className="relative overflow-hidden pt-12 pb-20 bg-gradient-to-b from-blue-50/70 via-[#f8fafc] to-[#f8fafc] border-b border-[#e2e8f0]/60">
+      <div className="relative overflow-hidden pt-12 pb-20 bg-gradient-to-b from-white/95 via-white/85 to-slate-50/75 border-b border-[#e2e8f0]/80 backdrop-blur-xs relative z-10">
+        <div className="absolute -top-16 -left-16 w-80 h-80 bg-blue-500/20 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute -bottom-20 -right-20 w-80 h-80 bg-indigo-500/20 rounded-full blur-3xl pointer-events-none" />
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           
-          <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-blue-50 border border-blue-200 text-blue-700 text-xs font-bold mb-6 shadow-2xs">
-            <CheckCircle2 className="w-3.5 h-3.5 text-blue-600" />
+          <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-white/90 border border-blue-300 text-blue-700 text-xs font-bold mb-6 shadow-sm">
+            <span className="w-2 h-2 rounded-full bg-blue-600 animate-ping" />
             <span>Next-Gen Smart Local Discovery with Explainable AI</span>
           </div>
 
@@ -167,19 +175,19 @@ const Home = () => {
           {/* Search Box */}
           <form 
             onSubmit={handleSearch}
-            className="max-w-2xl mx-auto relative flex items-center bg-white border border-[#e2e8f0] rounded-2xl p-2.5 shadow-md focus-within:border-blue-600 focus-within:ring-2 focus-within:ring-blue-100 transition-all mb-8"
+            className="max-w-2xl mx-auto relative flex items-center bg-white/95 border border-slate-300 rounded-2xl p-2.5 shadow-xl shadow-blue-900/10 focus-within:border-blue-600 focus-within:ring-3 focus-within:ring-blue-500/20 transition-all mb-8"
           >
-            <Search className="w-5 h-5 text-[#475569] ml-3 mr-2 shrink-0" />
+            <Search className="w-5 h-5 text-blue-600 ml-3 mr-2 shrink-0" />
             <input 
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Search by trade or problem (e.g., Electrician, AC Repair, Leaking Tap)"
-              className="w-full bg-transparent text-[#172033] placeholder-slate-400 text-sm sm:text-base outline-none px-2"
+              className="w-full bg-transparent text-[#172033] placeholder-slate-400 text-sm sm:text-base outline-none px-2 font-medium"
             />
             <button
               type="submit"
-              className="btn-primary px-6 py-2.5 rounded-xl text-xs sm:text-sm flex items-center space-x-1.5 whitespace-nowrap shadow-sm"
+              className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 hover:from-blue-700 hover:to-indigo-800 text-white font-bold text-xs sm:text-sm flex items-center space-x-1.5 whitespace-nowrap shadow-md shadow-blue-500/25 cursor-pointer transition-all"
             >
               <span>Explore</span>
               <ArrowRight className="w-4 h-4" />
@@ -190,23 +198,24 @@ const Home = () => {
           {!isAuthenticated ? (
             <div className="max-w-4xl mx-auto mt-10">
               <div className="text-center mb-6">
-                <span className="text-xs uppercase font-extrabold tracking-wider text-[#475569] bg-slate-100 px-3 py-1 rounded-full border border-slate-200">
+                <span className="text-xs uppercase font-extrabold tracking-wider text-blue-800 bg-blue-100/90 px-3.5 py-1 rounded-full border border-blue-200">
                   Direct Portal Access
                 </span>
-                <p className="text-xs text-[#475569] mt-2">
+                <p className="text-xs text-[#475569] mt-2 font-medium">
                   Choose your dedicated entry point to sign in or register with verified credentials
                 </p>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5 text-left">
                 {/* 1 & 2. CUSTOMER PORTAL */}
-                <div className="bg-white rounded-2xl border border-[#e2e8f0] p-6 shadow-sm hover:shadow-md hover:border-blue-300 transition-all flex flex-col justify-between">
+                <div className="glass-card rounded-2xl p-6 relative overflow-hidden group border-t-4 border-t-blue-500 flex flex-col justify-between">
+                  <div className="absolute top-0 right-0 w-36 h-36 bg-blue-500/10 rounded-bl-full pointer-events-none transition group-hover:scale-125 duration-300" />
                   <div>
                     <div className="flex items-center justify-between mb-3">
-                      <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold border border-blue-100">
+                      <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold border border-blue-200 shadow-xs">
                         <User className="w-5 h-5" />
                       </div>
-                      <span className="text-[11px] font-bold text-blue-700 bg-blue-50 px-2.5 py-0.5 rounded-full border border-blue-200 uppercase tracking-wider">
+                      <span className="text-[11px] font-bold text-blue-800 bg-blue-100 px-2.5 py-0.5 rounded-full border border-blue-200 uppercase tracking-wider">
                         Customer Portal
                       </span>
                     </div>
@@ -216,17 +225,17 @@ const Home = () => {
                     </p>
                   </div>
 
-                  <div className="mt-5 pt-4 border-t border-[#e2e8f0] flex flex-col sm:flex-row gap-2.5">
+                  <div className="mt-5 pt-4 border-t border-[#e2e8f0] flex flex-col sm:flex-row gap-2.5 relative z-10">
                     <button
                       onClick={() => navigate('/login/customer')}
-                      className="flex-1 btn-primary py-2 px-3 text-xs font-bold flex items-center justify-center space-x-1.5 shadow-xs cursor-pointer"
+                      className="flex-1 py-2.5 px-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold flex items-center justify-center space-x-1.5 shadow-md shadow-blue-500/20 cursor-pointer transition"
                     >
                       <LogIn className="w-3.5 h-3.5" />
                       <span>Customer Login</span>
                     </button>
                     <button
                       onClick={() => navigate('/register/customer')}
-                      className="flex-1 btn-secondary py-2 px-3 text-xs font-semibold flex items-center justify-center space-x-1.5 cursor-pointer hover:border-blue-400"
+                      className="flex-1 py-2.5 px-3 rounded-xl bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold flex items-center justify-center space-x-1.5 cursor-pointer border border-slate-300 shadow-2xs hover:border-blue-400 transition"
                     >
                       <UserPlus className="w-3.5 h-3.5 text-blue-600" />
                       <span>Customer Register</span>
@@ -235,13 +244,14 @@ const Home = () => {
                 </div>
 
                 {/* 3 & 4. SERVICE PROVIDER PORTAL */}
-                <div className="bg-white rounded-2xl border border-[#e2e8f0] p-6 shadow-sm hover:shadow-md hover:border-blue-300 transition-all flex flex-col justify-between">
+                <div className="glass-card rounded-2xl p-6 relative overflow-hidden group border-t-4 border-t-indigo-500 flex flex-col justify-between">
+                  <div className="absolute top-0 right-0 w-36 h-36 bg-indigo-500/10 rounded-bl-full pointer-events-none transition group-hover:scale-125 duration-300" />
                   <div>
                     <div className="flex items-center justify-between mb-3">
-                      <div className="w-10 h-10 rounded-xl bg-slate-100 text-[#172033] flex items-center justify-center font-bold border border-slate-200">
-                        <Wrench className="w-5 h-5 text-blue-600" />
+                      <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-700 flex items-center justify-center font-bold border border-indigo-200 shadow-xs">
+                        <Wrench className="w-5 h-5 text-indigo-600" />
                       </div>
-                      <span className="text-[11px] font-bold text-slate-700 bg-slate-100 px-2.5 py-0.5 rounded-full border border-slate-200 uppercase tracking-wider">
+                      <span className="text-[11px] font-bold text-indigo-800 bg-indigo-100 px-2.5 py-0.5 rounded-full border border-indigo-200 uppercase tracking-wider">
                         Provider Portal
                       </span>
                     </div>
@@ -251,19 +261,19 @@ const Home = () => {
                     </p>
                   </div>
 
-                  <div className="mt-5 pt-4 border-t border-[#e2e8f0] flex flex-col sm:flex-row gap-2.5">
+                  <div className="mt-5 pt-4 border-t border-[#e2e8f0] flex flex-col sm:flex-row gap-2.5 relative z-10">
                     <button
                       onClick={() => navigate('/login/provider')}
-                      className="flex-1 btn-primary py-2 px-3 text-xs font-bold flex items-center justify-center space-x-1.5 shadow-xs cursor-pointer"
+                      className="flex-1 py-2.5 px-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold flex items-center justify-center space-x-1.5 shadow-md shadow-indigo-500/20 cursor-pointer transition"
                     >
                       <LogIn className="w-3.5 h-3.5" />
                       <span>Provider Login</span>
                     </button>
                     <button
                       onClick={() => navigate('/register/provider')}
-                      className="flex-1 btn-secondary py-2 px-3 text-xs font-semibold flex items-center justify-center space-x-1.5 cursor-pointer hover:border-blue-400"
+                      className="flex-1 py-2.5 px-3 rounded-xl bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold flex items-center justify-center space-x-1.5 cursor-pointer border border-slate-300 shadow-2xs hover:border-indigo-400 transition"
                     >
-                      <UserPlus className="w-3.5 h-3.5 text-blue-600" />
+                      <UserPlus className="w-3.5 h-3.5 text-indigo-600" />
                       <span>Provider Register</span>
                     </button>
                   </div>
@@ -271,8 +281,8 @@ const Home = () => {
               </div>
 
               {/* 5. SEPARATE, SMALLER ADMIN LOGIN OPTION */}
-              <div className="mt-4 pt-3 pb-1 flex items-center justify-center">
-                <div className="inline-flex items-center space-x-2 text-xs text-[#475569] bg-white/80 backdrop-blur-xs px-3.5 py-1.5 rounded-full border border-[#e2e8f0] shadow-2xs">
+              <div className="mt-5 pt-3 pb-1 flex items-center justify-center">
+                <div className="inline-flex items-center space-x-2 text-xs text-[#475569] bg-white/90 backdrop-blur-xs px-4 py-1.5 rounded-full border border-[#e2e8f0] shadow-xs">
                   <Lock className="w-3.5 h-3.5 text-purple-600 shrink-0" />
                   <span>Platform Staff & Moderators:</span>
                   <Link
@@ -368,48 +378,52 @@ const Home = () => {
       </div>
 
       {/* 3. GRADIENT STATS BAND (100% REAL DATABASE DATA) */}
-      <div className="my-16 relative overflow-hidden bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 text-white py-12 shadow-lg">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center divide-y md:divide-y-0 md:divide-x divide-white/20">
+      <div className="my-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+        <div className="relative overflow-hidden rounded-3xl text-white p-8 md:p-12 dark-card-gradient border border-slate-700/80 shadow-2xl">
+          <div className="absolute -right-16 -top-16 w-80 h-80 bg-blue-600/30 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute -left-16 -bottom-16 w-80 h-80 bg-indigo-600/30 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-cyan-500/15 rounded-full blur-3xl pointer-events-none" />
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center divide-y md:divide-y-0 md:divide-x divide-slate-800/80 relative z-10">
             
             {/* Real Stat 1: Total Completed Jobs */}
             <div className="pt-4 md:pt-0">
-              <div className="flex items-center justify-center space-x-2 text-white/90 mb-1">
-                <Users className="w-5 h-5" />
+              <div className="flex items-center justify-center space-x-2 text-blue-400 mb-2">
+                <Users className="w-4 h-4" />
                 <span className="text-xs font-bold uppercase tracking-widest">Jobs Completed</span>
               </div>
-              <p className="text-4xl sm:text-5xl font-black tracking-tight">
+              <p className="text-4xl sm:text-5xl font-black tracking-tight text-white drop-shadow-sm">
                 {platformStats.totalCompletedJobs}
               </p>
-              <p className="text-xs text-white/80 mt-1 font-medium">
+              <p className="text-xs text-slate-300 mt-1 font-medium">
                 Verified jobs across {platformStats.totalProviders} active providers in Mangaluru
               </p>
             </div>
 
             {/* Real Stat 2: Authentic Average Rating */}
             <div className="pt-4 md:pt-0">
-              <div className="flex items-center justify-center space-x-2 text-white/90 mb-1">
-                <Star className="w-5 h-5 fill-white" />
+              <div className="flex items-center justify-center space-x-2 text-amber-400 mb-2">
+                <Star className="w-4 h-4 fill-amber-400" />
                 <span className="text-xs font-bold uppercase tracking-widest">Community Rating</span>
               </div>
-              <p className="text-4xl sm:text-5xl font-black tracking-tight">
+              <p className="text-4xl sm:text-5xl font-black tracking-tight text-white drop-shadow-sm">
                 {platformStats.avgRating ? `${platformStats.avgRating} / 5.0` : 'New Platform'}
               </p>
-              <p className="text-xs text-white/80 mt-1 font-medium">
+              <p className="text-xs text-slate-300 mt-1 font-medium">
                 Calculated from real NLP-screened reviews
               </p>
             </div>
 
             {/* Real Stat 3: Punctuality / Completion Rate */}
             <div className="pt-4 md:pt-0">
-              <div className="flex items-center justify-center space-x-2 text-white/90 mb-1">
-                <Clock className="w-5 h-5" />
+              <div className="flex items-center justify-center space-x-2 text-emerald-400 mb-2">
+                <Clock className="w-4 h-4" />
                 <span className="text-xs font-bold uppercase tracking-widest">Completion Rate</span>
               </div>
-              <p className="text-4xl sm:text-5xl font-black tracking-tight">
+              <p className="text-4xl sm:text-5xl font-black tracking-tight text-white drop-shadow-sm">
                 {platformStats.onTimeRate}
               </p>
-              <p className="text-xs text-white/80 mt-1 font-medium">
+              <p className="text-xs text-slate-300 mt-1 font-medium">
                 Punctual arrival and low cancellation ratio
               </p>
             </div>

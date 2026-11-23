@@ -111,11 +111,19 @@ const CustomerLogin = () => {
   };
 
   return (
-    <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-[#f8fafc]">
-      <div className="theme-card max-w-4xl w-full overflow-hidden grid grid-cols-1 md:grid-cols-12 shadow-xl border border-[#e2e8f0]">
+    <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-slate-100/70 bg-tech-grid relative overflow-hidden">
+      
+      {/* Ambient Vivid Glowing Orbs */}
+      <div className="aurora-glow-1 -top-20 left-10 pointer-events-none" />
+      <div className="aurora-glow-2 -bottom-20 right-10 pointer-events-none" />
+
+      <div className="max-w-4xl w-full overflow-hidden grid grid-cols-1 md:grid-cols-12 shadow-2xl rounded-3xl border border-white/80 glass-panel relative z-10">
         
         {/* Left Side: Brand Showcase */}
-        <div className="md:col-span-5 bg-gradient-to-br from-[#1e293b] via-[#334155] to-[#0f172a] p-8 text-white flex flex-col justify-between relative overflow-hidden">
+        <div className="md:col-span-5 dark-card-gradient p-8 text-white flex flex-col justify-between relative overflow-hidden border-r border-slate-700/50">
+          <div className="absolute -bottom-12 -left-12 w-48 h-48 bg-blue-500/35 rounded-full blur-2xl pointer-events-none" />
+          <div className="absolute -top-12 -right-12 w-48 h-48 bg-indigo-500/30 rounded-full blur-2xl pointer-events-none" />
+
           <div className="relative z-10 space-y-6">
             <Link
               to="/auth"
@@ -125,12 +133,12 @@ const CustomerLogin = () => {
               <span>Back to Role Selection</span>
             </Link>
 
-            <div className="w-12 h-12 rounded-2xl bg-blue-500/20 border border-blue-400/30 flex items-center justify-center shadow-inner">
-              <User className="w-6 h-6 text-blue-400" />
+            <div className="w-12 h-12 rounded-2xl bg-blue-600/40 border border-blue-400/40 flex items-center justify-center shadow-lg shadow-blue-500/20 text-blue-300">
+              <User className="w-6 h-6" />
             </div>
 
             <div>
-              <div className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-blue-500/20 text-blue-300 text-[11px] font-bold uppercase tracking-wider mb-2 border border-blue-400/30">
+              <div className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-blue-500/30 text-blue-200 text-[11px] font-bold uppercase tracking-wider mb-2 border border-blue-400/40">
                 <Sparkles className="w-3.5 h-3.5" />
                 <span>Customer Portal</span>
               </div>
@@ -140,7 +148,7 @@ const CustomerLogin = () => {
               </p>
             </div>
 
-            <div className="space-y-2 pt-4 border-t border-slate-700 text-xs text-slate-300">
+            <div className="space-y-2 pt-4 border-t border-slate-700/60 text-xs text-slate-300">
               <div className="flex items-center space-x-2">
                 <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
                 <span>Explainable AI trust ratings</span>
@@ -215,15 +223,15 @@ const CustomerLogin = () => {
                   Email Address <span className="text-red-500">*</span>
                 </label>
                 <div className="relative">
-                  <Mail className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
+                  <Mail className="w-4 h-4 text-blue-600 absolute left-3 top-3" />
                   <input
                     type="email"
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="alice@example.com"
-                    className={`w-full pl-9 pr-3 py-2 bg-white border rounded-xl text-sm text-[#172033] placeholder-slate-400 focus:outline-none transition ${
-                      errors.email ? 'border-red-500 focus:border-red-500' : 'border-[#e2e8f0] focus:border-[#2563eb]'
+                    className={`w-full pl-9 pr-3 py-2.5 bg-slate-50 border rounded-xl text-sm text-[#172033] placeholder-slate-400 focus:bg-white focus:outline-none transition ${
+                      errors.email ? 'border-red-500 focus:border-red-500' : 'border-slate-300 focus:border-[#2563eb] focus:ring-2 focus:ring-blue-500/20'
                     }`}
                   />
                 </div>
@@ -238,21 +246,21 @@ const CustomerLogin = () => {
                   </label>
                 </div>
                 <div className="relative">
-                  <Lock className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
+                  <Lock className="w-4 h-4 text-blue-600 absolute left-3 top-3" />
                   <input
                     type={showPassword ? 'text' : 'password'}
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="Enter your password"
-                    className={`w-full pl-9 pr-10 py-2 bg-white border rounded-xl text-sm text-[#172033] placeholder-slate-400 focus:outline-none transition ${
-                      errors.password ? 'border-red-500 focus:border-red-500' : 'border-[#e2e8f0] focus:border-[#2563eb]'
+                    className={`w-full pl-9 pr-10 py-2.5 bg-slate-50 border rounded-xl text-sm text-[#172033] placeholder-slate-400 focus:bg-white focus:outline-none transition ${
+                      errors.password ? 'border-red-500 focus:border-red-500' : 'border-slate-300 focus:border-[#2563eb] focus:ring-2 focus:ring-blue-500/20'
                     }`}
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-2.5 text-slate-400 hover:text-slate-600 transition cursor-pointer"
+                    className="absolute right-3 top-3 text-slate-400 hover:text-slate-600 transition cursor-pointer"
                     title={showPassword ? 'Hide password' : 'Show password'}
                   >
                     {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -265,7 +273,7 @@ const CustomerLogin = () => {
               <button
                 type="submit"
                 disabled={submitting}
-                className="w-full btn-primary py-2.5 text-xs font-bold flex items-center justify-center space-x-2 shadow-sm disabled:opacity-50 cursor-pointer mt-2"
+                className="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 hover:from-blue-700 hover:to-indigo-800 text-white font-bold text-xs shadow-lg shadow-blue-500/25 transition flex items-center justify-center space-x-2 disabled:opacity-50 cursor-pointer mt-4"
               >
                 <span>{submitting ? 'Verifying Credentials...' : 'Sign In as Customer'}</span>
                 <ArrowRight className="w-4 h-4" />
