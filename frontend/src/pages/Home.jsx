@@ -145,7 +145,7 @@ const Home = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-100/70 text-[#172033] flex flex-col justify-between bg-tech-grid relative overflow-x-hidden">
+    <div className="min-h-screen text-[#172033] flex flex-col justify-between bg-tech-grid relative overflow-x-hidden">
       
       {/* Ambient Vivid Background Auroras */}
       <div className="aurora-glow-1 -top-24 left-1/4 pointer-events-none" />
@@ -154,7 +154,7 @@ const Home = () => {
       <div className="aurora-glow-1 bottom-40 right-1/4 pointer-events-none" />
 
       {/* 1. HERO SECTION */}
-      <div className="relative overflow-hidden pt-12 pb-20 bg-gradient-to-b from-white/95 via-white/85 to-slate-50/75 border-b border-[#e2e8f0]/80 backdrop-blur-xs relative z-10">
+      <div className="relative overflow-hidden pt-12 pb-20 bg-gradient-to-b from-white/80 via-white/55 to-slate-50/40 border-b border-[#e2e8f0]/80 backdrop-blur-xs relative z-10">
         <div className="absolute -top-16 -left-16 w-80 h-80 bg-blue-500/20 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute -bottom-20 -right-20 w-80 h-80 bg-indigo-500/20 rounded-full blur-3xl pointer-events-none" />
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">

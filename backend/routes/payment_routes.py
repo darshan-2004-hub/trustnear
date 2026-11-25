@@ -38,14 +38,19 @@ def _gen_txn() -> str:
 
 def _get_or_create_payment(booking: Booking) -> Payment:
     """
-    Lazily create a Payment row for a booking the first time it is needed.
+    Lazily create or synchronize a Payment row for a booking.
     Amounts are always derived from booking.agreed_price.
+    Guarantees:
+      - advance_amount + balance_amount == total_amount (no penny-rounding drift)
+      - If agreed_price changes before payment, amounts resynchronize
+      - If agreed_price changes after advance (partially_paid), balance adjusts accordingly
     """
     payment = Payment.query.filter_by(booking_id=booking.id).first()
+    total = float(booking.agreed_price or 0)
+    advance = round(total * 0.20, 2)
+    balance = round(total - advance, 2)
+
     if payment is None:
-        total = float(booking.agreed_price or 0)
-        advance = round(total * 0.20, 2)
-        balance = round(total * 0.80, 2)
         payment = Payment(
             booking_id=booking.id,
             total_amount=total,
@@ -56,6 +61,23 @@ def _get_or_create_payment(booking: Booking) -> Payment:
         )
         db.session.add(payment)
         db.session.commit()
+    else:
+        # Check if agreed_price was updated and synchronize
+        needs_commit = False
+        if payment.payment_status == 'unpaid':
+            if float(payment.total_amount or 0) != total:
+                payment.total_amount = total
+                payment.advance_amount = advance
+                payment.balance_amount = balance
+                needs_commit = True
+        elif payment.payment_status == 'partially_paid':
+            if float(payment.total_amount or 0) != total:
+                payment.total_amount = total
+                payment.balance_amount = max(0.0, round(total - float(payment.amount_paid or 0), 2))
+                needs_commit = True
+        if needs_commit:
+            db.session.commit()
+
     return payment
 
 
@@ -104,6 +126,7 @@ def pay_advance(current_user, booking_id):
     Simulate the 20% advance payment.
     Rules:
       - Customer only (must own the booking).
+      - Suspended or deleted customers are blocked.
       - Booking must be in 'accepted' status.
       - Advance must not already be paid.
       - Body: {"simulate": "success" | "failure"}
@@ -111,12 +134,24 @@ def pay_advance(current_user, booking_id):
     if current_user.role != 'customer':
         return jsonify({'success': False, 'message': 'Only customers can make payments.'}), 403
 
+    if getattr(current_user, 'account_status', 'active') == 'suspended':
+        return jsonify({'success': False, 'message': 'Your account is suspended. You cannot make payments.'}), 403
+    if getattr(current_user, 'account_status', 'active') == 'deleted':
+        return jsonify({'success': False, 'message': 'Account is inactive.'}), 403
+
     booking = Booking.query.get(booking_id)
     if not booking:
         return jsonify({'success': False, 'message': 'Booking not found.'}), 404
 
     if booking.customer_id != current_user.id:
         return jsonify({'success': False, 'message': 'Access denied – not your booking.'}), 403
+
+    # Provider status verification
+    provider = User.query.get(booking.provider_id)
+    if provider and getattr(provider, 'account_status', 'active') == 'suspended':
+        return jsonify({'success': False, 'message': 'Service provider is currently suspended. Payment cannot be processed.'}), 400
+    if provider and getattr(provider, 'account_status', 'active') == 'deleted':
+        return jsonify({'success': False, 'message': 'Service provider is no longer active.'}), 400
 
     if booking.status != 'accepted':
         return jsonify({
@@ -174,6 +209,7 @@ def pay_balance(current_user, booking_id):
     Simulate the 80% balance payment.
     Rules:
       - Customer only (must own the booking).
+      - Suspended or deleted customers are blocked.
       - Booking must be 'completed'.
       - Advance must already be paid.
       - Balance must not already be paid.
@@ -182,12 +218,22 @@ def pay_balance(current_user, booking_id):
     if current_user.role != 'customer':
         return jsonify({'success': False, 'message': 'Only customers can make payments.'}), 403
 
+    if getattr(current_user, 'account_status', 'active') == 'suspended':
+        return jsonify({'success': False, 'message': 'Your account is suspended. You cannot make payments.'}), 403
+    if getattr(current_user, 'account_status', 'active') == 'deleted':
+        return jsonify({'success': False, 'message': 'Account is inactive.'}), 403
+
     booking = Booking.query.get(booking_id)
     if not booking:
         return jsonify({'success': False, 'message': 'Booking not found.'}), 404
 
     if booking.customer_id != current_user.id:
         return jsonify({'success': False, 'message': 'Access denied – not your booking.'}), 403
+
+    # Provider status verification
+    provider = User.query.get(booking.provider_id)
+    if provider and getattr(provider, 'account_status', 'active') == 'deleted':
+        return jsonify({'success': False, 'message': 'Service provider is no longer active.'}), 400
 
     if booking.status != 'completed':
         return jsonify({

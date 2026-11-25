@@ -111,7 +111,7 @@ const CustomerLogin = () => {
   };
 
   return (
-    <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-slate-100/70 bg-tech-grid relative overflow-hidden">
+    <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-tech-grid relative overflow-hidden">
       
       {/* Ambient Vivid Glowing Orbs */}
       <div className="aurora-glow-1 -top-20 left-10 pointer-events-none" />

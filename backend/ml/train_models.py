@@ -43,7 +43,7 @@ def train_trust_model(source_preference: str = 'hybrid'):
 
     print(f"  Dataset composition: {real_count} real records, {synthetic_count} synthetic records (Sources: {sources})")
 
-    feature_cols = ['completed_jobs', 'cancellation_rate', 'avg_response_minutes', 'review_sentiment_avg']
+    feature_cols = ['completed_jobs', 'cancellation_rate', 'avg_response_minutes', 'review_sentiment_avg', 'experience_years']
     X = df[feature_cols]
     y = df['trust_score']
 

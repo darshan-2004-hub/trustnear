@@ -29,6 +29,8 @@ def ensure_data_dir():
 def generate_synthetic_trust_data(n_samples: int = 600, random_state: int = 42) -> pd.DataFrame:
     """
     Generates clearly labeled synthetic historical records for provider trust training.
+    Includes all 5 features: completed_jobs, cancellation_rate, avg_response_minutes,
+    review_sentiment_avg, experience_years.
     """
     np.random.seed(random_state)
 
@@ -36,6 +38,7 @@ def generate_synthetic_trust_data(n_samples: int = 600, random_state: int = 42) 
     cancellation_rate = np.round(np.random.beta(a=1.5, b=8, size=n_samples) * 100, 2)
     avg_response_minutes = np.random.gamma(shape=2, scale=15, size=n_samples).astype(int)
     review_sentiment_avg = np.round(np.random.uniform(low=-0.2, high=1.0, size=n_samples), 4)
+    experience_years = np.random.randint(1, 25, size=n_samples)
 
     # Domain formula for ground-truth benchmark
     trust_scores = (
@@ -44,6 +47,7 @@ def generate_synthetic_trust_data(n_samples: int = 600, random_state: int = 42) 
         - (cancellation_rate * 0.55)
         - np.clip(avg_response_minutes * 0.18, 0, 15)
         + (review_sentiment_avg * 20.0)
+        + np.clip(experience_years * 0.3, 0, 6)
     )
     trust_scores = np.round(np.clip(trust_scores, 15.0, 99.0), 2)
 
@@ -52,6 +56,7 @@ def generate_synthetic_trust_data(n_samples: int = 600, random_state: int = 42) 
         'cancellation_rate': cancellation_rate,
         'avg_response_minutes': avg_response_minutes,
         'review_sentiment_avg': review_sentiment_avg,
+        'experience_years': experience_years,
         'trust_score': trust_scores,
         'is_synthetic': True,
         'data_source': 'synthetic_benchmark_v1'
@@ -93,15 +98,19 @@ def generate_synthetic_price_data(n_samples: int = 800, random_state: int = 42) 
 
 def fetch_real_mysql_trust_metrics() -> pd.DataFrame:
     """
-    Retrieves genuine TrustMetric records from MySQL.
+    Retrieves genuine TrustMetric records from MySQL joined with ProviderProfile.
     Clearly labeled with is_synthetic=False and data_source='mysql_production'.
+    Includes all 5 features: completed_jobs, cancellation_rate, avg_response_minutes,
+    review_sentiment_avg, experience_years.
     """
     try:
         from app import app
-        from models.schema_models import TrustMetric
+        from models.schema_models import db, TrustMetric, ProviderProfile
         with app.app_context():
-            records = TrustMetric.query.all()
-            if not records:
+            results = db.session.query(TrustMetric, ProviderProfile.experience_years)\
+                .outerjoin(ProviderProfile, TrustMetric.provider_id == ProviderProfile.user_id)\
+                .all()
+            if not results:
                 return pd.DataFrame()
 
             data = [{
@@ -109,10 +118,11 @@ def fetch_real_mysql_trust_metrics() -> pd.DataFrame:
                 'cancellation_rate': float(r.cancellation_rate or 0.0),
                 'avg_response_minutes': int(r.avg_response_minutes or 25),
                 'review_sentiment_avg': float(r.review_sentiment_avg or 0.0),
+                'experience_years': int(exp or 0),
                 'trust_score': float(r.trust_score or 50.0),
                 'is_synthetic': False,
                 'data_source': 'mysql_production'
-            } for r in records]
+            } for r, exp in results]
             return pd.DataFrame(data)
     except Exception as e:
         print(f"[ML Datasets Notice] Could not read TrustMetric from MySQL: {e}")

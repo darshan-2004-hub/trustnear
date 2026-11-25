@@ -1,24 +1,36 @@
 {
-  "trained_at": "2026-11-02T16:25:43.338485+00:00",
+  "trained_at": "2026-11-25T16:24:23.137093+00:00",
+  "source_preference": "hybrid",
   "trust_model": {
     "model_path": "C:\\Users\\darsh\\trustnear\\backend\\ml\\saved_models\\trust_model.joblib",
     "explainer_path": "C:\\Users\\darsh\\trustnear\\backend\\ml\\saved_models\\trust_explainer.joblib",
     "test_metrics": {
-      "mae": 1.7349,
-      "rmse": 2.2699,
-      "r2": 0.9785
+      "mae": 0.0009,
+      "rmse": 0.0009,
+      "r2": 0.0
     },
-    "train_samples": 480,
-    "test_samples": 120
+    "train_samples": 27,
+    "test_samples": 7,
+    "real_samples": 34,
+    "synthetic_samples": 0,
+    "data_sources": [
+      "mysql_production"
+    ]
   },
   "price_model": {
     "model_path": "C:\\Users\\darsh\\trustnear\\backend\\ml\\saved_models\\price_model.joblib",
     "test_metrics": {
-      "mae": 36.8471,
-      "rmse": 47.1005,
-      "r2": 0.9942
+      "mae": 48.211,
+      "rmse": 73.0905,
+      "r2": -0.0309
     },
-    "train_samples": 640,
-    "test_samples": 160
+    "train_samples": 54,
+    "test_samples": 14,
+    "real_samples": 68,
+    "synthetic_samples": 0,
+    "data_sources": [
+      "mysql_production_bookings",
+      "mysql_production_rates"
+    ]
   }
 }

@@ -1,8 +1,9 @@
-completed_jobs,cancellation_rate,avg_response_minutes,review_sentiment_avg,trust_score
-0,0.0,25,0.0,50.0
-0,0.0,25,0.0,50.0
-0,0.0,25,0.0,50.0
-0,0.0,25,0.0,50.0
-0,0.0,25,0.0,50.0
-0,0.0,25,0.0,50.0
-0,0.0,25,0.0,50.0
+completed_jobs,cancellation_rate,avg_response_minutes,review_sentiment_avg,experience_years,trust_score
+0,0.0,25,0.0,2,50.0
+0,0.0,25,0.0,3,50.0
+0,0.0,25,0.0,3,50.0
+0,0.0,25,0.0,3,50.0
+0,0.0,25,0.0,2,50.0
+0,0.0,25,0.0,2,50.0
+0,0.0,25,0.0,2,50.0
+0,0.0,25,0.0,3,50.0

@@ -33,7 +33,7 @@ def evaluate_models():
     trust_model = joblib.load(trust_model_path)
     test_trust_df = pd.read_csv(test_trust_path)
 
-    feature_cols_trust = ['completed_jobs', 'cancellation_rate', 'avg_response_minutes', 'review_sentiment_avg']
+    feature_cols_trust = ['completed_jobs', 'cancellation_rate', 'avg_response_minutes', 'review_sentiment_avg', 'experience_years']
     X_test_trust = test_trust_df[feature_cols_trust]
     y_test_trust = test_trust_df['trust_score']
 

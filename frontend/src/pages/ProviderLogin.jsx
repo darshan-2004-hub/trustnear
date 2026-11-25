@@ -110,7 +110,11 @@ const ProviderLogin = () => {
   };
 
   return (
-    <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-[#f8fafc]">
+    <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-tech-grid relative overflow-hidden">
+      
+      {/* Ambient Vivid Glowing Orbs */}
+      <div className="aurora-glow-1 -top-20 left-10 pointer-events-none" />
+      <div className="aurora-glow-2 -bottom-20 right-10 pointer-events-none" />
       <div className="theme-card max-w-4xl w-full overflow-hidden grid grid-cols-1 md:grid-cols-12 shadow-xl border border-[#e2e8f0]">
         
         {/* Left Side: Provider Brand Showcase */}

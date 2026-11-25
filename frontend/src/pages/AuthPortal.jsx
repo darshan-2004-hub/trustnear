@@ -20,7 +20,11 @@ const AuthPortal = () => {
   };
 
   return (
-    <div className="min-h-[calc(100vh-4rem)] bg-[#f8fafc] text-[#172033] py-12 px-4 sm:px-6 lg:px-8 flex flex-col justify-center">
+    <div className="min-h-[calc(100vh-4rem)] bg-tech-grid text-[#172033] py-12 px-4 sm:px-6 lg:px-8 flex flex-col justify-center relative overflow-hidden">
+      
+      {/* Ambient Vivid Glowing Orbs */}
+      <div className="aurora-glow-1 -top-24 left-1/4 pointer-events-none" />
+      <div className="aurora-glow-2 -bottom-24 right-1/4 pointer-events-none" />
       <div className="max-w-4xl mx-auto w-full space-y-8">
         
         {/* Header Banner */}

@@ -45,6 +45,7 @@ def ai_chat():
     query = db.session.query(ProviderProfile, User, TrustMetric)\
         .join(User, ProviderProfile.user_id == User.id)\
         .outerjoin(TrustMetric, ProviderProfile.user_id == TrustMetric.provider_id)\
+        .filter(User.account_status == 'active')\
         .filter(ProviderProfile.verification_status == 'verified')\
         .filter(ProviderProfile.is_available == True)
 
