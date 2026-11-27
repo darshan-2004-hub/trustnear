@@ -25,11 +25,6 @@ const AIAssistantWidget = () => {
   const messagesEndRef = useRef(null);
   const navigate = useNavigate();
 
-  // Hide AI Assistant from provider and admin accounts
-  if (user && user.role !== 'customer') {
-    return null;
-  }
-
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
@@ -37,6 +32,11 @@ const AIAssistantWidget = () => {
   useEffect(() => {
     if (isOpen) scrollToBottom();
   }, [messages, isOpen]);
+
+  // Hide AI Assistant from provider and admin accounts (after all hooks to preserve hook order)
+  if (user && user.role !== 'customer') {
+    return null;
+  }
 
   const handleSend = async (textToSend) => {
     const query = textToSend || input;
