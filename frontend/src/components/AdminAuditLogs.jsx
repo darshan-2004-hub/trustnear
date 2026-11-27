@@ -164,7 +164,7 @@ const AdminAuditLogs = () => {
 
             <button
               type="submit"
-              className="px-4 py-2 rounded-xl bg-blue-600 text-white font-bold hover:bg-blue-700 transition cursor-pointer"
+              className="px-4 py-2 rounded-xl btn-primary font-bold transition cursor-pointer"
             >
               Filter
             </button>
@@ -173,10 +173,10 @@ const AdminAuditLogs = () => {
       </div>
 
       {/* Logs Table */}
-      <div className="bg-white rounded-2xl border border-[#e2e8f0] shadow-sm overflow-hidden">
+      <div className="glass-card rounded-2xl overflow-hidden">
         {loading ? (
           <div className="py-16 text-center text-[#475569] space-y-2">
-            <RefreshCw className="w-6 h-6 animate-spin mx-auto text-blue-600" />
+            <RefreshCw className="w-6 h-6 animate-spin mx-auto text-emerald-600" />
             <p className="font-semibold">Loading audit entries...</p>
           </div>
         ) : error ? (

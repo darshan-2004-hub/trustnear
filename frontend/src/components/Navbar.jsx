@@ -57,21 +57,21 @@ const Navbar = () => {
   const isAdmin = user?.role === 'admin';
 
   return (
-    <nav className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-[#e2e8f0] shadow-xs">
+    <nav className="sticky top-0 z-40 bg-white/85 backdrop-blur-md border-b border-emerald-200/70 shadow-xs">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           
           {/* Logo & Brand */}
           <Link to="/" className="flex items-center space-x-3 group">
-            <div className="w-10 h-10 rounded-xl bg-blue-600 text-white p-0.5 shadow-sm flex items-center justify-center">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-600 to-sky-600 text-white p-0.5 shadow-md shadow-emerald-600/20 flex items-center justify-center">
               <ShieldCheck className="w-6 h-6 text-white" />
             </div>
             <div>
               <div className="flex items-center space-x-1.5">
                 <span className="text-xl font-extrabold tracking-tight text-[#172033]">
-                  Trust<span className="text-blue-600">Near</span>
+                  Trust<span className="text-emerald-600">Near</span>
                 </span>
-                <span className="text-[10px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200">
+                <span className="text-[10px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
                   AI
                 </span>
               </div>
@@ -85,8 +85,8 @@ const Navbar = () => {
               to="/"
               className={`px-3.5 py-2 rounded-xl text-sm font-semibold transition-all ${
                 isActive('/') 
-                  ? 'bg-blue-50 text-blue-700 border border-blue-200 shadow-2xs' 
-                  : 'text-[#475569] hover:text-[#172033] hover:bg-slate-100'
+                  ? 'bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-2xs' 
+                  : 'text-[#475569] hover:text-[#065f46] hover:bg-emerald-50/60'
               }`}
             >
               Home
@@ -98,11 +98,11 @@ const Navbar = () => {
                 to="/provider-dashboard"
                 className={`flex items-center space-x-1.5 px-3.5 py-2 rounded-xl text-sm font-semibold transition-all ${
                   isActive('/provider-dashboard') 
-                    ? 'bg-blue-50 text-blue-700 border border-blue-200 shadow-2xs' 
-                    : 'text-[#475569] hover:text-[#172033] hover:bg-slate-100'
+                    ? 'bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-2xs' 
+                    : 'text-[#475569] hover:text-[#065f46] hover:bg-emerald-50/60'
                 }`}
               >
-                <TrendingUp className="w-4 h-4 text-blue-600" />
+                <TrendingUp className="w-4 h-4 text-emerald-600" />
                 <span>Dashboard</span>
               </Link>
             )}
@@ -113,11 +113,11 @@ const Navbar = () => {
                 to={isProvider ? "/job-queue" : "/bookings"}
                 className={`flex items-center space-x-1.5 px-3.5 py-2 rounded-xl text-sm font-semibold transition-all ${
                   isActive('/bookings') || isActive('/job-queue')
-                    ? 'bg-blue-50 text-blue-700 border border-blue-200 shadow-2xs' 
-                    : 'text-[#475569] hover:text-[#172033] hover:bg-slate-100'
+                    ? 'bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-2xs' 
+                    : 'text-[#475569] hover:text-[#065f46] hover:bg-emerald-50/60'
                 }`}
               >
-                <CalendarCheck className="w-4 h-4 text-blue-600" />
+                <CalendarCheck className="w-4 h-4 text-emerald-600" />
                 <span>{isProvider ? 'Job Queue' : 'My Bookings'}</span>
               </Link>
             )}
@@ -126,11 +126,11 @@ const Navbar = () => {
               to="/providers"
               className={`flex items-center space-x-1.5 px-3.5 py-2 rounded-xl text-sm font-semibold transition-all ${
                 isActive('/providers') || isActive('/search')
-                  ? 'bg-blue-50 text-blue-700 border border-blue-200 shadow-2xs' 
-                  : 'text-[#475569] hover:text-[#172033] hover:bg-slate-100'
+                  ? 'bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-2xs' 
+                  : 'text-[#475569] hover:text-[#065f46] hover:bg-emerald-50/60'
               }`}
             >
-              <Search className="w-4 h-4 text-blue-600" />
+              <Search className="w-4 h-4 text-sky-600" />
               <span>Find Services</span>
             </Link>
 
@@ -139,11 +139,11 @@ const Navbar = () => {
                 to="/profile"
                 className={`flex items-center space-x-1.5 px-3.5 py-2 rounded-xl text-sm font-semibold transition-all ${
                   isActive('/profile') 
-                    ? 'bg-blue-50 text-blue-700 border border-blue-200 shadow-2xs' 
-                    : 'text-[#475569] hover:text-[#172033] hover:bg-slate-100'
+                    ? 'bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-2xs' 
+                    : 'text-[#475569] hover:text-[#065f46] hover:bg-emerald-50/60'
                 }`}
               >
-                <User className="w-4 h-4 text-blue-600" />
+                <User className="w-4 h-4 text-emerald-600" />
                 <span>Profile</span>
               </Link>
             )}
@@ -153,11 +153,11 @@ const Navbar = () => {
                 to="/admin"
                 className={`flex items-center space-x-1.5 px-3.5 py-2 rounded-xl text-sm font-semibold transition-all ${
                   isActive('/admin') 
-                    ? 'bg-purple-50 text-purple-700 border border-purple-200 shadow-2xs' 
-                    : 'text-purple-700 hover:text-purple-900 hover:bg-purple-50'
+                    ? 'bg-teal-50 text-teal-800 border border-teal-300 shadow-2xs' 
+                    : 'text-teal-700 hover:text-teal-900 hover:bg-teal-50'
                 }`}
               >
-                <ShieldAlert className="w-4 h-4 text-purple-600" />
+                <ShieldAlert className="w-4 h-4 text-teal-600" />
                 <span>Admin Console</span>
               </Link>
             )}
@@ -169,14 +169,14 @@ const Navbar = () => {
               <div className="flex items-center space-x-2.5">
                 <Link
                   to={isProvider ? "/provider-dashboard" : isAdmin ? "/admin" : "/profile"}
-                  className="flex items-center space-x-2.5 px-3 py-1.5 rounded-xl bg-slate-50 border border-[#e2e8f0] hover:border-blue-400 transition-colors"
+                  className="flex items-center space-x-2.5 px-3 py-1.5 rounded-xl bg-emerald-50/60 border border-emerald-200 hover:border-emerald-400 transition-colors"
                 >
-                  <div className="w-7 h-7 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-xs shadow-xs">
+                  <div className="w-7 h-7 rounded-full bg-gradient-to-br from-emerald-600 to-sky-600 text-white flex items-center justify-center font-bold text-xs shadow-xs">
                     {user?.full_name?.charAt(0) || 'U'}
                   </div>
                   <div className="text-left">
                     <p className="text-xs font-bold text-[#172033] leading-tight">{user?.full_name?.split(' ')[0]}</p>
-                    <span className="text-[10px] uppercase font-bold text-[#475569] tracking-wider">
+                    <span className="text-[10px] uppercase font-bold text-emerald-700 tracking-wider">
                       {user?.role}
                     </span>
                   </div>
@@ -199,23 +199,23 @@ const Navbar = () => {
                       setSignInDropdownOpen(!signInDropdownOpen);
                       setRegisterDropdownOpen(false);
                     }}
-                    className="flex items-center space-x-1 px-3.5 py-2 text-xs font-bold text-[#172033] hover:bg-slate-100 rounded-xl transition-all cursor-pointer"
+                    className="flex items-center space-x-1 px-3.5 py-2 text-xs font-bold text-[#172033] hover:bg-emerald-50 border border-emerald-200/70 rounded-xl transition-all cursor-pointer bg-white/75"
                   >
                     <span>Sign In</span>
-                    <ChevronDown className="w-3.5 h-3.5 text-[#475569]" />
+                    <ChevronDown className="w-3.5 h-3.5 text-emerald-600" />
                   </button>
 
                   {signInDropdownOpen && (
-                    <div className="absolute right-0 mt-2 w-56 bg-white rounded-2xl shadow-xl border border-[#e2e8f0] py-2 z-50 text-xs">
-                      <div className="px-3 py-1 text-[10px] uppercase font-extrabold tracking-wider text-[#475569]">
+                    <div className="absolute right-0 mt-2 w-56 bg-white/95 backdrop-blur-md rounded-2xl shadow-xl border border-emerald-200 py-2 z-50 text-xs">
+                      <div className="px-3 py-1 text-[10px] uppercase font-extrabold tracking-wider text-emerald-700">
                         Select Portal
                       </div>
                       <Link
                         to="/login/customer"
                         onClick={() => setSignInDropdownOpen(false)}
-                        className="flex items-center space-x-2.5 px-3.5 py-2 hover:bg-blue-50 text-[#172033] font-semibold"
+                        className="flex items-center space-x-2.5 px-3.5 py-2 hover:bg-emerald-50 text-[#172033] font-semibold"
                       >
-                        <User className="w-4 h-4 text-blue-600 shrink-0" />
+                        <User className="w-4 h-4 text-emerald-600 shrink-0" />
                         <div>
                           <div className="font-bold text-xs">Customer Login</div>
                           <div className="text-[10px] text-[#475569]">Homeowners & Clients</div>
@@ -224,21 +224,21 @@ const Navbar = () => {
                       <Link
                         to="/login/provider"
                         onClick={() => setSignInDropdownOpen(false)}
-                        className="flex items-center space-x-2.5 px-3.5 py-2 hover:bg-slate-50 text-[#172033] font-semibold"
+                        className="flex items-center space-x-2.5 px-3.5 py-2 hover:bg-sky-50 text-[#172033] font-semibold"
                       >
-                        <Wrench className="w-4 h-4 text-slate-700 shrink-0" />
+                        <Wrench className="w-4 h-4 text-sky-600 shrink-0" />
                         <div>
                           <div className="font-bold text-xs">Provider Login</div>
                           <div className="text-[10px] text-[#475569]">Trades & Professionals</div>
                         </div>
                       </Link>
-                      <div className="border-t border-[#e2e8f0] my-1"></div>
+                      <div className="border-t border-emerald-100 my-1"></div>
                       <Link
                         to="/login/admin"
                         onClick={() => setSignInDropdownOpen(false)}
-                        className="flex items-center space-x-2.5 px-3.5 py-1.5 hover:bg-purple-50 text-purple-700 font-bold"
+                        className="flex items-center space-x-2.5 px-3.5 py-1.5 hover:bg-teal-50 text-teal-800 font-bold"
                       >
-                        <Lock className="w-3.5 h-3.5 text-purple-600 shrink-0" />
+                        <Lock className="w-3.5 h-3.5 text-teal-600 shrink-0" />
                         <span className="text-xs">Admin Staff Login</span>
                       </Link>
                     </div>
@@ -260,16 +260,16 @@ const Navbar = () => {
                   </button>
 
                   {registerDropdownOpen && (
-                    <div className="absolute right-0 mt-2 w-56 bg-white rounded-2xl shadow-xl border border-[#e2e8f0] py-2 z-50 text-xs">
-                      <div className="px-3 py-1 text-[10px] uppercase font-extrabold tracking-wider text-[#475569]">
+                    <div className="absolute right-0 mt-2 w-56 bg-white/95 backdrop-blur-md rounded-2xl shadow-xl border border-emerald-200 py-2 z-50 text-xs">
+                      <div className="px-3 py-1 text-[10px] uppercase font-extrabold tracking-wider text-emerald-700">
                         Create Account
                       </div>
                       <Link
                         to="/register/customer"
                         onClick={() => setRegisterDropdownOpen(false)}
-                        className="flex items-center space-x-2.5 px-3.5 py-2 hover:bg-blue-50 text-[#172033] font-semibold"
+                        className="flex items-center space-x-2.5 px-3.5 py-2 hover:bg-emerald-50 text-[#172033] font-semibold"
                       >
-                        <UserPlus className="w-4 h-4 text-blue-600 shrink-0" />
+                        <UserPlus className="w-4 h-4 text-emerald-600 shrink-0" />
                         <div>
                           <div className="font-bold text-xs">Customer Register</div>
                           <div className="text-[10px] text-[#475569]">New client account</div>
@@ -278,9 +278,9 @@ const Navbar = () => {
                       <Link
                         to="/register/provider"
                         onClick={() => setRegisterDropdownOpen(false)}
-                        className="flex items-center space-x-2.5 px-3.5 py-2 hover:bg-slate-50 text-[#172033] font-semibold"
+                        className="flex items-center space-x-2.5 px-3.5 py-2 hover:bg-sky-50 text-[#172033] font-semibold"
                       >
-                        <Wrench className="w-4 h-4 text-slate-700 shrink-0" />
+                        <Wrench className="w-4 h-4 text-sky-600 shrink-0" />
                         <div>
                           <div className="font-bold text-xs">Provider Register</div>
                           <div className="text-[10px] text-[#475569]">Register skilled trade</div>

@@ -354,12 +354,12 @@ const BookingModal = ({ provider, onClose, onSuccess }) => {
                       }}
                       className={`py-2 px-2.5 rounded-xl text-xs font-semibold transition border cursor-pointer flex flex-col items-center justify-center ${
                         isSelected
-                          ? 'bg-blue-600 text-white border-blue-600 shadow-sm ring-2 ring-blue-300'
-                          : 'bg-white hover:bg-blue-50 text-[#172033] border-[#e2e8f0] hover:border-blue-300'
+                          ? 'bg-gradient-to-r from-emerald-600 to-sky-600 text-white border-emerald-600 shadow-sm ring-2 ring-emerald-300'
+                          : 'bg-white hover:bg-emerald-50 text-[#172033] border-emerald-200/80 hover:border-emerald-400'
                       }`}
                     >
                       <span>{slot.start_time} - {slot.end_time}</span>
-                      <span className={`text-[9px] font-bold uppercase tracking-wider mt-0.5 ${isSelected ? 'text-blue-100' : 'text-emerald-600'}`}>
+                      <span className={`text-[9px] font-bold uppercase tracking-wider mt-0.5 ${isSelected ? 'text-emerald-100' : 'text-emerald-600'}`}>
                         Available
                       </span>
                     </button>

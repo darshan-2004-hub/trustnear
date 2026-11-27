@@ -102,11 +102,11 @@ export default function PaymentModal({ booking, role, onClose, onPaid }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm">
-      <div className="bg-white rounded-2xl max-w-md w-full shadow-xl border border-blue-100 overflow-hidden">
+      <div className="bg-white rounded-2xl max-w-md w-full shadow-2xl border border-emerald-200 overflow-hidden">
 
         {/* Header */}
-        <div className="flex items-center justify-between px-5 py-4 border-b border-[#e2e8f0] bg-blue-50">
-          <div className="flex items-center space-x-2 text-blue-700">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-emerald-100 bg-gradient-to-r from-emerald-50 to-sky-50">
+          <div className="flex items-center space-x-2 text-emerald-700">
             <CreditCard className="w-5 h-5" />
             <div>
               <h3 className="text-sm font-black text-[#172033]">Payment Details</h3>

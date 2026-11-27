@@ -106,7 +106,7 @@ const AdminDashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#f8fafc] text-[#172033] py-8 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen text-[#172033] py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto space-y-6">
         
         {/* Top Header */}
@@ -114,7 +114,7 @@ const AdminDashboard = () => {
           <div>
             <div className="flex items-center space-x-2.5">
               <h1 className="text-2xl sm:text-3xl font-black text-[#172033]">TrustNear Administration Console</h1>
-              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-purple-50 text-purple-700 border border-purple-200 uppercase">
+              <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-teal-50 text-teal-800 border border-teal-200 uppercase">
                 Root Admin
               </span>
             </div>
@@ -128,19 +128,19 @@ const AdminDashboard = () => {
             disabled={loading}
             className="btn-secondary px-4 py-2 text-xs font-bold flex items-center space-x-2 rounded-xl shadow-2xs cursor-pointer"
           >
-            <RefreshCw className={`w-3.5 h-3.5 text-blue-600 ${loading ? 'animate-spin' : ''}`} />
+            <RefreshCw className={`w-3.5 h-3.5 text-emerald-600 ${loading ? 'animate-spin' : ''}`} />
             <span>Refresh Console</span>
           </button>
         </div>
 
         {/* Tab Switcher */}
-        <div className="flex items-center space-x-1.5 border-b border-[#e2e8f0] pb-3 text-xs font-semibold overflow-x-auto">
+        <div className="flex items-center space-x-1.5 border-b border-emerald-200/70 pb-3 text-xs font-semibold overflow-x-auto">
           <button
             onClick={() => setActiveTab('overview')}
             className={`px-3.5 py-1.5 rounded-xl transition-all cursor-pointer whitespace-nowrap ${
               activeTab === 'overview'
-                ? 'bg-blue-600 text-white font-bold shadow-xs'
-                : 'text-[#475569] hover:text-[#172033] hover:bg-slate-100'
+                ? 'bg-gradient-to-r from-emerald-600 to-sky-600 text-white font-bold shadow-xs'
+                : 'text-[#475569] hover:text-emerald-800 hover:bg-emerald-50/80'
             }`}
           >
             Overview
@@ -150,14 +150,14 @@ const AdminDashboard = () => {
             onClick={() => setActiveTab('bookings')}
             className={`px-3.5 py-1.5 rounded-xl transition-all cursor-pointer whitespace-nowrap flex items-center space-x-1.5 ${
               activeTab === 'bookings'
-                ? 'bg-blue-600 text-white font-bold shadow-xs'
-                : 'text-[#475569] hover:text-[#172033] hover:bg-slate-100'
+                ? 'bg-gradient-to-r from-emerald-600 to-sky-600 text-white font-bold shadow-xs'
+                : 'text-[#475569] hover:text-emerald-800 hover:bg-emerald-50/80'
             }`}
           >
             <span>Bookings</span>
             {stats.total_bookings > 0 && (
               <span className={`px-1.5 py-0.2 rounded-full text-[10px] font-bold ${
-                activeTab === 'bookings' ? 'bg-blue-800 text-white' : 'bg-slate-200 text-slate-700'
+                activeTab === 'bookings' ? 'bg-white/25 text-white' : 'bg-emerald-100 text-emerald-800'
               }`}>
                 {stats.total_bookings}
               </span>
@@ -168,8 +168,8 @@ const AdminDashboard = () => {
             onClick={() => setActiveTab('customers')}
             className={`px-3.5 py-1.5 rounded-xl transition-all cursor-pointer whitespace-nowrap ${
               activeTab === 'customers'
-                ? 'bg-blue-600 text-white font-bold shadow-xs'
-                : 'text-[#475569] hover:text-[#172033] hover:bg-slate-100'
+                ? 'bg-gradient-to-r from-emerald-600 to-sky-600 text-white font-bold shadow-xs'
+                : 'text-[#475569] hover:text-emerald-800 hover:bg-emerald-50/80'
             }`}
           >
             Customers
@@ -179,8 +179,8 @@ const AdminDashboard = () => {
             onClick={() => setActiveTab('all-providers')}
             className={`px-3.5 py-1.5 rounded-xl transition-all cursor-pointer whitespace-nowrap ${
               activeTab === 'all-providers'
-                ? 'bg-blue-600 text-white font-bold shadow-xs'
-                : 'text-[#475569] hover:text-[#172033] hover:bg-slate-100'
+                ? 'bg-gradient-to-r from-emerald-600 to-sky-600 text-white font-bold shadow-xs'
+                : 'text-[#475569] hover:text-emerald-800 hover:bg-emerald-50/80'
             }`}
           >
             Providers
@@ -190,8 +190,8 @@ const AdminDashboard = () => {
             onClick={() => setActiveTab('providers')}
             className={`px-3.5 py-1.5 rounded-xl transition-all cursor-pointer whitespace-nowrap flex items-center space-x-1.5 ${
               activeTab === 'providers'
-                ? 'bg-blue-600 text-white font-bold shadow-xs'
-                : 'text-[#475569] hover:text-[#172033] hover:bg-slate-100'
+                ? 'bg-gradient-to-r from-emerald-600 to-sky-600 text-white font-bold shadow-xs'
+                : 'text-[#475569] hover:text-emerald-800 hover:bg-emerald-50/80'
             }`}
           >
             <span>KYC Verification</span>
@@ -206,8 +206,8 @@ const AdminDashboard = () => {
             onClick={() => setActiveTab('reviews')}
             className={`px-3.5 py-1.5 rounded-xl transition-all cursor-pointer whitespace-nowrap flex items-center space-x-1.5 ${
               activeTab === 'reviews'
-                ? 'bg-blue-600 text-white font-bold shadow-xs'
-                : 'text-[#475569] hover:text-[#172033] hover:bg-slate-100'
+                ? 'bg-gradient-to-r from-emerald-600 to-sky-600 text-white font-bold shadow-xs'
+                : 'text-[#475569] hover:text-emerald-800 hover:bg-emerald-50/80'
             }`}
           >
             <span>Review Moderation</span>
@@ -222,8 +222,8 @@ const AdminDashboard = () => {
             onClick={() => setActiveTab('no-shows')}
             className={`px-3.5 py-1.5 rounded-xl transition-all cursor-pointer whitespace-nowrap flex items-center space-x-1.5 ${
               activeTab === 'no-shows'
-                ? 'bg-blue-600 text-white font-bold shadow-xs'
-                : 'text-[#475569] hover:text-[#172033] hover:bg-slate-100'
+                ? 'bg-gradient-to-r from-emerald-600 to-sky-600 text-white font-bold shadow-xs'
+                : 'text-[#475569] hover:text-emerald-800 hover:bg-emerald-50/80'
             }`}
           >
             <span>No-Shows</span>
@@ -238,8 +238,8 @@ const AdminDashboard = () => {
             onClick={() => setActiveTab('audit-logs')}
             className={`px-3.5 py-1.5 rounded-xl transition-all cursor-pointer whitespace-nowrap ${
               activeTab === 'audit-logs'
-                ? 'bg-blue-600 text-white font-bold shadow-xs'
-                : 'text-[#475569] hover:text-[#172033] hover:bg-slate-100'
+                ? 'bg-gradient-to-r from-emerald-600 to-sky-600 text-white font-bold shadow-xs'
+                : 'text-[#475569] hover:text-emerald-800 hover:bg-emerald-50/80'
             }`}
           >
             Audit Log
@@ -249,8 +249,8 @@ const AdminDashboard = () => {
             onClick={() => setActiveTab('payments')}
             className={`px-3.5 py-1.5 rounded-xl transition-all cursor-pointer whitespace-nowrap ${
               activeTab === 'payments'
-                ? 'bg-blue-600 text-white font-bold shadow-xs'
-                : 'text-[#475569] hover:text-[#172033] hover:bg-slate-100'
+                ? 'bg-gradient-to-r from-emerald-600 to-sky-600 text-white font-bold shadow-xs'
+                : 'text-[#475569] hover:text-emerald-800 hover:bg-emerald-50/80'
             }`}
           >
             Payments

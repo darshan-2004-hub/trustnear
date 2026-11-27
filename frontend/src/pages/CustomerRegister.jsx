@@ -109,65 +109,70 @@ const CustomerRegister = () => {
   };
 
   return (
-    <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-[#f8fafc]">
-      <div className="theme-card max-w-4xl w-full overflow-hidden grid grid-cols-1 md:grid-cols-12 shadow-xl border border-[#e2e8f0]">
+    <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-tech-grid relative overflow-hidden">
+      <div className="aurora-glow-1 -top-20 left-10 pointer-events-none" />
+      <div className="aurora-glow-2 -bottom-20 right-10 pointer-events-none" />
+
+      <div className="glass-panel max-w-4xl w-full overflow-hidden grid grid-cols-1 md:grid-cols-12 shadow-2xl rounded-3xl border border-white/80 relative z-10">
 
         {/* Left Side: Brand Showcase */}
-        <div className="md:col-span-5 bg-gradient-to-br from-[#1e293b] via-[#334155] to-[#0f172a] p-8 text-white flex flex-col justify-between relative overflow-hidden">
+        <div className="md:col-span-5 dark-card-gradient p-8 text-white flex flex-col justify-between relative overflow-hidden border-r border-emerald-800/40">
+          <div className="absolute -bottom-12 -left-12 w-48 h-48 bg-emerald-400/30 rounded-full blur-2xl pointer-events-none" />
+          <div className="absolute -top-12 -right-12 w-48 h-48 bg-sky-400/25 rounded-full blur-2xl pointer-events-none" />
           <div className="relative z-10 space-y-6">
             <Link
               to="/auth"
-              className="inline-flex items-center space-x-1.5 text-xs font-semibold text-slate-300 hover:text-white transition"
+              className="inline-flex items-center space-x-1.5 text-xs font-semibold text-emerald-100/80 hover:text-white transition"
             >
               <ArrowLeft className="w-3.5 h-3.5" />
               <span>Back to Role Selection</span>
             </Link>
 
-            <div className="w-12 h-12 rounded-2xl bg-blue-500/20 border border-blue-400/30 flex items-center justify-center shadow-inner">
-              <User className="w-6 h-6 text-blue-400" />
+            <div className="w-12 h-12 rounded-2xl bg-emerald-500/30 border border-emerald-300/40 flex items-center justify-center shadow-lg">
+              <User className="w-6 h-6 text-emerald-200" />
             </div>
 
             <div>
-              <div className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-blue-500/20 text-blue-300 text-[11px] font-bold uppercase tracking-wider mb-2 border border-blue-400/30">
+              <div className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-emerald-500/25 text-emerald-100 text-[11px] font-bold uppercase tracking-wider mb-2 border border-emerald-300/40">
                 <Sparkles className="w-3.5 h-3.5" />
                 <span>Join TrustNear</span>
               </div>
               <h2 className="text-2xl font-black leading-tight text-white">Create Customer Account</h2>
-              <p className="text-xs text-slate-300 mt-2 leading-relaxed">
+              <p className="text-xs text-emerald-50/85 mt-2 leading-relaxed">
                 Connect with verified local professionals in Mangaluru with explainable trust scores and fair price estimations.
               </p>
             </div>
 
-            <div className="space-y-2 pt-4 border-t border-slate-700 text-xs text-slate-300">
+            <div className="space-y-2 pt-4 border-t border-white/15 text-xs text-emerald-50/90">
               <div className="flex items-center space-x-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                <CheckCircle2 className="w-4 h-4 text-emerald-300 shrink-0" />
                 <span>Zero upfront booking fees</span>
               </div>
               <div className="flex items-center space-x-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                <CheckCircle2 className="w-4 h-4 text-sky-300 shrink-0" />
                 <span>Direct in-app messaging with assigned pros</span>
               </div>
               <div className="flex items-center space-x-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                <CheckCircle2 className="w-4 h-4 text-emerald-300 shrink-0" />
                 <span>Authentic, approved community feedback only</span>
               </div>
             </div>
           </div>
 
-          <div className="relative z-10 pt-6 text-[11px] text-slate-400">
+          <div className="relative z-10 pt-6 text-[11px] text-emerald-100/70">
             <span>TrustNear • Mangaluru Local Discovery</span>
           </div>
         </div>
 
         {/* Right Side: Registration Form */}
-        <div className="md:col-span-7 p-8 bg-white flex flex-col justify-between">
+        <div className="md:col-span-7 p-8 bg-white/95 flex flex-col justify-between">
           <div>
-            <div className="flex items-center justify-between pb-4 border-b border-[#e2e8f0]">
+            <div className="flex items-center justify-between pb-4 border-b border-emerald-100">
               <div>
                 <h3 className="text-xl font-bold text-[#172033]">Customer Sign Up</h3>
                 <p className="text-xs text-[#475569] mt-0.5">Fill in your information to get started</p>
               </div>
-              <span className="text-[11px] font-bold text-blue-700 bg-blue-50 px-2.5 py-1 rounded-full border border-blue-200 uppercase">
+              <span className="text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200 uppercase">
                 Customer
               </span>
             </div>

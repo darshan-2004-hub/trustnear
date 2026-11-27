@@ -165,15 +165,15 @@ const CustomerProfile = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#f8fafc] text-[#172033] py-12 px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen text-[#172033] py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto space-y-6 animate-pulse">
-          <div className="bg-white rounded-2xl border border-[#e2e8f0] p-8 h-40 shadow-sm" />
+          <div className="glass-card rounded-2xl p-8 h-40 shadow-sm" />
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
             {[1, 2, 3, 4].map((i) => (
-              <div key={i} className="bg-white rounded-2xl border border-[#e2e8f0] p-4 h-24 shadow-sm" />
+              <div key={i} className="glass-card rounded-2xl p-4 h-24 shadow-sm" />
             ))}
           </div>
-          <div className="bg-white rounded-2xl border border-[#e2e8f0] p-8 h-64 shadow-sm" />
+          <div className="glass-card rounded-2xl p-8 h-64 shadow-sm" />
         </div>
       </div>
     );
@@ -182,30 +182,30 @@ const CustomerProfile = () => {
   const displayName = profileData.fullName || authUser?.full_name || 'Customer';
 
   return (
-    <div className="min-h-screen bg-[#f8fafc] text-[#172033] py-8 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen text-[#172033] py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto space-y-6">
 
         {/* Header Profile Card */}
-        <div className="bg-white rounded-2xl border border-[#e2e8f0] p-6 sm:p-8 relative overflow-hidden shadow-sm">
+        <div className="glass-panel rounded-2xl p-6 sm:p-8 relative overflow-hidden">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
             <div className="flex items-center space-x-4 sm:space-x-5">
-              <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-blue-600 text-white flex items-center justify-center text-2xl sm:text-3xl font-black shadow-md shrink-0">
+              <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-br from-emerald-600 to-sky-600 text-white flex items-center justify-center text-2xl sm:text-3xl font-black shadow-md shrink-0">
                 {displayName.charAt(0)}
               </div>
               <div>
                 <div className="flex items-center space-x-2">
                   <h1 className="text-xl sm:text-2xl font-black text-[#172033]">{displayName}</h1>
-                  <span className="px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-700 text-xs font-bold border border-blue-200 uppercase tracking-wide">
+                  <span className="px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-xs font-bold border border-emerald-200 uppercase tracking-wide">
                     {profileData.role}
                   </span>
                 </div>
                 <p className="text-xs text-[#475569] mt-1 flex items-center space-x-1.5">
-                  <Mail className="w-3.5 h-3.5 text-blue-600" />
+                  <Mail className="w-3.5 h-3.5 text-emerald-600" />
                   <span>{profileData.email}</span>
                 </p>
                 {profileData.phone && (
                   <p className="text-xs text-[#475569] mt-0.5 flex items-center space-x-1.5">
-                    <Phone className="w-3.5 h-3.5 text-blue-600" />
+                    <Phone className="w-3.5 h-3.5 text-sky-600" />
                     <span>{profileData.phone}</span>
                   </p>
                 )}
@@ -221,13 +221,13 @@ const CustomerProfile = () => {
 
         {/* Real Customer Activity Metrics */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-          <div className="bg-white rounded-2xl border border-[#e2e8f0] p-4 shadow-sm">
+          <div className="glass-card rounded-2xl p-4">
             <span className="text-[10px] font-bold text-[#475569] uppercase tracking-wider block">Total Bookings</span>
             <span className="text-xl sm:text-2xl font-black text-[#172033] mt-1 block">{stats.total}</span>
           </div>
-          <div className="bg-white rounded-2xl border border-[#e2e8f0] p-4 shadow-sm">
+          <div className="glass-card rounded-2xl p-4">
             <span className="text-[10px] font-bold text-[#475569] uppercase tracking-wider block">Active Jobs</span>
-            <span className="text-xl sm:text-2xl font-black text-blue-600 mt-1 block">{stats.active}</span>
+            <span className="text-xl sm:text-2xl font-black text-sky-600 mt-1 block">{stats.active}</span>
           </div>
           <div className="bg-white rounded-2xl border border-[#e2e8f0] p-4 shadow-sm">
             <span className="text-[10px] font-bold text-[#475569] uppercase tracking-wider block">Completed</span>

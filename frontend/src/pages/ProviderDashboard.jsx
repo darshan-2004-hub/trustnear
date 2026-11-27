@@ -271,22 +271,22 @@ const ProviderDashboard = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#f8fafc] text-[#172033] py-8 px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen text-[#172033] py-8 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto space-y-6">
           {/* Skeleton Header */}
-          <div className="h-20 bg-slate-200 rounded-2xl animate-pulse" />
+          <div className="h-20 glass-card rounded-2xl animate-pulse" />
           
           {/* Skeleton KPI Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
             {[1, 2, 3, 4, 5, 6].map((i) => (
-              <div key={i} className="h-28 bg-slate-200 rounded-2xl animate-pulse" />
+              <div key={i} className="h-28 glass-card rounded-2xl animate-pulse" />
             ))}
           </div>
 
           {/* Skeleton Chart & Diagnostics */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-            <div className="lg:col-span-8 h-80 bg-slate-200 rounded-2xl animate-pulse" />
-            <div className="lg:col-span-4 h-80 bg-slate-200 rounded-2xl animate-pulse" />
+            <div className="lg:col-span-8 h-80 glass-card rounded-2xl animate-pulse" />
+            <div className="lg:col-span-4 h-80 glass-card rounded-2xl animate-pulse" />
           </div>
         </div>
       </div>
@@ -295,8 +295,8 @@ const ProviderDashboard = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-[#f8fafc] text-[#172033] py-16 px-4 flex items-center justify-center">
-        <div className="bg-white rounded-2xl border border-rose-200 max-w-md w-full p-8 text-center shadow-sm">
+      <div className="min-h-screen text-[#172033] py-16 px-4 flex items-center justify-center">
+        <div className="glass-panel rounded-2xl border border-rose-200 max-w-md w-full p-8 text-center shadow-sm">
           <div className="w-12 h-12 rounded-2xl bg-rose-50 text-rose-600 border border-rose-200 flex items-center justify-center mx-auto mb-4">
             <AlertCircle className="w-6 h-6" />
           </div>
@@ -330,24 +330,24 @@ const ProviderDashboard = () => {
   const maxBookings = Math.max(...monthlySeries.map((m) => m.total_bookings || 0), 5);
 
   return (
-    <div className="min-h-screen bg-[#f8fafc] text-[#172033] py-8 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen text-[#172033] py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto space-y-6">
 
         {/* 1. TOP PROFILE & SUMMARY BANNER */}
-        <div className="bg-white rounded-2xl border border-[#e2e8f0] p-6 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div className="glass-panel rounded-2xl p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div className="flex items-center space-x-4">
-            <div className="w-14 h-14 rounded-2xl bg-blue-600 text-white font-black text-xl flex items-center justify-center shrink-0 shadow-md">
+            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-600 to-sky-600 text-white font-black text-xl flex items-center justify-center shrink-0 shadow-md">
               {profile?.full_name?.charAt(0) || 'P'}
             </div>
             <div>
               <div className="flex items-center space-x-2">
                 <h1 className="text-xl sm:text-2xl font-black text-[#172033]">{profile?.full_name}</h1>
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200 uppercase">
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 uppercase">
                   {profile?.verification_status || 'verified'}
                 </span>
               </div>
               <p className="text-xs text-[#475569] mt-0.5 flex flex-wrap items-center gap-x-2">
-                <span className="text-blue-600 font-bold">{profile?.service_category}</span>
+                <span className="text-emerald-700 font-bold">{profile?.service_category}</span>
                 <span>•</span>
                 <span>{profile?.service_address || 'Mangaluru'}</span>
                 <span>•</span>
@@ -361,7 +361,7 @@ const ProviderDashboard = () => {
           <div className="flex items-center space-x-3 w-full md:w-auto">
             <button
               onClick={fetchDashboardData}
-              className="p-2.5 rounded-xl border border-[#e2e8f0] bg-white hover:bg-slate-50 text-[#475569] hover:text-[#172033] transition cursor-pointer shadow-2xs"
+              className="p-2.5 rounded-xl border border-emerald-200 bg-white/90 hover:bg-emerald-50 text-emerald-700 transition cursor-pointer shadow-2xs"
               title="Refresh Analytics"
             >
               <RefreshCw className="w-4 h-4" />
@@ -382,13 +382,13 @@ const ProviderDashboard = () => {
         </div>
 
         {/* TAB NAVIGATION: Overview vs Portfolio vs Availability */}
-        <div className="flex items-center space-x-2 border-b border-[#e2e8f0] pb-2">
+        <div className="flex items-center space-x-2 border-b border-emerald-200/70 pb-2">
           <button
             onClick={() => setActiveTab('overview')}
             className={`px-4 py-2 rounded-xl text-xs font-bold transition flex items-center space-x-2 cursor-pointer ${
               activeTab === 'overview'
-                ? 'bg-blue-600 text-white shadow-sm'
-                : 'bg-white text-[#475569] hover:text-[#172033] border border-[#e2e8f0]'
+                ? 'bg-gradient-to-r from-emerald-600 to-sky-600 text-white shadow-sm'
+                : 'bg-white/90 text-[#475569] hover:text-emerald-800 border border-emerald-200/70'
             }`}
           >
             <TrendingUp className="w-4 h-4" />
@@ -399,8 +399,8 @@ const ProviderDashboard = () => {
             onClick={() => setActiveTab('portfolio')}
             className={`px-4 py-2 rounded-xl text-xs font-bold transition flex items-center space-x-2 cursor-pointer ${
               activeTab === 'portfolio'
-                ? 'bg-blue-600 text-white shadow-sm'
-                : 'bg-white text-[#475569] hover:text-[#172033] border border-[#e2e8f0]'
+                ? 'bg-gradient-to-r from-emerald-600 to-sky-600 text-white shadow-sm'
+                : 'bg-white/90 text-[#475569] hover:text-emerald-800 border border-emerald-200/70'
             }`}
           >
             <ImageIcon className="w-4 h-4" />
@@ -411,8 +411,8 @@ const ProviderDashboard = () => {
             onClick={() => setActiveTab('availability')}
             className={`px-4 py-2 rounded-xl text-xs font-bold transition flex items-center space-x-2 cursor-pointer ${
               activeTab === 'availability'
-                ? 'bg-blue-600 text-white shadow-sm'
-                : 'bg-white text-[#475569] hover:text-[#172033] border border-[#e2e8f0]'
+                ? 'bg-gradient-to-r from-emerald-600 to-sky-600 text-white shadow-sm'
+                : 'bg-white/90 text-[#475569] hover:text-emerald-800 border border-emerald-200/70'
             }`}
           >
             <Clock className="w-4 h-4" />
@@ -631,13 +631,13 @@ const ProviderDashboard = () => {
                 </div>
 
                 {/* Chart Toggle Tabs */}
-                <div className="flex items-center space-x-1 bg-slate-100 p-1 rounded-xl border border-[#e2e8f0] text-xs">
+                <div className="flex items-center space-x-1 bg-emerald-50/70 p-1 rounded-xl border border-emerald-200 text-xs">
                   <button
                     onClick={() => setActiveChart('earnings')}
                     className={`px-3 py-1 rounded-lg font-bold transition-all cursor-pointer ${
                       activeChart === 'earnings'
-                        ? 'bg-blue-600 text-white shadow-xs'
-                        : 'text-[#475569] hover:text-[#172033]'
+                        ? 'bg-gradient-to-r from-emerald-600 to-sky-600 text-white shadow-xs'
+                        : 'text-[#475569] hover:text-emerald-800'
                     }`}
                   >
                     Earnings (₹)
@@ -646,8 +646,8 @@ const ProviderDashboard = () => {
                     onClick={() => setActiveChart('trend')}
                     className={`px-3 py-1 rounded-lg font-bold transition-all cursor-pointer ${
                       activeChart === 'trend'
-                        ? 'bg-blue-600 text-white shadow-xs'
-                        : 'text-[#475569] hover:text-[#172033]'
+                        ? 'bg-gradient-to-r from-emerald-600 to-sky-600 text-white shadow-xs'
+                        : 'text-[#475569] hover:text-emerald-800'
                     }`}
                   >
                     Booking Volume
@@ -662,7 +662,7 @@ const ProviderDashboard = () => {
                 </div>
               ) : (
                 <div className="space-y-4">
-                  <div className="h-56 flex items-end justify-between gap-2 sm:gap-4 pt-6 px-2 border-b border-[#e2e8f0]">
+                  <div className="h-56 flex items-end justify-between gap-2 sm:gap-4 pt-6 px-2 border-b border-emerald-100">
                     {monthlySeries.map((m) => {
                       const value = activeChart === 'earnings' ? m.earnings : m.total_bookings;
                       const maxVal = activeChart === 'earnings' ? maxEarnings : maxBookings;
@@ -671,7 +671,7 @@ const ProviderDashboard = () => {
                       return (
                         <div key={m.month_key} className="flex-1 flex flex-col items-center group relative h-full justify-end">
                           {/* Tooltip on Hover */}
-                          <div className="absolute -top-10 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none bg-slate-900 border border-slate-800 px-2.5 py-1 rounded-lg text-[10px] text-white font-bold whitespace-nowrap z-20 shadow-xl">
+                          <div className="absolute -top-10 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none bg-[#064e3b] border border-emerald-700 px-2.5 py-1 rounded-lg text-[10px] text-white font-bold whitespace-nowrap z-20 shadow-xl">
                             {activeChart === 'earnings'
                               ? `₹${m.earnings.toFixed(0)} (${m.completed_count} completed)`
                               : `${m.total_bookings} total (${m.completed_count} completed, ${m.cancelled_count} cancelled)`}
@@ -683,16 +683,16 @@ const ProviderDashboard = () => {
                           </span>
 
                           {/* Bar */}
-                          <div className="w-full max-w-[48px] bg-slate-100 rounded-t-xl overflow-hidden p-0.5 border border-[#e2e8f0]">
+                          <div className="w-full max-w-[48px] bg-emerald-50/70 rounded-t-xl overflow-hidden p-0.5 border border-emerald-100">
                             <div
                               style={{ height: `${heightPercent}%` }}
                               className={`w-full rounded-t-lg transition-all duration-500 ${
                                 activeChart === 'earnings'
                                   ? value > 0
-                                    ? 'bg-blue-600'
+                                    ? 'bg-gradient-to-t from-emerald-600 to-teal-500'
                                     : 'bg-slate-300'
                                   : value > 0
-                                    ? 'bg-indigo-600'
+                                    ? 'bg-gradient-to-t from-sky-600 to-cyan-500'
                                     : 'bg-slate-300'
                               }`}
                             />
@@ -709,7 +709,7 @@ const ProviderDashboard = () => {
 
                   <div className="flex items-center justify-between text-[11px] text-[#475569] pt-2">
                     <span className="flex items-center space-x-1.5">
-                      <span className={`w-2.5 h-2.5 rounded-full ${activeChart === 'earnings' ? 'bg-blue-600' : 'bg-indigo-600'}`} />
+                      <span className={`w-2.5 h-2.5 rounded-full ${activeChart === 'earnings' ? 'bg-emerald-600' : 'bg-sky-600'}`} />
                       <span>{activeChart === 'earnings' ? 'Gross verified earnings' : 'Total customer job requests'}</span>
                     </span>
                     <span className="text-[10px] font-medium">Real transaction records</span>
@@ -723,12 +723,12 @@ const ProviderDashboard = () => {
           <div className="lg:col-span-4 space-y-6">
             
             {/* 1. Status Distribution Card */}
-            <div className="bg-white rounded-2xl border border-[#e2e8f0] p-6 shadow-sm">
+            <div className="glass-card rounded-2xl p-6">
               <h3 className="text-base font-bold text-[#172033] mb-1">Booking Status Breakdown</h3>
               <p className="text-xs text-[#475569] mb-4">Distribution across current request lifecycle</p>
 
               {/* Segmented Distribution Bar */}
-              <div className="h-3 w-full bg-slate-100 rounded-full overflow-hidden flex mb-4 border border-[#e2e8f0]">
+              <div className="h-3 w-full bg-slate-100 rounded-full overflow-hidden flex mb-4 border border-emerald-100">
                 <div 
                   style={{ width: `${statusDist.percentages?.completed || 0}%` }} 
                   className="bg-emerald-500" 
@@ -736,7 +736,7 @@ const ProviderDashboard = () => {
                 />
                 <div 
                   style={{ width: `${statusDist.percentages?.active || 0}%` }} 
-                  className="bg-blue-600" 
+                  className="bg-sky-600" 
                   title={`Active: ${statusDist.percentages?.active || 0}%`} 
                 />
                 <div 
@@ -753,7 +753,7 @@ const ProviderDashboard = () => {
 
               {/* Status List */}
               <div className="space-y-2.5 text-xs">
-                <div className="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 border border-[#e2e8f0]">
+                <div className="flex items-center justify-between p-2.5 rounded-xl bg-emerald-50/50 border border-emerald-100">
                   <span className="flex items-center space-x-2 text-[#172033]">
                     <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 shrink-0" />
                     <span className="font-medium">Completed</span>
@@ -763,9 +763,9 @@ const ProviderDashboard = () => {
                   </span>
                 </div>
 
-                <div className="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 border border-[#e2e8f0]">
+                <div className="flex items-center justify-between p-2.5 rounded-xl bg-sky-50/50 border border-sky-100">
                   <span className="flex items-center space-x-2 text-[#172033]">
-                    <span className="w-2.5 h-2.5 rounded-full bg-blue-600 shrink-0" />
+                    <span className="w-2.5 h-2.5 rounded-full bg-sky-600 shrink-0" />
                     <span className="font-medium">Active / In Progress</span>
                   </span>
                   <span className="font-bold text-[#172033]">

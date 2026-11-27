@@ -244,12 +244,12 @@ const Bookings = () => {
   const providerTrustScore = providerTrustData?.trust_score ?? user?.trust_metrics?.trust_score ?? null;
 
   return (
-    <div className="min-h-screen bg-[#f8fafc] text-[#172033] py-8 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen text-[#172033] py-8 px-4 sm:px-6 lg:px-8">
       
       {/* Real-time Toast Banner */}
       {toastNotification && (
-        <div className="fixed bottom-6 left-6 z-50 bg-white border border-blue-200 rounded-2xl p-4 shadow-xl flex items-center space-x-3 animate-in slide-in-from-bottom-5">
-          <div className="p-2 bg-blue-50 text-blue-600 rounded-xl">
+        <div className="fixed bottom-6 left-6 z-50 glass-panel border-emerald-300 rounded-2xl p-4 shadow-xl flex items-center space-x-3 animate-in slide-in-from-bottom-5">
+          <div className="p-2 bg-emerald-50 text-emerald-600 rounded-xl">
             <Bell className="w-5 h-5" />
           </div>
           <div>
@@ -278,7 +278,7 @@ const Bookings = () => {
               <h1 className="text-2xl sm:text-3xl font-black text-[#172033]">
                 {isCustomer ? 'My Bookings & Appointments' : 'Provider Job Queue & Work Orders'}
               </h1>
-              <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200">
+              <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
                 {user?.role}
               </span>
             </div>
@@ -293,9 +293,9 @@ const Bookings = () => {
           {isProvider && (
             <Link
               to="/provider-dashboard"
-              className="btn-secondary px-3.5 py-2 text-xs font-bold flex items-center space-x-1.5 shadow-2xs hover:border-blue-300 transition-colors rounded-xl"
+              className="btn-secondary px-3.5 py-2 text-xs font-bold flex items-center space-x-1.5 shadow-2xs transition-colors rounded-xl"
             >
-              <TrendingUp className="w-3.5 h-3.5 text-blue-600" />
+              <TrendingUp className="w-3.5 h-3.5 text-emerald-600" />
               <span>Provider Analytics</span>
               <ChevronRight className="w-3.5 h-3.5 text-[#475569]" />
             </Link>
@@ -394,7 +394,7 @@ const Bookings = () => {
         </div>
 
         {/* Filter Tabs */}
-        <div className="flex items-center space-x-2 border-b border-[#e2e8f0] pb-3 text-xs font-semibold">
+        <div className="flex items-center space-x-2 border-b border-emerald-200/70 pb-3 text-xs font-semibold">
           {[
             { id: 'all', label: `All (${bookings.length})` },
             { id: 'active', label: `Active (${activeCount})` },
@@ -406,8 +406,8 @@ const Bookings = () => {
               onClick={() => setActiveTab(tab.id)}
               className={`px-3.5 py-1.5 rounded-xl transition-all cursor-pointer ${
                 activeTab === tab.id
-                  ? 'bg-blue-600 text-white font-bold shadow-xs'
-                  : 'text-[#475569] hover:text-[#172033] hover:bg-slate-100'
+                  ? 'bg-gradient-to-r from-emerald-600 to-sky-600 text-white font-bold shadow-xs'
+                  : 'text-[#475569] hover:text-emerald-800 hover:bg-emerald-50/80'
               }`}
             >
               {tab.label}

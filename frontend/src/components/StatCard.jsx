@@ -1,23 +1,24 @@
 import React from 'react';
 
 const ACCENTS = {
-  blue: 'text-blue-700 bg-blue-50 border-blue-200',
-  violet: 'text-blue-700 bg-blue-50 border-blue-200',
-  teal: 'text-emerald-700 bg-emerald-50 border-emerald-200',
+  blue: 'text-sky-700 bg-sky-50 border-sky-200',
+  sky: 'text-sky-700 bg-sky-50 border-sky-200',
+  violet: 'text-teal-700 bg-teal-50 border-teal-200',
+  teal: 'text-teal-700 bg-teal-50 border-teal-200',
   emerald: 'text-emerald-700 bg-emerald-50 border-emerald-200',
   amber: 'text-amber-700 bg-amber-50 border-amber-200',
-  pink: 'text-purple-700 bg-purple-50 border-purple-200',
-  purple: 'text-purple-700 bg-purple-50 border-purple-200',
+  pink: 'text-cyan-700 bg-cyan-50 border-cyan-200',
+  purple: 'text-teal-700 bg-teal-50 border-teal-200',
 };
 
-const StatCard = ({ title, value, change, icon: Icon, accent = 'blue', subtitle, onClick }) => {
-  const accentClass = ACCENTS[accent] || ACCENTS.blue;
+const StatCard = ({ title, value, change, icon: Icon, accent = 'emerald', subtitle, onClick }) => {
+  const accentClass = ACCENTS[accent] || ACCENTS.emerald;
 
   return (
     <div 
       onClick={onClick}
-      className={`theme-card bg-white p-5 relative overflow-hidden flex flex-col justify-between border border-[#e2e8f0] shadow-xs ${
-        onClick ? 'cursor-pointer hover:border-blue-400 transition-all' : ''
+      className={`glass-card rounded-2xl p-5 relative overflow-hidden flex flex-col justify-between ${
+        onClick ? 'cursor-pointer hover:border-emerald-400 transition-all' : ''
       }`}
     >
       <div className="flex items-center justify-between mb-2">

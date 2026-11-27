@@ -7,7 +7,7 @@ const TrustBadge = ({ score = 50, shapFactors = null, providerName = 'Verified P
 
   const getBadgeStyle = () => {
     if (numScore >= 80) return 'bg-emerald-50 text-emerald-700 border-emerald-300';
-    if (numScore >= 65) return 'bg-blue-50 text-blue-700 border-blue-300';
+    if (numScore >= 65) return 'bg-sky-50 text-sky-700 border-sky-300';
     return 'bg-amber-50 text-amber-700 border-amber-300';
   };
 
@@ -45,7 +45,7 @@ const TrustBadge = ({ score = 50, shapFactors = null, providerName = 'Verified P
             </button>
 
             <div className="flex items-center space-x-3 mb-4">
-              <div className="w-10 h-10 rounded-xl bg-blue-50 border border-blue-200 flex items-center justify-center text-blue-600">
+              <div className="w-10 h-10 rounded-xl bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-600">
                 <Sparkles className="w-5 h-5" />
               </div>
               <div>
@@ -54,14 +54,14 @@ const TrustBadge = ({ score = 50, shapFactors = null, providerName = 'Verified P
               </div>
             </div>
 
-            <div className="bg-slate-50 p-4 rounded-xl border border-[#e2e8f0] mb-5">
+            <div className="bg-[#f4fbf9] p-4 rounded-xl border border-emerald-200/80 mb-5">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-xs font-semibold text-[#475569]">Computed Trust Rating</span>
-                <span className="text-xl font-black text-blue-600">{numScore.toFixed(1)} / 100</span>
+                <span className="text-xl font-black text-emerald-700">{numScore.toFixed(1)} / 100</span>
               </div>
-              <div className="w-full bg-slate-200 h-2.5 rounded-full overflow-hidden">
+              <div className="w-full bg-emerald-100 h-2.5 rounded-full overflow-hidden">
                 <div 
-                  className="h-full bg-blue-600 rounded-full transition-all duration-700"
+                  className="h-full bg-gradient-to-r from-emerald-600 to-sky-600 rounded-full transition-all duration-700"
                   style={{ width: `${Math.min(100, Math.max(0, numScore))}%` }}
                 />
               </div>

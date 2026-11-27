@@ -19,22 +19,22 @@ const ProviderCard = ({ provider, onBook, onViewReviews }) => {
   const estimatedPrice = provider.estimated_price ?? provider.predicted_price ?? null;
 
   return (
-    <div className="theme-card theme-card-hover p-6 flex flex-col justify-between bg-white border border-[#e2e8f0] shadow-xs">
+    <div className="glass-card rounded-2xl p-6 flex flex-col justify-between">
       <div>
         {/* Header: Avatar, Name & Actions (Match Score + Trust Badge) */}
         <div className="flex items-start justify-between gap-3 mb-4">
           <Link to={`/provider/${providerId}`} className="flex items-center space-x-3 group">
-            <div className="w-12 h-12 rounded-full p-0.5 bg-gradient-to-tr from-blue-600 to-indigo-600 shrink-0 shadow-xs">
-              <div className="w-full h-full rounded-full bg-white flex items-center justify-center text-lg font-black text-blue-600 group-hover:bg-blue-50 transition-colors">
+            <div className="w-12 h-12 rounded-full p-0.5 bg-gradient-to-tr from-emerald-600 to-sky-600 shrink-0 shadow-xs">
+              <div className="w-full h-full rounded-full bg-white flex items-center justify-center text-lg font-black text-emerald-700 group-hover:bg-emerald-50 transition-colors">
                 {name.charAt(0)}
               </div>
             </div>
             <div>
               <div className="flex items-center space-x-1.5">
-                <h4 className="text-base font-bold text-[#172033] group-hover:text-blue-600 transition-colors">{name}</h4>
-                <CheckCircle2 className="w-4 h-4 text-blue-600 shrink-0" />
+                <h4 className="text-base font-bold text-[#172033] group-hover:text-emerald-700 transition-colors">{name}</h4>
+                <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
               </div>
-              <span className="text-[11px] font-semibold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-full border border-blue-200">
+              <span className="text-[11px] font-semibold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
                 {category}
               </span>
             </div>
@@ -60,14 +60,14 @@ const ProviderCard = ({ provider, onBook, onViewReviews }) => {
 
         {/* AI Recommendation Reason Banner */}
         {aiReason && (
-          <div className="mb-3 px-3 py-1.5 rounded-xl bg-blue-50/70 border border-blue-200 text-xs text-[#475569] flex items-center space-x-2">
-            <Sparkles className="w-3.5 h-3.5 text-blue-600 shrink-0" />
+          <div className="mb-3 px-3 py-1.5 rounded-xl bg-emerald-50/75 border border-emerald-200 text-xs text-[#334155] flex items-center space-x-2">
+            <Sparkles className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
             <span className="truncate"><strong className="text-[#172033]">AI Reason:</strong> {aiReason}</span>
           </div>
         )}
 
         {/* Rating & Location / Distance */}
-        <div className="grid grid-cols-2 gap-2 my-4 p-3 rounded-xl bg-slate-50 border border-[#e2e8f0] text-xs">
+        <div className="grid grid-cols-2 gap-2 my-4 p-3 rounded-xl bg-[#f4fbf9]/90 border border-emerald-100 text-xs">
           <button
             onClick={() => onViewReviews && onViewReviews(provider)}
             className="flex items-center space-x-1.5 text-amber-500 hover:opacity-80 transition-opacity text-left cursor-pointer"
@@ -87,7 +87,7 @@ const ProviderCard = ({ provider, onBook, onViewReviews }) => {
           </button>
 
           <div className="flex items-center space-x-1 text-[#475569] truncate">
-            <MapPin className="w-3.5 h-3.5 text-blue-600 shrink-0" />
+            <MapPin className="w-3.5 h-3.5 text-sky-600 shrink-0" />
             <span className="truncate font-medium">
               {distance !== null ? `${distance} km • ` : ''}{address}
             </span>
@@ -101,7 +101,7 @@ const ProviderCard = ({ provider, onBook, onViewReviews }) => {
             {hourlyRate ? (
               <>
                 <span className="text-lg font-black text-[#172033] flex items-center">
-                  <IndianRupee className="w-4 h-4 text-blue-600" />
+                  <IndianRupee className="w-4 h-4 text-emerald-600" />
                   {hourlyRate}
                 </span>
                 <span className="text-xs text-[#475569]">/ hr</span>
@@ -112,7 +112,7 @@ const ProviderCard = ({ provider, onBook, onViewReviews }) => {
           </div>
 
           {estimatedPrice && (
-            <span className="text-xs text-blue-700 font-semibold bg-blue-50 px-2 py-0.5 rounded-md border border-blue-200">
+            <span className="text-xs text-sky-700 font-semibold bg-sky-50 px-2 py-0.5 rounded-md border border-sky-200">
               Est. ₹{Number(estimatedPrice).toFixed(0)}
             </span>
           )}
@@ -123,9 +123,9 @@ const ProviderCard = ({ provider, onBook, onViewReviews }) => {
       <div className="grid grid-cols-2 gap-2 pt-2">
         <Link
           to={`/provider/${providerId}`}
-          className="btn-secondary py-2.5 text-xs font-semibold flex items-center justify-center space-x-1.5 hover:border-blue-400"
+          className="btn-secondary py-2.5 text-xs font-semibold flex items-center justify-center space-x-1.5"
         >
-          <ExternalLink className="w-3.5 h-3.5 text-blue-600" />
+          <ExternalLink className="w-3.5 h-3.5 text-emerald-700" />
           <span>View Profile</span>
         </Link>
 

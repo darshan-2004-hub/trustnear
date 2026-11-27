@@ -104,17 +104,17 @@ const ProviderDetail = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#f8fafc] text-[#172033] py-12 px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen text-[#172033] py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto space-y-6 animate-pulse">
-          <div className="h-6 w-32 bg-slate-200 rounded-lg" />
-          <div className="bg-white rounded-2xl border border-[#e2e8f0] p-8 h-64 shadow-sm" />
+          <div className="h-6 w-32 bg-emerald-100 rounded-lg" />
+          <div className="glass-card rounded-2xl p-8 h-64 shadow-sm" />
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
             <div className="lg:col-span-7 space-y-6">
-              <div className="bg-white rounded-2xl border border-[#e2e8f0] p-6 h-48 shadow-sm" />
-              <div className="bg-white rounded-2xl border border-[#e2e8f0] p-6 h-64 shadow-sm" />
+              <div className="glass-card rounded-2xl p-6 h-48 shadow-sm" />
+              <div className="glass-card rounded-2xl p-6 h-64 shadow-sm" />
             </div>
             <div className="lg:col-span-5">
-              <div className="bg-white rounded-2xl border border-[#e2e8f0] p-6 h-96 shadow-sm" />
+              <div className="glass-card rounded-2xl p-6 h-96 shadow-sm" />
             </div>
           </div>
         </div>
@@ -124,8 +124,8 @@ const ProviderDetail = () => {
 
   if (error || !provider) {
     return (
-      <div className="min-h-screen bg-[#f8fafc] text-[#172033] py-16 px-4 flex items-center justify-center">
-        <div className="bg-white rounded-2xl border border-[#e2e8f0] max-w-md w-full p-8 text-center space-y-4 shadow-sm">
+      <div className="min-h-screen text-[#172033] py-16 px-4 flex items-center justify-center">
+        <div className="glass-panel rounded-2xl max-w-md w-full p-8 text-center space-y-4 shadow-sm">
           <div className="w-12 h-12 rounded-full bg-rose-50 text-rose-600 border border-rose-200 flex items-center justify-center mx-auto">
             <AlertCircle className="w-6 h-6" />
           </div>
@@ -154,14 +154,14 @@ const ProviderDetail = () => {
   const trustScore = provider.trust_score;
 
   return (
-    <div className="min-h-screen bg-[#f8fafc] text-[#172033] py-8 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen text-[#172033] py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-6xl mx-auto space-y-6">
         
         {/* Breadcrumb / Back Link */}
         <div>
           <Link
             to="/providers"
-            className="inline-flex items-center space-x-2 text-xs font-semibold text-[#475569] hover:text-blue-600 transition-colors"
+            className="inline-flex items-center space-x-2 text-xs font-semibold text-[#475569] hover:text-emerald-700 transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
             <span>Back to All Providers</span>
@@ -169,12 +169,12 @@ const ProviderDetail = () => {
         </div>
 
         {/* Hero Profile Header Card */}
-        <div className="bg-white rounded-2xl border border-[#e2e8f0] p-6 sm:p-8 relative overflow-hidden shadow-sm">
+        <div className="glass-panel rounded-2xl p-6 sm:p-8 relative overflow-hidden">
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
             
             {/* Avatar & Core Bio */}
             <div className="flex items-start sm:items-center space-x-4 sm:space-x-6">
-              <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-blue-600 text-white flex items-center justify-center text-3xl font-black shadow-md shrink-0">
+              <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-gradient-to-br from-emerald-600 to-sky-600 text-white flex items-center justify-center text-3xl font-black shadow-md shrink-0">
                 {name.charAt(0)}
               </div>
 
@@ -182,8 +182,8 @@ const ProviderDetail = () => {
                 <div className="flex flex-wrap items-center gap-2">
                   <h1 className="text-2xl sm:text-3xl font-black text-[#172033]">{name}</h1>
                   {isVerified && (
-                    <span className="inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-700 text-xs font-bold border border-blue-200">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-blue-600" />
+                    <span className="inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-xs font-bold border border-emerald-200">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
                       <span>Verified Pro</span>
                     </span>
                   )}

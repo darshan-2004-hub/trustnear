@@ -103,13 +103,13 @@ const ChatModal = ({ booking, onClose }) => {
       onClick={onClose}
     >
       <div 
-        className="bg-white rounded-2xl border border-[#e2e8f0] max-w-lg w-full h-[580px] flex flex-col relative shadow-xl overflow-hidden animate-in fade-in zoom-in-95"
+        className="bg-white/95 backdrop-blur-md rounded-2xl border border-emerald-200 max-w-lg w-full h-[580px] flex flex-col relative shadow-2xl overflow-hidden animate-in fade-in zoom-in-95"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="p-4 bg-white border-b border-[#e2e8f0] flex items-center justify-between">
+        <div className="p-4 bg-gradient-to-r from-emerald-50/90 via-white to-sky-50/90 border-b border-emerald-200/80 flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center font-bold text-sm shadow-xs">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-600 to-sky-600 text-white flex items-center justify-center font-bold text-sm shadow-xs">
               {recipientName.charAt(0)}
             </div>
             <div>
@@ -125,17 +125,17 @@ const ChatModal = ({ booking, onClose }) => {
           </div>
           <button 
             onClick={onClose} 
-            className="text-[#475569] hover:text-[#172033] p-1.5 rounded-lg hover:bg-slate-100 transition-colors"
+            className="text-[#475569] hover:text-[#172033] p-1.5 rounded-lg hover:bg-emerald-50 transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Messages Stream */}
-        <div className="flex-1 p-4 overflow-y-auto space-y-3 bg-slate-50">
+        <div className="flex-1 p-4 overflow-y-auto space-y-3 bg-[#f4fbf9]">
           {messages.length === 0 ? (
             <div className="text-center py-16 text-xs text-[#475569]">
-              <MessageSquare className="w-8 h-8 text-blue-600 mx-auto mb-2 opacity-60" />
+              <MessageSquare className="w-8 h-8 text-emerald-600 mx-auto mb-2 opacity-60" />
               <p>No messages yet. Send a message to coordinate your booking!</p>
             </div>
           ) : (
@@ -146,8 +146,8 @@ const ChatModal = ({ booking, onClose }) => {
                   <div
                     className={`max-w-[78%] px-4 py-2.5 rounded-2xl text-xs leading-relaxed ${
                       isMine
-                        ? 'bg-blue-600 text-white rounded-br-xs shadow-xs'
-                        : 'bg-white border border-[#e2e8f0] text-[#172033] rounded-bl-xs shadow-xs'
+                        ? 'bg-gradient-to-r from-emerald-600 to-sky-600 text-white rounded-br-xs shadow-xs'
+                        : 'bg-white border border-emerald-100 text-[#172033] rounded-bl-xs shadow-xs'
                     }`}
                   >
                     {m.content || m.message_text}
@@ -163,13 +163,13 @@ const ChatModal = ({ booking, onClose }) => {
         </div>
 
         {/* Input Bar */}
-        <form onSubmit={handleSend} className="p-3 bg-white border-t border-[#e2e8f0] flex items-center space-x-2">
+        <form onSubmit={handleSend} className="p-3 bg-white border-t border-emerald-100 flex items-center space-x-2">
           <input
             type="text"
             value={newText}
             onChange={(e) => setNewText(e.target.value)}
             placeholder="Type your message..."
-            className="flex-1 bg-slate-50 border border-[#e2e8f0] rounded-xl px-4 py-2.5 text-xs text-[#172033] placeholder-slate-400 outline-none focus:bg-white focus:border-blue-600 focus:ring-1 focus:ring-blue-600 transition"
+            className="flex-1 bg-[#f4fbf9] border border-emerald-200 rounded-xl px-4 py-2.5 text-xs text-[#172033] placeholder-slate-400 outline-none focus:bg-white focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 transition"
           />
           <button
             type="submit"

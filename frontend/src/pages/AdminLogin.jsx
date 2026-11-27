@@ -95,8 +95,11 @@ const AdminLogin = () => {
   };
 
   return (
-    <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-[#f8fafc]">
-      <div className="theme-card max-w-md w-full p-8 shadow-xl border border-[#e2e8f0] bg-white space-y-6">
+    <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-tech-grid relative overflow-hidden">
+      <div className="aurora-glow-1 -top-20 left-10 pointer-events-none" />
+      <div className="aurora-glow-2 -bottom-20 right-10 pointer-events-none" />
+
+      <div className="glass-panel max-w-md w-full p-8 rounded-3xl shadow-2xl space-y-6 relative z-10">
         
         {/* Top Header */}
         <div>

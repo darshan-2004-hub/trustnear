@@ -107,11 +107,11 @@ const InvoiceModal = ({ booking, onClose }) => {
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-6 border-b border-slate-200">
             <div>
               <div className="flex items-center space-x-2">
-                <div className="w-8 h-8 rounded-lg bg-blue-600 text-white flex items-center justify-center font-bold">
+                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-600 to-sky-600 text-white flex items-center justify-center font-bold">
                   <ShieldCheck className="w-5 h-5" />
                 </div>
                 <span className="text-xl font-black tracking-tight text-slate-900">
-                  Trust<span className="text-blue-600">Near</span>
+                  Trust<span className="text-emerald-600">Near</span>
                 </span>
                 <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 uppercase">
                   Verified

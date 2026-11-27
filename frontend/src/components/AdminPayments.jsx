@@ -158,7 +158,7 @@ export default function AdminPayments() {
 
           <button
             type="submit"
-            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl transition cursor-pointer shadow-sm"
+            className="px-4 py-2 btn-primary text-xs font-bold rounded-xl transition cursor-pointer shadow-sm"
           >
             Search
           </button>
