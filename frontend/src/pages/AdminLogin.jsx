@@ -145,7 +145,7 @@ const AdminLogin = () => {
         )}
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4" autoComplete="off">
           <div>
             <label className="block text-xs font-semibold text-[#475569] uppercase mb-1.5">
               Staff Email Address <span className="text-red-500">*</span>
@@ -158,6 +158,7 @@ const AdminLogin = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="admin@trustnear.com"
+                autoComplete="off"
                 className={`w-full pl-9 pr-3 py-2 bg-white border rounded-xl text-sm text-[#172033] placeholder-slate-400 focus:outline-none transition ${
                   errors.email ? 'border-red-500 focus:border-red-500' : 'border-[#e2e8f0] focus:border-[#2563eb]'
                 }`}
@@ -178,6 +179,7 @@ const AdminLogin = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Staff password"
+                autoComplete="new-password"
                 className={`w-full pl-9 pr-10 py-2 bg-white border rounded-xl text-sm text-[#172033] placeholder-slate-400 focus:outline-none transition ${
                   errors.password ? 'border-red-500 focus:border-red-500' : 'border-[#e2e8f0] focus:border-[#2563eb]'
                 }`}

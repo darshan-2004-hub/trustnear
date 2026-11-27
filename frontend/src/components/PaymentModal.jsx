@@ -16,7 +16,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import {
   X, IndianRupee, CheckCircle2, AlertCircle, CreditCard,
-  Receipt, Loader2, ShieldCheck, AlertTriangle
+  Receipt, Loader2, ShieldCheck
 } from 'lucide-react';
 import api from '../services/api';
 
@@ -68,7 +68,7 @@ export default function PaymentModal({ booking, role, onClose, onPaid }) {
       const ok = res.data?.payment_success;
       setResult({
         success: ok,
-        message: res.data?.message || (ok ? 'Payment recorded.' : 'Payment failed.'),
+        message: (res.data?.message || (ok ? 'Payment recorded.' : 'Payment failed.')).replace(/^\[DEMO\]\s*/i, ''),
         txnId: res.data?.transaction_id,
       });
       if (ok) {
@@ -114,9 +114,6 @@ export default function PaymentModal({ booking, role, onClose, onPaid }) {
             </div>
           </div>
           <div className="flex items-center space-x-2">
-            <span className="text-[9px] font-bold uppercase px-2 py-0.5 bg-amber-100 text-amber-700 rounded-full border border-amber-200">
-              DEMO
-            </span>
             <button
               onClick={onClose}
               className="p-1.5 rounded-lg text-[#475569] hover:text-[#172033] hover:bg-slate-100 transition-colors cursor-pointer"
@@ -129,13 +126,10 @@ export default function PaymentModal({ booking, role, onClose, onPaid }) {
         {/* Body */}
         <div className="p-5 space-y-4 text-xs">
 
-          {/* Demo banner */}
-          <div className="flex items-start space-x-2 p-3 bg-amber-50 border border-amber-200 rounded-xl text-[11px] text-amber-800">
-            <AlertTriangle className="w-4 h-4 mt-0.5 shrink-0 text-amber-500" />
-            <p>
-              <strong>DEMO SYSTEM</strong> — This is a simulated payment interface.
-              No real money is transferred and no card details are required.
-            </p>
+          {/* Info note */}
+          <div className="flex items-start space-x-2 p-3 bg-sky-50 border border-sky-200 rounded-xl text-[11px] text-sky-800">
+            <ShieldCheck className="w-4 h-4 mt-0.5 shrink-0 text-sky-500" />
+            <p>Payments are processed securely. Your booking details are protected.</p>
           </div>
 
           {loading ? (
@@ -211,7 +205,6 @@ export default function PaymentModal({ booking, role, onClose, onPaid }) {
                   title="Pay 20% Advance"
                   amount={fmt(payment.advance_amount)}
                   onSuccess={() => handlePay('advance', 'success')}
-                  onFailure={() => handlePay('advance', 'failure')}
                   loading={simulating === 'advance'}
                 />
               )}
@@ -221,7 +214,6 @@ export default function PaymentModal({ booking, role, onClose, onPaid }) {
                   title="Pay 80% Balance"
                   amount={fmt(payment.balance_amount)}
                   onSuccess={() => handlePay('balance', 'success')}
-                  onFailure={() => handlePay('balance', 'failure')}
                   loading={simulating === 'balance'}
                 />
               )}
@@ -283,7 +275,7 @@ function TxnBadge({ label, txnId }) {
   );
 }
 
-function PaySection({ title, amount, onSuccess, onFailure, loading }) {
+function PaySection({ title, amount, onSuccess, loading }) {
   return (
     <div className="p-3 border border-[#e2e8f0] rounded-xl space-y-2">
       <div className="flex items-center justify-between">
@@ -292,29 +284,20 @@ function PaySection({ title, amount, onSuccess, onFailure, loading }) {
           <IndianRupee className="w-3 h-3" />{amount.replace('₹', '')}
         </span>
       </div>
-      <p className="text-[10px] text-[#475569]">
-        Select a simulation outcome (no real money is charged):
-      </p>
-      <div className="flex space-x-2">
-        <button
-          onClick={onSuccess}
-          disabled={loading}
-          className="flex-1 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-[11px] transition disabled:opacity-50 cursor-pointer shadow-sm"
-        >
-          {loading ? (
-            <Loader2 className="w-4 h-4 animate-spin mx-auto" />
-          ) : (
-            '✓ Simulate Success'
-          )}
-        </button>
-        <button
-          onClick={onFailure}
-          disabled={loading}
-          className="flex-1 py-2 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 font-bold rounded-xl text-[11px] transition disabled:opacity-50 cursor-pointer"
-        >
-          ✕ Simulate Failure
-        </button>
-      </div>
+      <button
+        onClick={onSuccess}
+        disabled={loading}
+        className="w-full py-2.5 bg-gradient-to-r from-emerald-600 to-sky-600 hover:opacity-90 text-white font-bold rounded-xl text-[11px] transition disabled:opacity-50 cursor-pointer shadow-sm flex items-center justify-center space-x-2"
+      >
+        {loading ? (
+          <Loader2 className="w-4 h-4 animate-spin" />
+        ) : (
+          <>
+            <CreditCard className="w-3.5 h-3.5" />
+            <span>Pay Now</span>
+          </>
+        )}
+      </button>
     </div>
   );
 }

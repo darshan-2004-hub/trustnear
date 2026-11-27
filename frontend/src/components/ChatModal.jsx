@@ -60,7 +60,7 @@ const ChatModal = ({ booking, onClose }) => {
 
     socket.on('connect', () => {
       setConnected(true);
-      socket.emit('join_booking_room', {
+      socket.emit('join_booking_chat', {
         booking_id: booking.id,
         token: token,
       });

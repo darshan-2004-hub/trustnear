@@ -213,7 +213,7 @@ const ProviderLogin = () => {
               </div>
             )}
 
-            <form onSubmit={handleSubmit} className="space-y-4 mt-6">
+            <form onSubmit={handleSubmit} className="space-y-4 mt-6" autoComplete="off">
               {/* Email Address */}
               <div>
                 <label className="block text-xs font-semibold text-[#475569] uppercase mb-1.5">
@@ -227,6 +227,7 @@ const ProviderLogin = () => {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="ramesh.electrician@example.com"
+                    autoComplete="off"
                     className={`w-full pl-9 pr-3 py-2.5 bg-[#f4fbf9]/70 border rounded-xl text-sm text-[#172033] placeholder-slate-400 focus:bg-white focus:outline-none transition ${
                       errors.email ? 'border-red-500 focus:border-red-500' : 'border-emerald-200 focus:border-sky-600 focus:ring-2 focus:ring-sky-500/20'
                     }`}
@@ -250,6 +251,7 @@ const ProviderLogin = () => {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="Enter your password"
+                    autoComplete="new-password"
                     className={`w-full pl-9 pr-10 py-2.5 bg-[#f4fbf9]/70 border rounded-xl text-sm text-[#172033] placeholder-slate-400 focus:bg-white focus:outline-none transition ${
                       errors.password ? 'border-red-500 focus:border-red-500' : 'border-emerald-200 focus:border-sky-600 focus:ring-2 focus:ring-sky-500/20'
                     }`}
